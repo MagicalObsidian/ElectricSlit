@@ -8,6 +8,7 @@
     Width="800"
     Height="450"
     prism:ViewModelLocator.AutoWireViewModel="True"
+    FontSize="14"
     Icon="/Resources/icon_power.png"
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow">
@@ -15,10 +16,14 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
 
 
-        <GroupBox Header="串口通信" Style="{StaticResource InputElementBaseStyle}">
+        <GroupBox
+            Margin="10"
+            Header="串口通信"
+            Style="{StaticResource InputElementBaseStyle}">
             <StackPanel Orientation="Horizontal">
                 <TextBlock
                     Margin="10"
@@ -37,6 +42,7 @@
 
         <GroupBox
             Grid.Row="1"
+            Margin="10"
             Header="控制"
             Style="{StaticResource InputElementBaseStyle}">
             <Grid>
@@ -58,28 +64,45 @@
                     </hc:PreviewSlider>
                 </StackPanel>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Button
-                        Margin="10"
-                        Content="左移指定距离"
-                        Style="{StaticResource ButtonPrimary}" />
-                    <Button
-                        Margin="10"
-                        Content="右移指定距离"
-                        Style="{StaticResource ButtonPrimary}" />
-                    <Button
-                        Margin="10"
-                        Content="移动至指定亮度位置"
-                        Style="{StaticResource ButtonPrimary}" />
-                    <Button
-                        Margin="10"
-                        Content="移动至狭缝全开"
-                        Style="{StaticResource ButtonPrimary}" />
-                    <Button
-                        Margin="10"
-                        Content="移动至狭缝全闭"
-                        Style="{StaticResource ButtonPrimary}" />
-                </StackPanel>
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="单次移动距离:" />
+                        <TextBox
+                            Width="100"
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            TextAlignment="Center" />
+                        <Button
+                            Margin="10"
+                            Content="狭缝调小"
+                            Style="{StaticResource ButtonDashedPrimary}" />
+                        <Button
+                            Margin="10"
+                            Content="狭缝调大"
+                            Style="{StaticResource ButtonDashedPrimary}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <Button
+                            Margin="10"
+                            Content="移动至指定亮度位置"
+                            Style="{StaticResource ButtonPrimary}" />
+                        <Button
+                            Margin="10"
+                            Content="移动至狭缝全开"
+                            Style="{StaticResource ButtonPrimary}" />
+                        <Button
+                            Margin="10"
+                            Content="移动至狭缝全闭"
+                            Style="{StaticResource ButtonPrimary}" />
+                    </StackPanel>
+                </Grid>
             </Grid>
         </GroupBox>
 
