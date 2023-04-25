@@ -1,0 +1,326 @@
+﻿<Window
+    x:Class="MotorTestDemo.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:MotorTestDemo"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Motor Test Demo"
+    Width="800"
+    Height="500"
+    Background="AliceBlue"
+    Closed="Window_Closed"
+    Closing="Window_Closing"
+    FontFamily="Segoe UI Semibold"
+    FontSize="13"
+    ResizeMode="CanMinimize"
+    SnapsToDevicePixels="True"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Grid Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
+
+
+        <Menu Background="{StaticResource PrimaryBrush}">
+            <MenuItem Header="Setting">
+                <MenuItem
+                    Name="MenuSerialPort"
+                    Click="MenuSerialPort_Click"
+                    Header="Port" />
+            </MenuItem>
+        </Menu>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal">
+                <!--  电机使能  -->
+                <Button
+                    Name="Enable"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource SuccessBrush}"
+                    Click="Enable_Click">
+                    <TextBlock Style="{StaticResource TextBlockBaseStyle}" Text="Enable" />
+                </Button>
+
+                <!--  电机脱机  -->
+                <Button
+                    Name="Disenable"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource DangerBrush}"
+                    Click="Disenable_Click">
+                    <TextBlock Style="{StaticResource TextBlockBaseStyle}" Text="Disenable" />
+                </Button>
+
+                <!--  暂停  -->
+                <Button
+                    Name="Pause"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource AccentBrush}"
+                    Click="Pause_Click">
+                    <TextBlock Style="{StaticResource TextBlockBaseStyle}" Text="Pause" />
+                </Button>
+
+                <!--  继续  -->
+                <Button
+                    Name="Stop"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource TitleBrush}"
+                    Click="Stop_Click">
+                    <TextBlock Style="{StaticResource TextBlockBaseStyle}" Text="Continue" />
+                </Button>
+
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="设置当前位置为零位" />
+                <!--  设置零位  -->
+                <Button
+                    Name="SetZero"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource SecondaryBorderBrush}"
+                    Click="SetZero_Click">
+                    <TextBlock Style="{StaticResource TextBlockBaseStyle}" Text="SetZero" />
+                </Button>
+
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="移动至零位" />
+                <!--  移动至零位  -->
+                <Button
+                    Name="MoveToZero"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource SecondaryBorderBrush}"
+                    Click="MoveToZero_Click">
+                    <TextBlock Style="{StaticResource TextBlockBaseStyle}" Text="MoveToZero" />
+                </Button>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="设置单歩歩长" />
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="Set SingleStep:" />
+                <TextBox
+                    Width="50"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="{Binding Path=SingleStep, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="mm" />
+
+                <Button
+                    Name="Left"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource SuccessBrush}"
+                    Click="Left_Click">
+                    <TextBlock Style="{StaticResource TextBlockBaseStyle}" Text="Left" />
+                </Button>
+
+                <Button
+                    Name="Right"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource SuccessBrush}"
+                    Click="Right_Click">
+                    <TextBlock Style="{StaticResource TextBlockBaseStyle}" Text="Right" />
+                </Button>
+
+            </StackPanel>
+
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="移动到绝对位置" />
+                <!--  移动到指定位置  -->
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="Set PositionGoto:" />
+                <ComboBox
+                    Name="Cb_Sign"
+                    Margin="10"
+                    VerticalAlignment="Center">
+                    <ComboBoxItem Content="+" IsSelected="True" />
+                    <ComboBoxItem Content="-" />
+                </ComboBox>
+                <TextBox
+                    Width="50"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="{Binding Path=PositionGoTo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="mm" />
+                <Button
+                    Name="Btn_PositionGoTo"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource SecondaryBorderBrush}"
+                    Click="Btn_PositionGoTo_Click">
+                    <TextBlock Style="{StaticResource TextBlockBaseStyle}" Text="PositionGoTo" />
+                </Button>
+            </StackPanel>
+
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="向上下限位移动" />
+
+                <!--  移动至上限位  -->
+                <Button
+                    Name="MoveToUpperLimit"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource SuccessBrush}"
+                    Click="MoveToUpperLimit_Click">
+                    <TextBlock Style="{StaticResource TextBlockBaseStyle}" Text="MoveToUpperLimit" />
+                </Button>
+
+                <!--  移动至下限位  -->
+                <Button
+                    Name="MoveToLowerLimit"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource SuccessBrush}"
+                    Click="MoveToLowerLimit_Click">
+                    <TextBlock Style="{StaticResource TextBlockBaseStyle}" Text="MoveToLowerLimit" />
+                </Button>
+
+            </StackPanel>
+
+            <!--  数据显示区  -->
+            <StackPanel Grid.RowSpan="5" Grid.Column="1">
+                <TextBlock Text="数据" />
+                <Grid Name="DataGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="100" />
+                        <RowDefinition Height="100" />
+                        <RowDefinition Height="100" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="发送报文：" />
+                        <TextBox
+                            Width="120"
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="{Binding Path=Command_Send, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <TextBlock
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="响应报文：" />
+                        <TextBox
+                            Width="120"
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="{Binding Path=Command_Receive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2">
+                        <Button Click="Button_Click" Content="显示当前脉冲位置" />
+                        <TextBlock x:Name="current" Width="100" />
+                        <TextBlock Width="120" Text="从左到右的脉冲数" />
+                        <TextBlock x:Name="pulsenum" Width="100" />
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+
+        </Grid>
+
+
+
+        <Border
+            Grid.Row="2"
+            Background="LightBlue"
+            Opacity="0.4" />
+
+        <Border Grid.Row="2" Background="{StaticResource PrimaryBrush}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="Connection Status" />
+
+                <Label
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="{Binding _recordEntity.StateColor}" />
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Foreground="{Binding _recordEntity.StateColor}"
+                    Text="{Binding _recordEntity.StateMsg}" />
+
+                <TextBlock
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="Current Position" />
+                <TextBlock
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding _recordEntity.DirectionSign}" />
+                <TextBlock
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding _recordEntity.Position}" />
+                <TextBlock
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="mm" />
+
+                <TextBlock
+                    Margin="100,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="当前配置系数K：" />
+                <TextBlock
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding K}" />
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
