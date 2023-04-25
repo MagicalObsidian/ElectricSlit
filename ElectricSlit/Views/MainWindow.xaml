@@ -2,6 +2,7 @@
     x:Class="ElectricSlit.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:prism="http://prismlibrary.com/"
     Title="{Binding Title}"
     Width="800"
@@ -11,11 +12,75 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30*" />
-            <ColumnDefinition Width="70*" />
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
+
+        <GroupBox Header="串口通信" Style="{StaticResource InputElementBaseStyle}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="可用串口" />
+                <ComboBox
+                    x:Name="cbxSerialPortList"
+                    Width="150"
+                    Margin="10" />
+                <Button
+                    Margin="10"
+                    Content="连接"
+                    Style="{StaticResource ButtonPrimary}" />
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox
+            Grid.Row="1"
+            Header="控制"
+            Style="{StaticResource InputElementBaseStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <hc:PreviewSlider
+                        Name="Slider_Light"
+                        Margin="10"
+                        Maximum="100"
+                        Value="500">
+                        <hc:PreviewSlider.PreviewContent>
+                            <Label />
+                        </hc:PreviewSlider.PreviewContent>
+                    </hc:PreviewSlider>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Button
+                        Margin="10"
+                        Content="左移指定距离"
+                        Style="{StaticResource ButtonPrimary}" />
+                    <Button
+                        Margin="10"
+                        Content="右移指定距离"
+                        Style="{StaticResource ButtonPrimary}" />
+                    <Button
+                        Margin="10"
+                        Content="移动至指定亮度位置"
+                        Style="{StaticResource ButtonPrimary}" />
+                    <Button
+                        Margin="10"
+                        Content="移动至狭缝全开"
+                        Style="{StaticResource ButtonPrimary}" />
+                    <Button
+                        Margin="10"
+                        Content="移动至狭缝全闭"
+                        Style="{StaticResource ButtonPrimary}" />
+                </StackPanel>
+            </Grid>
+        </GroupBox>
 
 
     </Grid>
