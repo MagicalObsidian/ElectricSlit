@@ -48,6 +48,7 @@
                 <StackPanel Orientation="Horizontal">
                     <hc:PreviewSlider
                         Name="Slider_Light"
+                        Width="200"
                         Margin="10"
                         Maximum="100"
                         Value="500">
