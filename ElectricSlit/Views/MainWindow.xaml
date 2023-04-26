@@ -5,8 +5,8 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:prism="http://prismlibrary.com/"
     Title="{Binding Title}"
-    Width="800"
-    Height="450"
+    Width="1200"
+    Height="750"
     prism:ViewModelLocator.AutoWireViewModel="True"
     FontSize="14"
     Icon="/Resources/icon_power.png"
@@ -32,11 +32,27 @@
                 <ComboBox
                     x:Name="cbxSerialPortList"
                     Width="150"
-                    Margin="10" />
-                <Button
                     Margin="10"
+                    ItemsSource="{Binding}" />
+                <Button
+                    Name="Btn_Connect"
+                    Margin="10"
+                    Click="Button_Click"
                     Content="连接"
                     Style="{StaticResource ButtonPrimary}" />
+
+                <TextBlock
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="电流："
+                    Visibility="Hidden" />
+                <TextBox
+                    Name="TextBox_Current"
+                    Width="50"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    TextAlignment="Center"
+                    Visibility="Hidden" />
             </StackPanel>
         </GroupBox>
 
@@ -47,25 +63,87 @@
             Style="{StaticResource InputElementBaseStyle}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="7*" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Horizontal">
-                    <hc:PreviewSlider
-                        Name="Slider_Light"
-                        Width="200"
-                        Margin="10"
-                        Maximum="100"
-                        Value="500">
-                        <hc:PreviewSlider.PreviewContent>
-                            <Label />
-                        </hc:PreviewSlider.PreviewContent>
-                    </hc:PreviewSlider>
-                </StackPanel>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="实时位置:"
+                            TextAlignment="Center" />
+                        <TextBox
+                            Name="TextBox_Position"
+                            Width="50"
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="{Binding ElementName=Slider_Position, Path=Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            TextAlignment="Center" />
+                        <hc:PreviewSlider
+                            Name="Slider_Position"
+                            Width="{Binding}"
+                            Margin="10"
+                            Maximum="130"
+                            Value="{Binding CurrentPosition}">
+                            <hc:PreviewSlider.PreviewContent>
+                                <Label
+                                    Content="{Binding Path=(hc:PreviewSlider.PreviewPosition), RelativeSource={RelativeSource Self}}"
+                                    ContentStringFormat="#0.0 mm"
+                                    Style="{StaticResource LabelPrimary}" />
+                            </hc:PreviewSlider.PreviewContent>
+                        </hc:PreviewSlider>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <TextBlock
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="当前亮度:"
+                            TextAlignment="Center" />
+                        <TextBox
+                            Name="TextBox_Light"
+                            Width="50"
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="{Binding ElementName=ProgressBar_Light, Path=Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            TextAlignment="Center" />
+                        <!--
+                        <hc:PreviewSlider
+                            Name="Slider_Light"
+                            Width="{Binding}"
+                            Margin="10"
+                            Maximum="100"
+                            Value="100">
+                            <hc:PreviewSlider.PreviewContent>
+                                <Label
+                                    Content="{Binding Path=(hc:PreviewSlider.PreviewPosition), RelativeSource={RelativeSource Self}}"
+                                    ContentStringFormat="#0.0"
+                                    Style="{StaticResource LabelPrimary}" />
+                            </hc:PreviewSlider.PreviewContent>
+                        </hc:PreviewSlider>
+                        -->
+                        <ProgressBar
+                            Name="ProgressBar_Light"
+                            Width="{Binding}"
+                            Margin="10"
+                            Value="60" />
+                    </StackPanel>
+                </Grid>
 
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
+                        <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
                     </Grid.RowDefinitions>
@@ -75,34 +153,134 @@
                             VerticalAlignment="Center"
                             Text="单次移动距离:" />
                         <TextBox
+                            Name="TextBox_step"
                             Width="100"
                             Margin="10"
                             VerticalAlignment="Center"
+                            Text="0"
                             TextAlignment="Center" />
+                        <TextBlock
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="mm" />
                         <Button
                             Margin="10"
+                            Click="Button_Click_1"
                             Content="狭缝调小"
                             Style="{StaticResource ButtonDashedPrimary}" />
                         <Button
                             Margin="10"
+                            Click="Button_Click_2"
                             Content="狭缝调大"
                             Style="{StaticResource ButtonDashedPrimary}" />
                     </StackPanel>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <TextBlock
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="指定位置/亮度:"
+                            TextAlignment="Center" />
+                        <TextBox
+                            Name="TextBox_targetPosition"
+                            Width="100"
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="0"
+                            TextAlignment="Center" />
+                        <TextBlock
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            Text="mm/?" />
                         <Button
                             Margin="10"
+                            Click="Button_Click_3"
                             Content="移动至指定亮度位置"
                             Style="{StaticResource ButtonPrimary}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal">
                         <Button
                             Margin="10"
+                            Click="Button_Click_4"
                             Content="移动至狭缝全开"
-                            Style="{StaticResource ButtonPrimary}" />
+                            Style="{StaticResource ButtonDashedSuccess}" />
                         <Button
                             Margin="10"
+                            Click="Button_Click_5"
                             Content="移动至狭缝全闭"
-                            Style="{StaticResource ButtonPrimary}" />
+                            Style="{StaticResource ButtonDashedSuccess}" />
+                        <Button
+                            Margin="10"
+                            Click="Button_Click_6"
+                            Content="紧急停止"
+                            Style="{StaticResource ButtonDanger}" />
                     </StackPanel>
                 </Grid>
+
+                <GroupBox
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Header="设定值列表"
+                    Style="{StaticResource InputElementBaseStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="8*" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                            <TextBlock
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                Text="设定光强百分比"
+                                TextAlignment="Center" />
+                            <TextBox
+                                Name="TextBox_LightSet"
+                                Width="100"
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center" />
+                            <TextBlock
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                Text="%"
+                                TextAlignment="Center" />
+                            <Button
+                                Margin="10"
+                                Click="Button_Click_7"
+                                Content="添加"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+
+                        <ListView
+                            Name="ListView_Set"
+                            Grid.Row="1"
+                            Margin="10"
+                            Background="AliceBlue"
+                            ItemsSource="{Binding Path=DataList}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn
+                                        Width="100"
+                                        DisplayMemberBinding="{Binding Path=Index}"
+                                        Header="序号" />
+                                    <GridViewColumn
+                                        Width="150"
+                                        DisplayMemberBinding="{Binding Path=Light}"
+                                        Header="光强百分比(%)" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <Button
+                            Grid.Row="2"
+                            Width="100"
+                            Margin="10"
+                            Click="Button_Click_8"
+                            Content="应用"
+                            Style="{StaticResource ButtonPrimary}" />
+                    </Grid>
+                </GroupBox>
+
             </Grid>
         </GroupBox>
 

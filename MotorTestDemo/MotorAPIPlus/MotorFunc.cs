@@ -25,6 +25,18 @@ namespace MotorAPIPlus
 
         }
 
+        /// <summary>
+        /// 检查是否连接可用电机
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckAvailable()
+        {
+            if(_motor.GetCurrent() > 0)//有电流表示电机已连接可用
+            {
+                return true;
+            }
+            return false;
+        }
 
         /// <summary>
         /// 电机脱机
@@ -112,7 +124,31 @@ namespace MotorAPIPlus
             _motor.SetPulsePositionSet(0);
         }
 
+        /// <summary>
+        /// 返回当前实际位置（乘以系数K）
+        /// </summary>
+        /// <returns></returns>
+        public double GetCurrentPosition()
+        {
+            double currentPosition = 0;
+            currentPosition = _motor.GetPulsePosition() * _motor.K;
+            return currentPosition;
+        }
 
+        /// <summary>
+        /// 移动至上限位
+        /// </summary>
+        public void MoveToUpperLimmit()
+        {
+            _motor.MovePSH();
+        }
 
+        /// <summary>
+        /// 移动至下限位
+        /// </summary>
+        public void MoveToLowerLimmit()
+        {
+            _motor.MovePSL();
+        }
     }
 }
