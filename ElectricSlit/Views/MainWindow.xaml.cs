@@ -191,7 +191,7 @@ namespace ElectricSlit.Views
             if (TextBox_targetPosition != null)
             {
                 targetPosition = Convert.ToDouble(TextBox_targetPosition.Text.ToString());
-                //targetPosition = f(Convert.ToDouble(TextBox_targetPosition.Text.ToString()));//亮度关于位置长度非线性映射
+                //targetPosition = f(Convert.ToDouble(TextBox_targetPosition.Text.ToString()));//亮度关于位置长度非线性映射f(x)
             }
 
             if(_motorEntity != null)
@@ -280,32 +280,7 @@ namespace ElectricSlit.Views
             {
 
             }
-            if (portSetWindow != null)
-            {
-                portName = portSetWindow.PortName_Motor;
-            }
 
-            //重新连接
-            if (portName != null && _serialPort_Motor == null)
-            {
-                _serialPort_Motor = new SerialPortHelper(portName);
-                if (_serialPort_Motor.Connect())
-                {
-                    _motorEntity = new MotorEntity(_serialPort_Motor);
-                    _motorFunc = new MotorFunc(_motorEntity);
-                    if (_motorFunc.CheckAvailable())
-                    {
-                        MotorConfig();
-
-                        //TextBox_Current.Text = _motorEntity.GetCurrent().ToString();
-                        GetCurrentPosition();
-                    }
-                    else
-                    {
-                        MessageBox.Show("连接失败!请检查串口和电路");
-                    }
-                }
-            }
         }
 
         //打开工具界面(狭缝全开全闭)

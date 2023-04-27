@@ -66,7 +66,7 @@ namespace MotorTestDemo.Views
             portName_Motor = ComboBox_PortName.Text.ToString();
             Btn_Connect.Content = "已连接";
             Btn_Connect.IsEnabled = false;
-            this.Close();
+            //this.Visibility = Visibility.Collapsed;   
         }
     }
 }
