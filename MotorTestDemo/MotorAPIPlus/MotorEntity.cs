@@ -21,7 +21,7 @@ namespace MotorAPIPlus
         /// <summary>
         /// 系数 实际运动距离(mm) 与 脉冲数 的比值
         /// </summary>
-        public double K { get; set; } = 0.011623748211731;//系数 //0.00025  //0.0000025 //0.0116279069767442
+        public double K { get; set; } = 0.0044706723891273;//系数 //0.00025  //0.0000025 //电动狭缝 0.0044706723891273
 
         public SerialPortHelper _serialPort = null;
 
@@ -137,7 +137,7 @@ namespace MotorAPIPlus
         {
             object res = null;
             byte[] data;
-            if (result.DataList == null) return null;
+            if (result.DataList == null || result.DataList.Count == 0) return null;
             if(result.DataList.Count > 4)
             {
                 byte[] datalist = result.DataList.ToArray();
@@ -388,7 +388,11 @@ namespace MotorAPIPlus
             byte[] bytes = new byte[] { 0x00, 0x01 };
             byte[] cmd = GetReadCommand(slaveID, 0x04, 0x0015, bytes);
             data = _serialPort.SendAndReceive(cmd);
-            return value = Convert.ToSingle((ushort)ConvertValue(data, typeof(ushort)) / 100f);
+            if(ConvertValue(data, typeof(ushort)) != null)
+            {
+                return value = Convert.ToSingle((ushort)ConvertValue(data, typeof(ushort)) / 100f);
+            }
+            return 0;
         }
 
         /// <summary>

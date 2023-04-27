@@ -19,7 +19,19 @@
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
 
+        <!--  菜单栏  -->
+        <Menu Grid.ColumnSpan="3" Background="SkyBlue">
+            <MenuItem
+                Name="MenuSerialPort"
+                Click="MenuSerialPort_Click"
+                Header="串口(P)" />
+            <MenuItem
+                Name="MenuTool"
+                Click="MenuTool_Click"
+                Header="工具(T)" />
+        </Menu>
 
+        <!--
         <GroupBox
             Margin="10"
             Header="串口通信"
@@ -54,8 +66,9 @@
                     TextAlignment="Center"
                     Visibility="Hidden" />
             </StackPanel>
-        </GroupBox>
+        </GroupBox>-->
 
+        <!--  控制界面  -->
         <GroupBox
             Grid.Row="1"
             Margin="10"
@@ -82,7 +95,7 @@
                         <TextBlock
                             Margin="10"
                             VerticalAlignment="Center"
-                            Text="实时位置:"
+                            Text="当前位置:"
                             TextAlignment="Center" />
                         <TextBox
                             Name="TextBox_Position"
@@ -95,7 +108,7 @@
                             Name="Slider_Position"
                             Width="{Binding}"
                             Margin="10"
-                            Maximum="130"
+                            Maximum="50"
                             Value="{Binding CurrentPosition}">
                             <hc:PreviewSlider.PreviewContent>
                                 <Label
@@ -284,6 +297,7 @@
             </Grid>
         </GroupBox>
 
-
+        <!--  状态栏  -->
+        <Border Grid.Row="2" Background="AliceBlue" />
     </Grid>
 </Window>

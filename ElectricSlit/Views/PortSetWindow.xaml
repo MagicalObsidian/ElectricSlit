@@ -1,0 +1,142 @@
+﻿<Window
+    x:Class="MotorTestDemo.Views.PortSetWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MotorTestDemo.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="串口设置"
+    Width="400"
+    Height="450"
+    Background="AliceBlue"
+    FontSize="12"
+    FontWeight="Black"
+    ResizeMode="CanMinimize"
+    SnapsToDevicePixels="True"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+    <Grid Name="PortGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+            <TextBlock
+                Margin="10"
+                VerticalAlignment="Center"
+                Text="可用串口"
+                TextAlignment="Center" />
+            <ComboBox
+                Name="ComboBox_PortName"
+                Width="150"
+                Margin="10"
+                VerticalAlignment="Center"
+                ItemsSource="{Binding PortList}"
+                SelectedIndex="0" />
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal">
+            <TextBlock
+                Margin="10"
+                VerticalAlignment="Center"
+                Text="波特率"
+                TextAlignment="Center" />
+            <ComboBox
+                Name="ComboBox_BaudRate"
+                Width="150"
+                Margin="10"
+                VerticalAlignment="Center"
+                SelectedIndex="2">
+                <ComboBoxItem Content="4800" />
+                <ComboBoxItem Content="9600" />
+                <ComboBoxItem Content="115200" />
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal">
+            <TextBlock
+                Margin="10"
+                VerticalAlignment="Center"
+                Text="校验位"
+                TextAlignment="Center" />
+            <ComboBox
+                Name="ComboBox_Parity"
+                Width="150"
+                Margin="10"
+                VerticalAlignment="Center"
+                SelectedIndex="1">
+                <ComboBoxItem Content="None" />
+                <ComboBoxItem Content="Even" />
+                <ComboBoxItem Content="Odd" />
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="3"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal">
+            <TextBlock
+                Margin="10"
+                VerticalAlignment="Center"
+                Text="数据位"
+                TextAlignment="Center" />
+            <ComboBox
+                Name="ComboBox_DataBits"
+                Width="150"
+                Margin="10"
+                VerticalAlignment="Center"
+                SelectedIndex="3">
+                <ComboBoxItem Content="5" />
+                <ComboBoxItem Content="6" />
+                <ComboBoxItem Content="7" />
+                <ComboBoxItem Content="8" />
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="4"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal">
+            <TextBlock
+                Margin="10"
+                VerticalAlignment="Center"
+                Text="停止位"
+                TextAlignment="Center" />
+            <ComboBox
+                Name="ComboBox_StopBits"
+                Width="150"
+                Margin="10"
+                VerticalAlignment="Center"
+                SelectedIndex="0">
+                <ComboBoxItem Content="One" />
+                <ComboBoxItem Content="OnePointFive" />
+                <ComboBoxItem Content="Two" />
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="5"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal">
+            <Button
+                Name="Btn_Connect"
+                Width="100"
+                Margin="10"
+                Click="Btn_Connect_Click"
+                Content="连接"
+                Style="{StaticResource ButtonPrimary}" />
+        </StackPanel>
+    </Grid>
+</Window>

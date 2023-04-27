@@ -1,5 +1,6 @@
 ﻿using ElectricSlit.ViewModels;
 using MotorAPIPlus;
+using MotorTestDemo.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,6 +24,7 @@ namespace ElectricSlit.Views
         private MotorEntity _motorEntity = null;
         private MotorFunc _motorFunc = null;
 
+        public PortSetWindow portSetWindow = null;
         private MainWindowViewModel mainWindowviewModel = null;
         private int tableCount = 0;
         public List<double> list_Light = new List<double>();
@@ -55,31 +57,69 @@ namespace ElectricSlit.Views
 
         private async Task Init()
         {
-            GetPortList();
-
+            //GetPortList();
             SetUI();
 
-            await GetCurrentPosition();
+            //初始化时打开串口连接窗口
+            //portName = cbxSerialPortList.Text.ToString();
+            portSetWindow = new PortSetWindow();
+            portSetWindow.ShowDialog();
+            if (portSetWindow != null)
+            {
+                portName = portSetWindow.PortName_Motor;
+            }
+
+            if (portName != null)
+            {
+                _serialPort_Motor = new SerialPortHelper(portName);
+                if (_serialPort_Motor.Connect())
+                {
+                    _motorEntity = new MotorEntity(_serialPort_Motor);
+                    _motorFunc = new MotorFunc(_motorEntity);
+                    if (_motorFunc.CheckAvailable())
+                    {
+                        MotorConfig();
+
+                        //TextBox_Current.Text = _motorEntity.GetCurrent().ToString();
+                        GetCurrentPosition();
+                    }
+                    else
+                    {
+                        MessageBox.Show("连接失败!请检查串口和电路");
+                    }
+                }
+            }
         }
 
         private void SetUI()
         {
-            CurrentPosition = 130;//mm
+            CurrentPosition = 50;//mm
             double sliderWidth = 200;
-            Slider_Position.Width = CurrentPosition / 130 * sliderWidth;
+            Slider_Position.Width = CurrentPosition / 50 * sliderWidth;
             //Slider_Light.Width = CurrentPosition / 130 * sliderWidth;
-            ProgressBar_Light.Width = CurrentPosition / 130 * sliderWidth;
+            ProgressBar_Light.Width = CurrentPosition / 50 * sliderWidth;
 
         }
 
 
         //获取实时实际位置
-        private async Task GetCurrentPosition()
+/*        private async Task GetCurrentPosition()
         {
             if(_motorEntity != null)
             {
                 CurrentPosition = _motorFunc.GetCurrentPosition();
-                await Task.Delay(200);
+                await Task.Delay(100);
+            }
+        }*/
+
+        private void GetCurrentPosition()
+        {
+            if (_motorEntity != null) 
+            {
+                Thread.Sleep(100);
+                CurrentPosition = _motorFunc.GetCurrentPosition();
+                Thread.Sleep(100);
+                TextBox_Position.Text = CurrentPosition.ToString();
             }
         }
 
@@ -87,56 +127,29 @@ namespace ElectricSlit.Views
         //获取串口列表
         public void GetPortList()
         {
-
             PortList?.Clear();
             SerialPort.GetPortNames().ToList().ForEach(p => PortList.Add(p));
-            cbxSerialPortList.DataContext = PortList;
+            //cbxSerialPortList.DataContext = PortList;
         }
 
         //连接串口
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            portName = cbxSerialPortList.Text.ToString();
 
-            if (portName != "")
-            {
-                _serialPort_Motor = new SerialPortHelper(portName);
-                if(_serialPort_Motor.Connect())
-                {
-                    _motorEntity = new MotorEntity(_serialPort_Motor);
-                    _motorFunc = new MotorFunc(_motorEntity);
-                    if(_motorFunc.CheckAvailable())
-                    {
-                        MotorConfig();
-
-                        //TextBox_Current.Text = _motorEntity.GetCurrent().ToString();
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("连接失败");
-                }
-            }
-
-            if (_motorEntity != null && _motorFunc.CheckAvailable())
-            {
-                Btn_Connect.Content = "已连接";
-                Btn_Connect.IsEnabled = false;
-            }
         }
 
         //电机初始化配置
-        private async void MotorConfig()
+        private void MotorConfig()
         {
             _motorEntity.SetPS();
             //_motorFunc.MoveToZero();//初始化置于零位
 
-            await GetCurrentPosition();
-            TextBox_Position.Text = CurrentPosition.ToString();
+            GetCurrentPosition();
+            //TextBox_Position.Text = CurrentPosition.ToString();
         }
 
         //狭缝调小
-        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             double singleStep = 0;
 
@@ -147,15 +160,14 @@ namespace ElectricSlit.Views
 
             if(_motorEntity != null)
             {
-                _motorFunc.MoveLeft(singleStep);
+                _motorFunc.MoveRight(singleStep);
 
-                await GetCurrentPosition();
-                TextBox_Position.Text = CurrentPosition.ToString();
+                GetCurrentPosition();
             }
         }
 
         //狭缝调大
-        private async void Button_Click_2(object sender, RoutedEventArgs e)
+        private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             double singleStep = 0;
 
@@ -166,15 +178,14 @@ namespace ElectricSlit.Views
 
             if (_motorEntity != null)
             {
-                _motorFunc.MoveRight(singleStep);
+                _motorFunc.MoveLeft(singleStep);
 
-                await GetCurrentPosition();
-                TextBox_Position.Text = CurrentPosition.ToString();
+                GetCurrentPosition();
             }
         }
 
         //移动到指定亮度位置
-        private async void Button_Click_3(object sender, RoutedEventArgs e)
+        private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             double targetPosition = 0;
             if (TextBox_targetPosition != null)
@@ -186,45 +197,41 @@ namespace ElectricSlit.Views
             if(_motorEntity != null)
             {
                 _motorFunc.MoveToPosition(targetPosition, true);//仅设置可运动路径位原点右侧部分，位置坐标符号位正
-                
-                await GetCurrentPosition();
-                TextBox_Position.Text = CurrentPosition.ToString();
+
+                GetCurrentPosition();
             }
         }
 
         //移动至狭缝全开
-        private async void Button_Click_4(object sender, RoutedEventArgs e)
+        private void Button_Click_4(object sender, RoutedEventArgs e)
         {
             if(_motorEntity != null)
             {
                 _motorFunc.MoveToLowerLimmit();
 
-                await GetCurrentPosition();
-                TextBox_Position.Text = CurrentPosition.ToString();
+                GetCurrentPosition();
             }
         }
 
         //移动值狭缝全闭
-        private async void Button_Click_5(object sender, RoutedEventArgs e)
+        private void Button_Click_5(object sender, RoutedEventArgs e)
         {
             if(_motorEntity != null)
             {
                 _motorFunc.MoveToUpperLimmit();
 
-                await GetCurrentPosition();
-                TextBox_Position.Text = CurrentPosition.ToString();
+                GetCurrentPosition();
             }
         }
 
         //紧急停止
-        private async void Button_Click_6(object sender, RoutedEventArgs e)
+        private void Button_Click_6(object sender, RoutedEventArgs e)
         {
             if(_motorEntity != null)
             {
                 _motorFunc.DisEnable();
 
-                await GetCurrentPosition();
-                TextBox_Position.Text = CurrentPosition.ToString();
+                GetCurrentPosition();
             }
         }
 
@@ -245,11 +252,11 @@ namespace ElectricSlit.Views
         }
 
         //应用一个设定值
-        private async void Button_Click_8(object sender, RoutedEventArgs e)
+        private void Button_Click_8(object sender, RoutedEventArgs e)
         {
             int selectedIndex = Convert.ToInt32(ListView_Set.SelectedIndex.ToString());//0,1,2,...
 
-            //double targetPosition = g(list_Light[selectedIndex]);//光强百分比对应的实际位置
+            //double targetPosition = g(list_Light[selectedIndex]);//光强对应的实际位置
 
             if (_motorEntity != null)
             {
@@ -257,11 +264,53 @@ namespace ElectricSlit.Views
                 Thread.Sleep(200);
                 TextBox_Light.Text = list_Light[selectedIndex].ToString();
 
-                await GetCurrentPosition();
-                TextBox_Position.Text = CurrentPosition.ToString();
+                GetCurrentPosition();
             }
 
 
+
+        }
+
+        //打开串口连接界面
+        private void MenuSerialPort_Click(object sender, RoutedEventArgs e)
+        {
+            portSetWindow = new PortSetWindow();
+            portSetWindow.ShowDialog();
+            if(portSetWindow.Btn_Connect.IsPressed == true)
+            {
+
+            }
+            if (portSetWindow != null)
+            {
+                portName = portSetWindow.PortName_Motor;
+            }
+
+            //重新连接
+            if (portName != null && _serialPort_Motor == null)
+            {
+                _serialPort_Motor = new SerialPortHelper(portName);
+                if (_serialPort_Motor.Connect())
+                {
+                    _motorEntity = new MotorEntity(_serialPort_Motor);
+                    _motorFunc = new MotorFunc(_motorEntity);
+                    if (_motorFunc.CheckAvailable())
+                    {
+                        MotorConfig();
+
+                        //TextBox_Current.Text = _motorEntity.GetCurrent().ToString();
+                        GetCurrentPosition();
+                    }
+                    else
+                    {
+                        MessageBox.Show("连接失败!请检查串口和电路");
+                    }
+                }
+            }
+        }
+
+        //打开工具界面(狭缝全开全闭)
+        private void MenuTool_Click(object sender, RoutedEventArgs e)
+        {
 
         }
     }
