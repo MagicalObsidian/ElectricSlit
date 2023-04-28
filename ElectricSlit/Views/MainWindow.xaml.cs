@@ -272,7 +272,6 @@ namespace ElectricSlit.Views
             }
             
 
-
         }
 
         //打开串口连接界面

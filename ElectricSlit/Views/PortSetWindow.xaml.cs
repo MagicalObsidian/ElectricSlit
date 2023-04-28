@@ -82,6 +82,7 @@ namespace MotorTestDemo.Views
             SerialPort.GetPortNames().ToList().ForEach(p => PortList.Add(p));
         }
 
+        //连接串口
         private void Btn_Connect_Click(object sender, RoutedEventArgs e)
         {
             portName_Motor = ComboBox_PortName.Text.ToString();//获取电机串口名
@@ -110,7 +111,7 @@ namespace MotorTestDemo.Views
                 }
                 else
                 {
-                    part_mainwindow._serialPort_Motor.Close();
+                    part_mainwindow._serialPort_Motor.Close();//断开串口
                     part_mainwindow._serialPort_Motor = null;
                     MessageBox.Show("连接失败!  请检查串口和电路", "错误");
                 }
