@@ -11,7 +11,8 @@
     Background="AliceBlue"
     FontSize="12"
     FontWeight="Black"
-    ResizeMode="CanMinimize"
+    Icon="/Resources/icon_serialport2.png"
+    ResizeMode="NoResize"
     SnapsToDevicePixels="True"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -48,7 +49,7 @@
             <TextBlock
                 Margin="10"
                 VerticalAlignment="Center"
-                Text="波特率"
+                Text="波特率   "
                 TextAlignment="Center" />
             <ComboBox
                 Name="ComboBox_BaudRate"
@@ -69,7 +70,7 @@
             <TextBlock
                 Margin="10"
                 VerticalAlignment="Center"
-                Text="校验位"
+                Text="校验位   "
                 TextAlignment="Center" />
             <ComboBox
                 Name="ComboBox_Parity"
@@ -90,7 +91,7 @@
             <TextBlock
                 Margin="10"
                 VerticalAlignment="Center"
-                Text="数据位"
+                Text="数据位   "
                 TextAlignment="Center" />
             <ComboBox
                 Name="ComboBox_DataBits"
@@ -112,7 +113,7 @@
             <TextBlock
                 Margin="10"
                 VerticalAlignment="Center"
-                Text="停止位"
+                Text="停止位   "
                 TextAlignment="Center" />
             <ComboBox
                 Name="ComboBox_StopBits"

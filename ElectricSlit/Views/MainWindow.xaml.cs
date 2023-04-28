@@ -18,11 +18,11 @@ namespace ElectricSlit.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string portName = "";
+        public string portName = "";
 
-        private SerialPortHelper _serialPort_Motor = null;
-        private MotorEntity _motorEntity = null;
-        private MotorFunc _motorFunc = null;
+        public SerialPortHelper _serialPort_Motor = null;
+        public MotorEntity _motorEntity = null;
+        public MotorFunc _motorFunc = null;
 
         public PortSetWindow portSetWindow = null;
         private MainWindowViewModel mainWindowviewModel = null;
@@ -32,9 +32,9 @@ namespace ElectricSlit.Views
         public ObservableCollection<string> PortList { get; set; } = new ObservableCollection<string>();//当前串口列表
         public double CurrentPosition;
 
-        string exePath;
-        string debugFolderPath;
-        string projectFolderPath;
+        private static string exePath;
+        private static string debugFolderPath;
+        private static string projectFolderPath;
 
 
         public MainWindow()
@@ -57,14 +57,16 @@ namespace ElectricSlit.Views
 
         private async Task Init()
         {
+            GroupBox_ControlPanel.IsEnabled = false;
+
             //GetPortList();
             SetUI();
 
             //初始化时打开串口连接窗口
             //portName = cbxSerialPortList.Text.ToString();
-            portSetWindow = new PortSetWindow();
+            portSetWindow = new PortSetWindow(this);
             portSetWindow.ShowDialog();
-            if (portSetWindow != null)
+/*            if (portSetWindow != null)
             {
                 portName = portSetWindow.PortName_Motor;
             }
@@ -82,13 +84,15 @@ namespace ElectricSlit.Views
 
                         //TextBox_Current.Text = _motorEntity.GetCurrent().ToString();
                         GetCurrentPosition();
+
+                        //GroupBox_ControlPanel.IsEnabled = true;//仅当电机通信正常控制面板可用
                     }
                     else
                     {
                         MessageBox.Show("连接失败!请检查串口和电路");
                     }
                 }
-            }
+            }*/
         }
 
         private void SetUI()
@@ -105,14 +109,14 @@ namespace ElectricSlit.Views
         //获取实时实际位置
 /*        private async Task GetCurrentPosition()
         {
-            if(_motorEntity != null)
+            if (_motorEntity != null)
             {
                 CurrentPosition = _motorFunc.GetCurrentPosition();
                 await Task.Delay(100);
             }
         }*/
 
-        private void GetCurrentPosition()
+        public void GetCurrentPosition()
         {
             if (_motorEntity != null) 
             {
@@ -139,7 +143,7 @@ namespace ElectricSlit.Views
         }
 
         //电机初始化配置
-        private void MotorConfig()
+        public void MotorConfig()
         {
             _motorEntity.SetPS();
             //_motorFunc.MoveToZero();//初始化置于零位
@@ -266,7 +270,7 @@ namespace ElectricSlit.Views
 
                 GetCurrentPosition();
             }
-
+            
 
 
         }
@@ -274,16 +278,10 @@ namespace ElectricSlit.Views
         //打开串口连接界面
         private void MenuSerialPort_Click(object sender, RoutedEventArgs e)
         {
-            portSetWindow = new PortSetWindow();
-            portSetWindow.ShowDialog();
-            if(portSetWindow.Btn_Connect.IsPressed == true)
-            {
-
-            }
-
+            portSetWindow.Show();
         }
 
-        //打开工具界面(狭缝全开全闭)
+        //打开工具界面(狭缝距离调节)
         private void MenuTool_Click(object sender, RoutedEventArgs e)
         {
 

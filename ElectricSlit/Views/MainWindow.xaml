@@ -70,6 +70,7 @@
 
         <!--  控制界面  -->
         <GroupBox
+            Name="GroupBox_ControlPanel"
             Grid.Row="1"
             Margin="10"
             Header="控制"
@@ -237,8 +238,7 @@
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="1*" />
-                            <RowDefinition Height="8*" />
-                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="9*" />
                         </Grid.RowDefinitions>
 
                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
@@ -263,6 +263,12 @@
                                 Click="Button_Click_7"
                                 Content="添加"
                                 Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Grid.Row="2"
+                                Margin="10"
+                                Click="Button_Click_8"
+                                Content="应用"
+                                Style="{StaticResource ButtonPrimary}" />
                         </StackPanel>
 
                         <ListView
@@ -284,13 +290,7 @@
                                 </GridView>
                             </ListView.View>
                         </ListView>
-                        <Button
-                            Grid.Row="2"
-                            Width="100"
-                            Margin="10"
-                            Click="Button_Click_8"
-                            Content="应用"
-                            Style="{StaticResource ButtonPrimary}" />
+
                     </Grid>
                 </GroupBox>
 

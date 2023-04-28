@@ -6,6 +6,9 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\icon_power.png" />
+    <None Remove="Resources\icon_serialport.png" />
+    <None Remove="Resources\icon_serialport2.png" />
+    <None Remove="Resources\serialport.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HandyControl" Version="3.4.0" />
@@ -19,5 +22,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\icon_power.png" />
+    <Resource Include="Resources\icon_serialport.png" />
+    <Resource Include="Resources\icon_serialport2.png" />
   </ItemGroup>
 </Project>
