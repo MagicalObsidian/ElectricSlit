@@ -21,7 +21,41 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        
+        <StackPanel>
+            <TextBlock
+                Margin="10"
+                VerticalAlignment="Center"
+                Text="狭缝宽度"
+                TextAlignment="Center" />
+            <TextBox
+                Name="TextBox_SlitWidth"
+                Margin="10"
+                VerticalAlignment="Center"
+                Text="0"
+                TextAlignment="Center" />
+            <TextBlock
+                Margin="10"
+                VerticalAlignment="Bottom"
+                Text="mm"
+                TextAlignment="Center" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1">
+            <TextBlock
+                Margin="10"
+                VerticalAlignment="Center"
+                TextAlignment="Center" />
+            <Button
+                Name="Btn_Larger"
+                Margin="10"
+                VerticalAlignment="Center"
+                Content="狭缝宽度调大" />
+            <Button
+                Name="Btn_Smaller"
+                Margin="10"
+                VerticalAlignment="Center"
+                Content="狭缝宽度调小" />
+        </StackPanel>
 
     </Grid>
 </Window>

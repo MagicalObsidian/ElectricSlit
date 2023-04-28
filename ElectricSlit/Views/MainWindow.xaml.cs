@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 
 namespace ElectricSlit.Views
 {
@@ -18,6 +19,9 @@ namespace ElectricSlit.Views
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const int SC_CLOSE = 0xF060;
+        private const int WM_SYSCOMMAND = 0x0112;
+
         public string portName = "";
 
         public SerialPortHelper _serialPort_Motor = null;
@@ -25,6 +29,7 @@ namespace ElectricSlit.Views
         public MotorFunc _motorFunc = null;
 
         public PortSetWindow portSetWindow = null;
+        public ToolWindow toolWindow = null;
         private MainWindowViewModel mainWindowviewModel = null;
         private int tableCount = 0;
         public List<double> list_Light = new List<double>();
@@ -55,17 +60,36 @@ namespace ElectricSlit.Views
             projectFolderPath = System.IO.Directory.GetParent(debugFolderPath).Parent.FullName;
         }
 
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            IntPtr hwnd = new WindowInteropHelper(this).Handle;
+            HwndSource.FromHwnd(hwnd)?.AddHook(WndProc);
+        }
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == WM_SYSCOMMAND && wParam.ToInt32() == SC_CLOSE)
+            {
+                this.Close();
+                handled = true;
+            }
+            return IntPtr.Zero;
+        }
+
         private async Task Init()
         {
-            GroupBox_ControlPanel.IsEnabled = false;
+            //GroupBox_ControlPanel.IsEnabled = false;
 
             //GetPortList();
             SetUI();
 
+            toolWindow = new ToolWindow(this);
+            //toolWindow.Hide();
+
             //初始化时打开串口连接窗口
             //portName = cbxSerialPortList.Text.ToString();
             portSetWindow = new PortSetWindow(this);
-            portSetWindow.ShowDialog();
+            portSetWindow.Show();
 /*            if (portSetWindow != null)
             {
                 portName = portSetWindow.PortName_Motor;
@@ -247,12 +271,15 @@ namespace ElectricSlit.Views
             tableCount++;
             lightSetModel.Index = tableCount;
 
-            double lightset = Convert.ToDouble(TextBox_LightSet.Text.ToString());
-            lightSetModel.Light = lightset;
+            if(TextBox_LightSet.Text != "")
+            {
+                double lightset = Convert.ToDouble(TextBox_LightSet.Text.ToString());
+                lightSetModel.Light = lightset;
 
-            ListView_Set.Items.Add(lightSetModel);
+                ListView_Set.Items.Add(lightSetModel);
 
-            list_Light.Add(lightset);
+                list_Light.Add(lightset);
+            }
         }
 
         //应用一个设定值
@@ -283,7 +310,19 @@ namespace ElectricSlit.Views
         //打开工具界面(狭缝距离调节)
         private void MenuTool_Click(object sender, RoutedEventArgs e)
         {
+            toolWindow.Show();
+        }
 
+        //删除选中项
+        private void Button_Click_9(object sender, RoutedEventArgs e)
+        {
+            if(ListView_Set.SelectedIndex >= 0)
+            {
+                int selectedIndex = Convert.ToInt32(ListView_Set.SelectedIndex.ToString());//0,1,2,...
+                list_Light.RemoveAt(selectedIndex);
+                ListView_Set.Items.RemoveAt(selectedIndex);
+                tableCount--;
+            }
         }
     }
 }
