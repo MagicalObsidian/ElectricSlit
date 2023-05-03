@@ -5,8 +5,8 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:prism="http://prismlibrary.com/"
     Title="{Binding Title}"
-    Width="1200"
-    Height="750"
+    Width="1000"
+    Height="700"
     prism:ViewModelLocator.AutoWireViewModel="True"
     FontSize="14"
     Icon="/Resources/icon_power.png"
@@ -16,7 +16,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="40" />
         </Grid.RowDefinitions>
 
         <!--  菜单栏  -->
@@ -91,8 +91,9 @@
                         <RowDefinition />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-
+                    <!--
                     <StackPanel Orientation="Horizontal">
+
                         <TextBlock
                             Margin="10"
                             VerticalAlignment="Center"
@@ -118,8 +119,12 @@
                                     Style="{StaticResource LabelPrimary}" />
                             </hc:PreviewSlider.PreviewContent>
                         </hc:PreviewSlider>
-                    </StackPanel>
-                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    </StackPanel
+                    -->
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Orientation="Horizontal">
                         <TextBlock
                             Margin="10"
                             VerticalAlignment="Center"
@@ -161,7 +166,7 @@
                         <RowDefinition />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Grid.RowSpan="2" Orientation="Horizontal">
                         <TextBlock
                             Margin="10"
                             VerticalAlignment="Center"
@@ -188,6 +193,8 @@
                             Content="狭缝调大"
                             Style="{StaticResource ButtonDashedPrimary}" />
                     </StackPanel>
+
+                    <!--
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <TextBlock
                             Margin="10"
@@ -211,6 +218,8 @@
                             Content="移动至指定亮度位置"
                             Style="{StaticResource ButtonPrimary}" />
                     </StackPanel>
+                    -->
+
                     <StackPanel Grid.Row="2" Orientation="Horizontal">
                         <Button
                             Margin="10"
@@ -245,18 +254,13 @@
                             <TextBlock
                                 Margin="10"
                                 VerticalAlignment="Center"
-                                Text="设定光强百分比"
+                                Text="设定光强"
                                 TextAlignment="Center" />
                             <TextBox
                                 Name="TextBox_LightSet"
                                 Width="100"
                                 Margin="10"
                                 VerticalAlignment="Center"
-                                TextAlignment="Center" />
-                            <TextBlock
-                                Margin="10"
-                                VerticalAlignment="Center"
-                                Text="%"
                                 TextAlignment="Center" />
                             <Button
                                 Margin="10"
@@ -265,13 +269,14 @@
                                 Style="{StaticResource ButtonPrimary}" />
                             <Button
                                 Margin="10"
-                                Click="Button_Click_8"
-                                Content="应用"
-                                Style="{StaticResource ButtonPrimary}" />
+                                Click="Button_Click_9"
+                                Content="删除"
+                                Style="{StaticResource ButtonWarning}" />
                             <Button
                                 Margin="10"
-                                Content="删除"
-                                Style="{StaticResource ButtonPrimary}" Click="Button_Click_9" />
+                                Click="Button_Click_8"
+                                Content="应用"
+                                Style="{StaticResource ButtonInfo}" />
                         </StackPanel>
 
                         <ListView
@@ -289,7 +294,7 @@
                                     <GridViewColumn
                                         Width="150"
                                         DisplayMemberBinding="{Binding Path=Light}"
-                                        Header="光强百分比(%)" />
+                                        Header="光强" />
                                 </GridView>
                             </ListView.View>
                         </ListView>
@@ -301,6 +306,39 @@
         </GroupBox>
 
         <!--  状态栏  -->
-        <Border Grid.Row="2" Background="AliceBlue" />
+        <Border Grid.Row="2" Background="AliceBlue">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="连接状态:"
+                    TextAlignment="Center" />
+                <TextBlock
+                    Name="TextBlock_isConnected"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="Red"
+                    Text="未连接"
+                    TextAlignment="Center" />
+
+                <TextBlock
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="当前狭缝宽度:"
+                    TextAlignment="Center" />
+                <TextBlock
+                    Name="TextBlock_CurrentWidth"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="Green"
+                    Text="0"
+                    TextAlignment="Center" />
+                <TextBlock
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="mm"
+                    TextAlignment="Center" />
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

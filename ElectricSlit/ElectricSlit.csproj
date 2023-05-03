@@ -8,6 +8,7 @@
     <None Remove="Resources\icon_power.png" />
     <None Remove="Resources\icon_serialport.png" />
     <None Remove="Resources\icon_serialport2.png" />
+    <None Remove="Resources\icon_tool.png" />
     <None Remove="Resources\serialport.png" />
   </ItemGroup>
   <ItemGroup>
@@ -17,12 +18,13 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MotorAPIPlus">
-      <HintPath>..\MotorTestDemo\MotorAPIPlus\bin\Debug\MotorAPIPlus.dll</HintPath>
+      <HintPath>Lib\MotorAPIPlus.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\icon_power.png" />
     <Resource Include="Resources\icon_serialport.png" />
     <Resource Include="Resources\icon_serialport2.png" />
+    <Resource Include="Resources\icon_tool.png" />
   </ItemGroup>
 </Project>

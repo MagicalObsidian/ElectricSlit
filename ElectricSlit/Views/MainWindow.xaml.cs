@@ -70,8 +70,9 @@ namespace ElectricSlit.Views
         {
             if (msg == WM_SYSCOMMAND && wParam.ToInt32() == SC_CLOSE)
             {
+                // 在此处实现将窗口隐藏而不是关闭的代码
                 this.Close();
-                handled = true;
+                //handled = true;
             }
             return IntPtr.Zero;
         }
@@ -123,8 +124,7 @@ namespace ElectricSlit.Views
         {
             CurrentPosition = 50;//mm
             double sliderWidth = 200;
-            Slider_Position.Width = CurrentPosition / 50 * sliderWidth;
-            //Slider_Light.Width = CurrentPosition / 130 * sliderWidth;
+            //Slider_Position.Width = CurrentPosition / 50 * sliderWidth;
             ProgressBar_Light.Width = CurrentPosition / 50 * sliderWidth;
 
         }
@@ -147,7 +147,8 @@ namespace ElectricSlit.Views
                 Thread.Sleep(100);
                 CurrentPosition = _motorFunc.GetCurrentPosition();
                 Thread.Sleep(100);
-                TextBox_Position.Text = CurrentPosition.ToString();
+                //TextBox_Position.Text = CurrentPosition.ToString();
+                TextBlock_CurrentWidth.Text = CurrentPosition.ToString();
             }
         }
 
@@ -216,11 +217,11 @@ namespace ElectricSlit.Views
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             double targetPosition = 0;
-            if (TextBox_targetPosition != null)
+/*            if (TextBox_targetPosition != null)
             {
                 targetPosition = Convert.ToDouble(TextBox_targetPosition.Text.ToString());
                 //targetPosition = f(Convert.ToDouble(TextBox_targetPosition.Text.ToString()));//亮度关于位置长度非线性映射f(x)
-            }
+            }*/
 
             if(_motorEntity != null)
             {

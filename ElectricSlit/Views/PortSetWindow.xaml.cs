@@ -9,6 +9,9 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Controls;
+using System.Drawing;
+using System.Windows.Media;
 
 namespace MotorTestDemo.Views
 {
@@ -103,6 +106,13 @@ namespace MotorTestDemo.Views
 
                     Btn_Connect.Content = "已连接";
                     Btn_Connect.IsEnabled = false;
+
+                    isConnnected_Motor = true;
+                    part_mainwindow.TextBlock_isConnected.Text = "已连接";
+                    Brush brush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 255, 0));
+                    part_mainwindow.TextBlock_isConnected.Foreground = brush;
+
+                    part_mainwindow.TextBlock_CurrentWidth.Text = part_mainwindow._motorFunc.GetCurrentPosition().ToString();
 
                     part_mainwindow.GroupBox_ControlPanel.IsEnabled = true;//将主窗口控制面板设为可用
 

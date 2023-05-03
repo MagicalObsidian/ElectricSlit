@@ -57,6 +57,36 @@ namespace ElectricSlit.Views
 
         }
 
+        //狭缝调大
+        private void Btn_Larger_Click(object sender, RoutedEventArgs e)
+        {
+            double singleStep = 0;
 
+            if (TextBox_SlitStep != null)
+            {
+                singleStep = Convert.ToDouble(TextBox_SlitStep.Text.ToString());
+            }
+
+            if (part_mainwindow._motorEntity!= null)
+            {
+                part_mainwindow._motorFunc.MoveLeft(singleStep);
+            }
+        }
+
+        //狭缝调小
+        private void Btn_Smaller_Click(object sender, RoutedEventArgs e)
+        {
+            double singleStep = 0;
+
+            if (TextBox_SlitStep != null)
+            {
+                singleStep = Convert.ToDouble(TextBox_SlitStep.Text.ToString());
+            }
+
+            if (part_mainwindow._motorEntity != null)
+            {
+                part_mainwindow._motorFunc.MoveRight(singleStep);
+            }
+        }
     }
 }

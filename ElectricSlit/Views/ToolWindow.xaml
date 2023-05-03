@@ -11,6 +11,7 @@
     Background="AliceBlue"
     FontSize="12"
     FontWeight="Black"
+    Icon="/Resources/icon_tool.png"
     ResizeMode="NoResize"
     SnapsToDevicePixels="True"
     WindowStartupLocation="CenterScreen"
@@ -21,26 +22,30 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <StackPanel>
+        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
             <TextBlock
                 Margin="10"
                 VerticalAlignment="Center"
-                Text="狭缝宽度"
+                Text="单次移动距离:"
                 TextAlignment="Center" />
             <TextBox
-                Name="TextBox_SlitWidth"
+                Name="TextBox_SlitStep"
+                Width="100"
                 Margin="10"
                 VerticalAlignment="Center"
                 Text="0"
                 TextAlignment="Center" />
             <TextBlock
                 Margin="10"
-                VerticalAlignment="Bottom"
+                VerticalAlignment="Center"
                 Text="mm"
                 TextAlignment="Center" />
         </StackPanel>
 
-        <StackPanel Grid.Row="1">
+        <StackPanel
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal">
             <TextBlock
                 Margin="10"
                 VerticalAlignment="Center"
@@ -49,12 +54,16 @@
                 Name="Btn_Larger"
                 Margin="10"
                 VerticalAlignment="Center"
-                Content="狭缝宽度调大" />
+                Click="Btn_Larger_Click"
+                Content="狭缝宽度调大"
+                Style="{StaticResource ButtonDashedPrimary}" />
             <Button
                 Name="Btn_Smaller"
                 Margin="10"
                 VerticalAlignment="Center"
-                Content="狭缝宽度调小" />
+                Click="Btn_Smaller_Click"
+                Content="狭缝宽度调小"
+                Style="{StaticResource ButtonDashedPrimary}" />
         </StackPanel>
 
     </Grid>
