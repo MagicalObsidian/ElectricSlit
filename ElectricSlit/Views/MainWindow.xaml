@@ -5,8 +5,8 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:prism="http://prismlibrary.com/"
     Title="{Binding Title}"
-    Width="1000"
-    Height="700"
+    Width="900"
+    Height="600"
     prism:ViewModelLocator.AutoWireViewModel="True"
     FontSize="14"
     Icon="/Resources/icon_power.png"
@@ -29,6 +29,10 @@
                 Name="MenuTool"
                 Click="MenuTool_Click"
                 Header="工具(T)" />
+            <MenuItem
+                Name="MenuAbout"
+                Click="MenuAbout_Click"
+                Header="关于(A)" />
         </Menu>
 
         <!--
@@ -121,22 +125,27 @@
                         </hc:PreviewSlider>
                     </StackPanel
                     -->
-                    <StackPanel
+                    <Grid
                         Grid.Row="0"
                         Grid.RowSpan="2"
-                        Orientation="Horizontal">
-                        <TextBlock
-                            Margin="10"
-                            VerticalAlignment="Center"
-                            Text="当前亮度:"
-                            TextAlignment="Center" />
-                        <TextBox
-                            Name="TextBox_Light"
-                            Width="50"
-                            Margin="10"
-                            VerticalAlignment="Center"
-                            Text="{Binding ElementName=ProgressBar_Light, Path=Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                            TextAlignment="Center" />
+                        HorizontalAlignment="Center">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                            <TextBlock
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                Text="当前光强:"
+                                TextAlignment="Center" />
+                            <TextBox
+                                Name="TextBox_Light"
+                                Width="100"
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center" />
+                        </StackPanel>
                         <!--
                         <hc:PreviewSlider
                             Name="Slider_Light"
@@ -154,45 +163,56 @@
                         -->
                         <ProgressBar
                             Name="ProgressBar_Light"
+                            Grid.Row="1"
                             Width="{Binding}"
                             Margin="10"
-                            Value="60" />
-                    </StackPanel>
+                            Value="100" />
+                    </Grid>
                 </Grid>
 
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
-                        <RowDefinition />
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.RowSpan="2" Orientation="Horizontal">
-                        <TextBlock
-                            Margin="10"
-                            VerticalAlignment="Center"
-                            Text="单次移动距离:" />
-                        <TextBox
-                            Name="TextBox_step"
-                            Width="100"
-                            Margin="10"
-                            VerticalAlignment="Center"
-                            Text="0"
-                            TextAlignment="Center" />
-                        <TextBlock
-                            Margin="10"
-                            VerticalAlignment="Center"
-                            Text="mm" />
-                        <Button
-                            Margin="10"
-                            Click="Button_Click_1"
-                            Content="狭缝调小"
-                            Style="{StaticResource ButtonDashedPrimary}" />
-                        <Button
-                            Margin="10"
-                            Click="Button_Click_2"
-                            Content="狭缝调大"
-                            Style="{StaticResource ButtonDashedPrimary}" />
-                    </StackPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                            <TextBlock
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                Text="单次移动距离:" />
+                            <TextBox
+                                Name="TextBox_step"
+                                Width="100"
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                Text="0"
+                                TextAlignment="Center" />
+                            <TextBlock
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                Text="mm" />
+                        </StackPanel>
+                        <StackPanel
+                            Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
+                            <Button
+                                Margin="10"
+                                Click="Button_Click_1"
+                                Content="狭缝调小"
+                                Style="{StaticResource ButtonDashedPrimary}" />
+                            <Button
+                                Margin="10"
+                                Click="Button_Click_2"
+                                Content="狭缝调大"
+                                Style="{StaticResource ButtonDashedPrimary}" />
+                        </StackPanel>
+                    </Grid>
 
                     <!--
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
@@ -220,16 +240,19 @@
                     </StackPanel>
                     -->
 
-                    <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <StackPanel
+                        Grid.Row="2"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
                         <Button
                             Margin="10"
                             Click="Button_Click_4"
-                            Content="移动至狭缝全开"
+                            Content="狭缝全开"
                             Style="{StaticResource ButtonDashedSuccess}" />
                         <Button
                             Margin="10"
                             Click="Button_Click_5"
-                            Content="移动至狭缝全闭"
+                            Content="狭缝全闭"
                             Style="{StaticResource ButtonDashedSuccess}" />
                         <Button
                             Margin="10"
@@ -246,8 +269,8 @@
                     Style="{StaticResource InputElementBaseStyle}">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="9*" />
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="8*" />
                         </Grid.RowDefinitions>
 
                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">

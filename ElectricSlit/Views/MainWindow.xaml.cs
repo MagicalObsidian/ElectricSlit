@@ -1,9 +1,13 @@
 ﻿using ElectricSlit.ViewModels;
+using HandyControl.Controls;
+using ImTools;
 using MotorAPIPlus;
 using MotorTestDemo.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Threading;
@@ -11,13 +15,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Media;
+using MessageBox = System.Windows.MessageBox;
+using Task = System.Threading.Tasks.Task;
 
 namespace ElectricSlit.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : System.Windows.Window
     {
         private const int SC_CLOSE = 0xF060;
         private const int WM_SYSCOMMAND = 0x0112;
@@ -34,8 +41,13 @@ namespace ElectricSlit.Views
         private int tableCount = 0;
         public List<double> list_Light = new List<double>();
 
+        public double a, b, c = 0;//映射 二次多项式系数
+        public double maxLight = 10000;
+
         public ObservableCollection<string> PortList { get; set; } = new ObservableCollection<string>();//当前串口列表
         public double CurrentPosition;
+        private Thread thread_getPosition = null;
+
 
         private static string exePath;
         private static string debugFolderPath;
@@ -50,16 +62,22 @@ namespace ElectricSlit.Views
             this.Loaded += MainWindow_Loaded;
         }
 
-
+        #region 初始化配置等
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             await Init();
+
+            //开启线程
+            thread_getPosition = new Thread(new ThreadStart(RefreshPosition));
+            thread_getPosition.Priority = ThreadPriority.Lowest;
+            thread_getPosition.Start();
 
             exePath = System.Reflection.Assembly.GetEntryAssembly().Location;
             debugFolderPath = System.IO.Path.GetDirectoryName(exePath);
             projectFolderPath = System.IO.Directory.GetParent(debugFolderPath).Parent.FullName;
         }
 
+        #region 窗体事件关闭进程
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
@@ -70,13 +88,15 @@ namespace ElectricSlit.Views
         {
             if (msg == WM_SYSCOMMAND && wParam.ToInt32() == SC_CLOSE)
             {
-                // 在此处实现将窗口隐藏而不是关闭的代码
                 this.Close();
+                Process.GetCurrentProcess().Kill();
                 //handled = true;
             }
             return IntPtr.Zero;
         }
+        #endregion
 
+        //初始化
         private async Task Init()
         {
             //GroupBox_ControlPanel.IsEnabled = false;
@@ -91,6 +111,7 @@ namespace ElectricSlit.Views
             //portName = cbxSerialPortList.Text.ToString();
             portSetWindow = new PortSetWindow(this);
             portSetWindow.Show();
+
 /*            if (portSetWindow != null)
             {
                 portName = portSetWindow.PortName_Motor;
@@ -120,38 +141,50 @@ namespace ElectricSlit.Views
             }*/
         }
 
+        //界面进度条
         private void SetUI()
         {
             CurrentPosition = 50;//mm
             double sliderWidth = 200;
             //Slider_Position.Width = CurrentPosition / 50 * sliderWidth;
             ProgressBar_Light.Width = CurrentPosition / 50 * sliderWidth;
-
         }
 
-
         //获取实时实际位置
-/*        private async Task GetCurrentPosition()
+/*        private async Task GetCurrentPositionAsync()
         {
             if (_motorEntity != null)
             {
-                CurrentPosition = _motorFunc.GetCurrentPosition();
+                GetCurrentPosition();
                 await Task.Delay(100);
             }
         }*/
 
-        public void GetCurrentPosition()
+        public void RefreshPosition()
         {
-            if (_motorEntity != null) 
+            while(true)
             {
-                Thread.Sleep(100);
-                CurrentPosition = _motorFunc.GetCurrentPosition();
-                Thread.Sleep(100);
-                //TextBox_Position.Text = CurrentPosition.ToString();
-                TextBlock_CurrentWidth.Text = CurrentPosition.ToString();
+                GetCurrentPosition();
+                Thread.Sleep(1000);
             }
         }
 
+        public void GetCurrentPosition()
+        {
+            if(_motorEntity != null)//
+            {
+                Thread.Sleep(100);
+                CurrentPosition = _motorFunc.GetCurrentPosition();
+                //CurrentPosition++;
+
+                //TextBox_Position.Text = CurrentPosition.ToString();
+                this.Dispatcher.BeginInvoke((Action)delegate ()
+                {
+                    TextBlock_CurrentWidth.Text = CurrentPosition.ToString();
+                });
+
+            }
+        }
 
         //获取串口列表
         public void GetPortList()
@@ -161,7 +194,7 @@ namespace ElectricSlit.Views
             //cbxSerialPortList.DataContext = PortList;
         }
 
-        //连接串口
+        //连接串口(未使用)
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 
@@ -170,13 +203,16 @@ namespace ElectricSlit.Views
         //电机初始化配置
         public void MotorConfig()
         {
-            _motorEntity.SetPS();
+            _motorEntity.SetPS();//设置为上下限位模式
             //_motorFunc.MoveToZero();//初始化置于零位
 
             GetCurrentPosition();
             //TextBox_Position.Text = CurrentPosition.ToString();
         }
 
+        #endregion
+
+        #region 按钮方法
         //狭缝调小
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
@@ -187,11 +223,18 @@ namespace ElectricSlit.Views
                 singleStep = Convert.ToDouble(TextBox_step.Text.ToString());
             }
 
-            if(_motorEntity != null)
+            if(singleStep >= 0 && singleStep <= 50)
             {
-                _motorFunc.MoveRight(singleStep);
+                if(_motorEntity != null)
+                {
+                    _motorFunc.MoveRight(singleStep);
 
-                GetCurrentPosition();
+                    GetCurrentPosition();
+                }
+            }
+            else
+            {
+                MessageBox.Show("输入值非法！", "错误");
             }
         }
 
@@ -205,11 +248,18 @@ namespace ElectricSlit.Views
                 singleStep = Convert.ToDouble(TextBox_step.Text.ToString());
             }
 
-            if (_motorEntity != null)
-            {
-                _motorFunc.MoveLeft(singleStep);
+            if(singleStep >= 0 && singleStep <= 50)
+            { 
+                if (_motorEntity != null)
+                {
+                    _motorFunc.MoveLeft(singleStep);
 
-                GetCurrentPosition();
+                    GetCurrentPosition();
+                }
+            }
+            else
+            {
+                MessageBox.Show("输入值非法！", "错误");
             }
         }
 
@@ -220,7 +270,6 @@ namespace ElectricSlit.Views
 /*            if (TextBox_targetPosition != null)
             {
                 targetPosition = Convert.ToDouble(TextBox_targetPosition.Text.ToString());
-                //targetPosition = f(Convert.ToDouble(TextBox_targetPosition.Text.ToString()));//亮度关于位置长度非线性映射f(x)
             }*/
 
             if(_motorEntity != null)
@@ -231,7 +280,7 @@ namespace ElectricSlit.Views
             }
         }
 
-        //移动至狭缝全开
+        //狭缝全开
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
             if(_motorEntity != null)
@@ -242,7 +291,7 @@ namespace ElectricSlit.Views
             }
         }
 
-        //移动值狭缝全闭
+        //狭缝全闭
         private void Button_Click_5(object sender, RoutedEventArgs e)
         {
             if(_motorEntity != null)
@@ -283,23 +332,43 @@ namespace ElectricSlit.Views
             }
         }
 
+        //删除选中项
+        private void Button_Click_9(object sender, RoutedEventArgs e)
+        {
+            if (ListView_Set.SelectedIndex >= 0)
+            {
+                int selectedIndex = Convert.ToInt32(ListView_Set.SelectedIndex.ToString());//0,1,2,...
+                list_Light.RemoveAt(selectedIndex);
+                ListView_Set.Items.RemoveAt(selectedIndex);
+                tableCount--;
+            }
+        }
+
         //应用一个设定值
         private void Button_Click_8(object sender, RoutedEventArgs e)
         {
             int selectedIndex = Convert.ToInt32(ListView_Set.SelectedIndex.ToString());//0,1,2,...
 
-            //double targetPosition = g(list_Light[selectedIndex]);//光强对应的实际位置
-
-            if (_motorEntity != null)
+            if(list_Light[selectedIndex] > maxLight)
             {
-                //_motorFunc.MoveToPosition(targetPosition, true);
-                Thread.Sleep(200);
-                TextBox_Light.Text = list_Light[selectedIndex].ToString();
-
-                GetCurrentPosition();
+                MessageBox.Show("输入值大于最大值!", "错误");
             }
-            
 
+            else
+            {
+                double targetPosition = toolWindow.Gx(list_Light[selectedIndex]);//光强对应的实际位置
+
+                if (_motorEntity != null)
+                {
+                    _motorFunc.MoveToPosition(targetPosition, true);
+                    Thread.Sleep(200);
+
+                    GetCurrentPosition();
+                }
+            
+                TextBox_Light.Text = list_Light[selectedIndex].ToString();
+                ProgressBar_Light.Value = (list_Light[selectedIndex] / maxLight) * 100;
+            }
         }
 
         //打开串口连接界面
@@ -308,22 +377,40 @@ namespace ElectricSlit.Views
             portSetWindow.Show();
         }
 
-        //打开工具界面(狭缝距离调节)
+        //打开工具界面(狭缝宽度调节)
         private void MenuTool_Click(object sender, RoutedEventArgs e)
         {
             toolWindow.Show();
         }
 
-        //删除选中项
-        private void Button_Click_9(object sender, RoutedEventArgs e)
+        //打开关于界面
+        private void MenuAbout_Click(object sender, RoutedEventArgs e)
         {
-            if(ListView_Set.SelectedIndex >= 0)
+            Thread thread = new Thread(OpenWord);
+
+            if (thread.ThreadState == System.Threading.ThreadState.Unstarted)
             {
-                int selectedIndex = Convert.ToInt32(ListView_Set.SelectedIndex.ToString());//0,1,2,...
-                list_Light.RemoveAt(selectedIndex);
-                ListView_Set.Items.RemoveAt(selectedIndex);
-                tableCount--;
+                thread.Start();
             }
+            /*            Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
+                        object isread = true;
+                        object isvisible = true;
+                        object miss = System.Reflection.Missing.Value;
+
+                        wordApp.Documents.Open(ref fileName, ref miss, ref isread, ref miss, ref miss, ref miss, ref miss, ref miss,
+                                               ref miss, ref miss, ref miss, ref isvisible, ref miss, ref miss, ref miss, ref miss);
+                    */
         }
+
+
+        private static void OpenWord()
+        {
+            String fileName = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "\\doc\\readme.docx";//输入打开文件路径
+
+            Process.Start("C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE", fileName);
+        }
+
+        #endregion
+
     }
 }

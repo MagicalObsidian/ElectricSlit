@@ -123,6 +123,8 @@ namespace MotorTestDemo.Views
                 {
                     part_mainwindow._serialPort_Motor.Close();//断开串口
                     part_mainwindow._serialPort_Motor = null;
+                    part_mainwindow._motorEntity = null;
+                    part_mainwindow._motorFunc = null;
                     MessageBox.Show("连接失败!  请检查串口和电路", "错误");
                 }
             }

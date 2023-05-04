@@ -27,7 +27,6 @@ namespace ElectricSlit.ViewModels
         }
 
 
-
         public MainWindowViewModel()
         {
 
