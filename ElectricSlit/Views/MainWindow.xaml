@@ -32,7 +32,7 @@
             <MenuItem
                 Name="MenuAbout"
                 Click="MenuAbout_Click"
-                Header="关于(A)" />
+                Header="帮助(H)" />
         </Menu>
 
         <!--

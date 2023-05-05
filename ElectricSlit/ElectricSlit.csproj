@@ -3,11 +3,14 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resources\icon_about.png" />
     <None Remove="Resources\icon_power.png" />
     <None Remove="Resources\icon_serialport.png" />
     <None Remove="Resources\icon_serialport2.png" />
+    <None Remove="Resources\icon_soft.ico" />
     <None Remove="Resources\icon_tool.png" />
     <None Remove="Resources\serialport.png" />
   </ItemGroup>
@@ -17,14 +20,34 @@
     <PackageReference Include="System.IO.Ports" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="MoonPdfLib">
+      <HintPath>Lib\MoonPdfLib.dll</HintPath>
+    </Reference>
     <Reference Include="MotorAPIPlus">
       <HintPath>Lib\MotorAPIPlus.dll</HintPath>
     </Reference>
+    <Reference Include="MouseKeyboardActivityMonitor">
+      <HintPath>Lib\MouseKeyboardActivityMonitor.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.Common">
+      <HintPath>Lib\Spire.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.Doc">
+      <HintPath>Lib\Spire.Doc.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.License">
+      <HintPath>Lib\Spire.License.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.Pdf">
+      <HintPath>Lib\Spire.Pdf.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\icon_about.png" />
     <Resource Include="Resources\icon_power.png" />
     <Resource Include="Resources\icon_serialport.png" />
     <Resource Include="Resources\icon_serialport2.png" />
+    <Resource Include="Resources\icon_soft.ico" />
     <Resource Include="Resources\icon_tool.png" />
   </ItemGroup>
 </Project>

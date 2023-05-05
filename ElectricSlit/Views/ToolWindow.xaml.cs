@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Spire.Pdf.Exporting.XPS.Schema;
+using Spire.Pdf.Security;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -107,7 +111,12 @@ namespace ElectricSlit.Views
 
         private void SaveConfig()
         {
-            string filePath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "\\config\\abc.txt";
+            //string filePath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "\\config\\abc.txt";
+            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\abc.txt");
+
+            
+
+
 
             StreamWriter writer = new StreamWriter(filePath);
             writer.WriteLine(part_mainwindow.a.ToString());

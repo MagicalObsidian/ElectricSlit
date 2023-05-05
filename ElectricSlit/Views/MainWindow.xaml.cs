@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using MessageBox = System.Windows.MessageBox;
 using Task = System.Threading.Tasks.Task;
 
@@ -37,6 +38,7 @@ namespace ElectricSlit.Views
 
         public PortSetWindow portSetWindow = null;
         public ToolWindow toolWindow = null;
+        public AboutWindow aboutWindow = null;
         private MainWindowViewModel mainWindowviewModel = null;
         private int tableCount = 0;
         public List<double> list_Light = new List<double>();
@@ -63,9 +65,9 @@ namespace ElectricSlit.Views
         }
 
         #region 初始化配置等
-        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await Init();
+            Init();
 
             //开启线程
             thread_getPosition = new Thread(new ThreadStart(RefreshPosition));
@@ -97,7 +99,7 @@ namespace ElectricSlit.Views
         #endregion
 
         //初始化
-        private async Task Init()
+        private void Init()
         {
             //GroupBox_ControlPanel.IsEnabled = false;
 
@@ -106,6 +108,7 @@ namespace ElectricSlit.Views
 
             toolWindow = new ToolWindow(this);
             //toolWindow.Hide();
+            aboutWindow = new AboutWindow(this);
 
             //初始化时打开串口连接窗口
             //portName = cbxSerialPortList.Text.ToString();
@@ -160,6 +163,7 @@ namespace ElectricSlit.Views
             }
         }*/
 
+        //间隔 1s 刷新显示位置
         public void RefreshPosition()
         {
             while(true)
@@ -206,7 +210,7 @@ namespace ElectricSlit.Views
             _motorEntity.SetPS();//设置为上下限位模式
             //_motorFunc.MoveToZero();//初始化置于零位
 
-            GetCurrentPosition();
+            //GetCurrentPosition();
             //TextBox_Position.Text = CurrentPosition.ToString();
         }
 
@@ -229,7 +233,7 @@ namespace ElectricSlit.Views
                 {
                     _motorFunc.MoveRight(singleStep);
 
-                    GetCurrentPosition();
+                    //GetCurrentPosition();
                 }
             }
             else
@@ -254,7 +258,7 @@ namespace ElectricSlit.Views
                 {
                     _motorFunc.MoveLeft(singleStep);
 
-                    GetCurrentPosition();
+                    //GetCurrentPosition();
                 }
             }
             else
@@ -276,7 +280,7 @@ namespace ElectricSlit.Views
             {
                 _motorFunc.MoveToPosition(targetPosition, true);//仅设置可运动路径位原点右侧部分，位置坐标符号位正
 
-                GetCurrentPosition();
+                //GetCurrentPosition();
             }
         }
 
@@ -287,7 +291,7 @@ namespace ElectricSlit.Views
             {
                 _motorFunc.MoveToLowerLimmit();
 
-                GetCurrentPosition();
+                //GetCurrentPosition();
             }
         }
 
@@ -298,7 +302,7 @@ namespace ElectricSlit.Views
             {
                 _motorFunc.MoveToUpperLimmit();
 
-                GetCurrentPosition();
+                //GetCurrentPosition();
             }
         }
 
@@ -309,7 +313,7 @@ namespace ElectricSlit.Views
             {
                 _motorFunc.DisEnable();
 
-                GetCurrentPosition();
+                //GetCurrentPosition();
             }
         }
 
@@ -363,7 +367,7 @@ namespace ElectricSlit.Views
                     _motorFunc.MoveToPosition(targetPosition, true);
                     Thread.Sleep(200);
 
-                    GetCurrentPosition();
+                    //GetCurrentPosition();
                 }
             
                 TextBox_Light.Text = list_Light[selectedIndex].ToString();
@@ -386,29 +390,9 @@ namespace ElectricSlit.Views
         //打开关于界面
         private void MenuAbout_Click(object sender, RoutedEventArgs e)
         {
-            Thread thread = new Thread(OpenWord);
-
-            if (thread.ThreadState == System.Threading.ThreadState.Unstarted)
-            {
-                thread.Start();
-            }
-            /*            Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
-                        object isread = true;
-                        object isvisible = true;
-                        object miss = System.Reflection.Missing.Value;
-
-                        wordApp.Documents.Open(ref fileName, ref miss, ref isread, ref miss, ref miss, ref miss, ref miss, ref miss,
-                                               ref miss, ref miss, ref miss, ref isvisible, ref miss, ref miss, ref miss, ref miss);
-                    */
+            aboutWindow.Show();
         }
 
-
-        private static void OpenWord()
-        {
-            String fileName = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "\\doc\\readme.docx";//输入打开文件路径
-
-            Process.Start("C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE", fileName);
-        }
 
         #endregion
 

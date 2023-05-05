@@ -25,8 +25,6 @@ namespace MotorTestDemo.Views
         private const int SC_CLOSE = 0xF060;
         private const int WM_SYSCOMMAND = 0x0112;
 
-        public event Func<bool, bool> Refresh;
-
         public ObservableCollection<string> PortList { get; set; } = new ObservableCollection<string>();
 
         public bool isConnnected_Motor;
