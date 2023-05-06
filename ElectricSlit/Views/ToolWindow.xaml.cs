@@ -105,6 +105,7 @@ namespace ElectricSlit.Views
             part_mainwindow.a = (max - 2 * half) / 1250;
             part_mainwindow.b = (4 * half - max) / 50;
             part_mainwindow.c = 0;
+            part_mainwindow.maxLight = Convert.ToDouble(TextBox_SetMaxLight.Text.ToString());
 
             MessageBox.Show("计算完成!");
         }
@@ -114,9 +115,7 @@ namespace ElectricSlit.Views
             //string filePath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "\\config\\abc.txt";
             string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\abc.txt");
 
-            
-
-
+            SetFilePermissions(filePath);
 
             StreamWriter writer = new StreamWriter(filePath);
             writer.WriteLine(part_mainwindow.a.ToString());
@@ -127,6 +126,21 @@ namespace ElectricSlit.Views
 
             MessageBox.Show("保存完成!");
         }
+
+        //赋予文件管理员权限
+        private void SetFilePermissions(string filePath)
+        {
+            FileInfo fileInfo = new FileInfo(filePath);
+            FileSecurity fileSecurity = fileInfo.GetAccessControl();
+
+            SecurityIdentifier adminId = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
+
+            FileSystemAccessRule accessRule = new FileSystemAccessRule(adminId, FileSystemRights.FullControl, AccessControlType.Allow);
+            fileSecurity.AddAccessRule(accessRule);
+
+            fileInfo.SetAccessControl(fileSecurity);
+        }
+
 
         //f(x) = a*x^2 + b*x + c 解一元二次方程 得到光强对应位置
         public double Gx(double light)

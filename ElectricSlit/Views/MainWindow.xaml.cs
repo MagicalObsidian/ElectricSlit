@@ -44,7 +44,7 @@ namespace ElectricSlit.Views
         public List<double> list_Light = new List<double>();
 
         public double a, b, c = 0;//映射 二次多项式系数
-        public double maxLight = 10000;
+        public double maxLight;
 
         public ObservableCollection<string> PortList { get; set; } = new ObservableCollection<string>();//当前串口列表
         public double CurrentPosition;
