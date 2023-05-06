@@ -2,6 +2,7 @@
 using Spire.Pdf.Security;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
@@ -29,7 +30,6 @@ namespace ElectricSlit.Views
 
         private const int SC_CLOSE = 0xF060;
         private const int WM_SYSCOMMAND = 0x0112;
-
 
 
         public ToolWindow(MainWindow mainWindow)
@@ -110,21 +110,31 @@ namespace ElectricSlit.Views
             MessageBox.Show("计算完成!");
         }
 
+        //保存配置
         private void SaveConfig()
         {
             //string filePath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "\\config\\abc.txt";
             string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\abc.txt");
 
-            SetFilePermissions(filePath);
 
-            StreamWriter writer = new StreamWriter(filePath);
-            writer.WriteLine(part_mainwindow.a.ToString());
-            writer.WriteLine(part_mainwindow.b.ToString());
-            writer.WriteLine(part_mainwindow.c.ToString());
-            writer.WriteLine(part_mainwindow.maxLight.ToString());
-            writer.Close();
 
-            MessageBox.Show("保存完成!");
+            if (filePath != null)
+            {
+                StreamWriter writer = new StreamWriter(filePath);
+                writer.WriteLine(part_mainwindow.a.ToString());
+                writer.WriteLine(part_mainwindow.b.ToString());
+                writer.WriteLine(part_mainwindow.c.ToString());
+                writer.WriteLine(part_mainwindow.maxLight.ToString());
+                writer.Close();
+
+                MessageBox.Show("保存完成!");
+            }
+
+            else
+            {
+                MessageBox.Show("保存失败!");
+            }
+
         }
 
         //赋予文件管理员权限

@@ -327,12 +327,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_A2F3D7C69EA54497B9B7F50A41CADD86"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_A6C68F98659B2830D2CB1E8B5175DAC1"
         "OwnerKey" = "8:_C71B20E72D7C2E71F4C6DC8AD8299B74"
         "MsmSig" = "8:_UNDEFINED"
@@ -393,12 +387,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C3FAE4C5C3164D138B18C2ABC969F0A4"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C576EEFE6D5A0FDB465B3E7C58CD49DF"
         "OwnerKey" = "8:_C71B20E72D7C2E71F4C6DC8AD8299B74"
         "MsmSig" = "8:_UNDEFINED"
@@ -453,6 +441,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E2B3ED00A6FC4C0597F0D643C1D88D33"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E9A18FFB4DD2E74C34FC768C5056711E"
         "OwnerKey" = "8:_66B2E841354C4F4DB8384223B1A829BA"
         "MsmSig" = "8:_UNDEFINED"
@@ -483,7 +477,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_EB9EBF64B6DC47528A5D4D4C827573D1"
+        "MsmKey" = "8:_EDBD87A50E70460EB03A8A0BD471E710"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -770,6 +764,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -2076,26 +2078,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A2F3D7C69EA54497B9B7F50A41CADD86"
-            {
-            "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\doc\\readme.docx"
-            "TargetName" = "8:readme.docx"
-            "Tag" = "8:"
-            "Folder" = "8:_37DB3615FE134F22BCD307AD15394271"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A6C68F98659B2830D2CB1E8B5175DAC1"
             {
             "AssemblyRegister" = "3:1"
@@ -2257,26 +2239,6 @@
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_4F253688179249C285668FF4F6AF77B6"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C3FAE4C5C3164D138B18C2ABC969F0A4"
-            {
-            "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\doc\\~$readme.docx"
-            "TargetName" = "8:~$readme.docx"
-            "Tag" = "8:"
-            "Folder" = "8:_37DB3615FE134F22BCD307AD15394271"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2497,6 +2459,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E2B3ED00A6FC4C0597F0D643C1D88D33"
+            {
+            "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\doc\\readme.pdf"
+            "TargetName" = "8:readme.pdf"
+            "Tag" = "8:"
+            "Folder" = "8:_37DB3615FE134F22BCD307AD15394271"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E9A18FFB4DD2E74C34FC768C5056711E"
             {
             "AssemblyRegister" = "3:1"
@@ -2528,10 +2510,10 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EB9EBF64B6DC47528A5D4D4C827573D1"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EDBD87A50E70460EB03A8A0BD471E710"
             {
-            "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\doc\\readme.pdf"
-            "TargetName" = "8:readme.pdf"
+            "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\doc\\readme.docx"
+            "TargetName" = "8:readme.docx"
             "Tag" = "8:"
             "Folder" = "8:_37DB3615FE134F22BCD307AD15394271"
             "Condition" = "8:"
@@ -2907,7 +2889,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ElectricSlitController"
         "ProductCode" = "8:{C8FDEFA7-8064-4269-8C3E-46FC6654E442}"
-        "PackageCode" = "8:{01B94B32-2035-4E0C-8EEB-289F7E9C0C52}"
+        "PackageCode" = "8:{BF37AB03-2E35-414F-B875-00D8C34D0F00}"
         "UpgradeCode" = "8:{C2FBDAFB-9ABE-40E8-A0F2-666777A0E474}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
