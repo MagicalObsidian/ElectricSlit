@@ -105,12 +105,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_34FAB078C54247B39AEAB027A00A05DE"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_376B090D6C0C540852763B7C56E1CF32"
         "OwnerKey" = "8:_C71B20E72D7C2E71F4C6DC8AD8299B74"
         "MsmSig" = "8:_UNDEFINED"
@@ -387,6 +381,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_C20509C10D774EF6BDBB8FF8026BC804"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C576EEFE6D5A0FDB465B3E7C58CD49DF"
         "OwnerKey" = "8:_C71B20E72D7C2E71F4C6DC8AD8299B74"
         "MsmSig" = "8:_UNDEFINED"
@@ -484,6 +484,12 @@
         "Entry"
         {
         "MsmKey" = "8:_F08B2EDBBA5D4C22A772C4C592B6BA96"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F0DCD0DE5BF345928ED330CB1B080170"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1211,26 +1217,6 @@
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A83D574D902B400BA74D86394062E0CA"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_34FAB078C54247B39AEAB027A00A05DE"
-            {
-            "SourcePath" = "8:..\\ElectricSlit\\Resources\\icon_soft.ico"
-            "TargetName" = "8:icon_soft.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_D0201D39FC3B4C7BB4AA9B79281B8A8F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2253,6 +2239,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C20509C10D774EF6BDBB8FF8026BC804"
+            {
+            "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\config\\com.txt"
+            "TargetName" = "8:com.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_CBC8C83B93B64DAA8FC34336038786DA"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C576EEFE6D5A0FDB465B3E7C58CD49DF"
             {
             "AssemblyRegister" = "3:1"
@@ -2547,6 +2553,26 @@
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_4F253688179249C285668FF4F6AF77B6"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F0DCD0DE5BF345928ED330CB1B080170"
+            {
+            "SourcePath" = "8:..\\ElectricSlit\\Resources\\icon_main.ico"
+            "TargetName" = "8:icon_main.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_D0201D39FC3B4C7BB4AA9B79281B8A8F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3011,7 +3037,7 @@
         {
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E1143236FF4C4761A9FE954D63E406B7"
             {
-            "Name" = "8:ElectricSlitController"
+            "Name" = "8:Light Controller"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -3020,7 +3046,7 @@
             "Target" = "8:_5069EC6AD5D24B23AD092EB911F24C71"
             "Folder" = "8:_7A631728390E4297AC6359F21A0DFD69"
             "WorkingFolder" = "8:_4F253688179249C285668FF4F6AF77B6"
-            "Icon" = "8:_34FAB078C54247B39AEAB027A00A05DE"
+            "Icon" = "8:_F0DCD0DE5BF345928ED330CB1B080170"
             "Feature" = "8:"
             }
         }

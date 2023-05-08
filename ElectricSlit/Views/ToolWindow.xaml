@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ElectricSlit.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="狭缝手动调节"
+    Title="手动调节"
     Width="400"
     Height="450"
     Background="AliceBlue"
@@ -34,7 +34,7 @@
                 Margin="10"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Text="光强与狭缝宽度映射手动配置"
+                Text="配置"
                 TextAlignment="Center" />
             <StackPanel
                 Grid.Row="1"
@@ -44,7 +44,7 @@
                     Margin="10"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Text="请设置最大光强值:"
+                    Text="全开照度:"
                     TextAlignment="Center" />
                 <TextBox
                     Name="TextBox_SetMaxLight"
@@ -58,8 +58,8 @@
                 <Button
                     Margin="10"
                     Click="Button_Click_2"
-                    Content="狭缝全开"
-                    Style="{StaticResource ButtonDashed}" />
+                    Content="全开"
+                    Style="{StaticResource ButtonPrimary}" />
             </StackPanel>
 
             <StackPanel
@@ -70,7 +70,7 @@
                     Margin="10"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Text="请设置半开光强值:"
+                    Text="半开照度:"
                     TextAlignment="Center" />
                 <TextBox
                     Name="TextBox_SetHalfLight"
@@ -84,8 +84,8 @@
                 <Button
                     Margin="10"
                     Click="Button_Click_3"
-                    Content="狭缝半开"
-                    Style="{StaticResource ButtonDashed}" />
+                    Content="半开"
+                    Style="{StaticResource ButtonPrimary}" />
             </StackPanel>
 
             <StackPanel
@@ -112,7 +112,7 @@
             <TextBlock
                 Margin="10"
                 VerticalAlignment="Center"
-                Text="单次移动距离:"
+                Text="步距:"
                 TextAlignment="Center" />
             <TextBox
                 Name="TextBox_SlitStep"
@@ -132,24 +132,38 @@
             Grid.Row="2"
             HorizontalAlignment="Center"
             Orientation="Horizontal">
-            <TextBlock
-                Margin="10"
-                VerticalAlignment="Center"
-                TextAlignment="Center" />
             <Button
                 Name="Btn_Larger"
+                Width="40"
+                Height="40"
                 Margin="10"
                 VerticalAlignment="Center"
-                Click="Btn_Larger_Click"
-                Content="狭缝宽度调大"
-                Style="{StaticResource ButtonDashedPrimary}" />
+                BorderThickness="0"
+                Click="Btn_Smaller_Click">
+                <Button.Background>
+                    <ImageBrush>
+                        <ImageBrush.ImageSource>
+                            <BitmapImage UriSource="/Resources/icon_left.png" />
+                        </ImageBrush.ImageSource>
+                    </ImageBrush>
+                </Button.Background>
+            </Button>
             <Button
                 Name="Btn_Smaller"
+                Width="40"
+                Height="40"
                 Margin="10"
                 VerticalAlignment="Center"
-                Click="Btn_Smaller_Click"
-                Content="狭缝宽度调小"
-                Style="{StaticResource ButtonDashedPrimary}" />
+                BorderThickness="0"
+                Click="Btn_Larger_Click">
+                <Button.Background>
+                    <ImageBrush>
+                        <ImageBrush.ImageSource>
+                            <BitmapImage UriSource="/Resources/icon_right.png" />
+                        </ImageBrush.ImageSource>
+                    </ImageBrush>
+                </Button.Background>
+            </Button>
         </StackPanel>
 
     </Grid>

@@ -12,7 +12,7 @@
     Icon="/Resources/icon_power.png"
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow">
-    <Grid>
+    <Grid Background="AliceBlue">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition />
@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
 
         <!--  菜单栏  -->
-        <Menu Grid.ColumnSpan="3" Background="SkyBlue">
+        <Menu Grid.ColumnSpan="3" Background="{StaticResource PrimaryBrush}">
             <MenuItem
                 Name="MenuSerialPort"
                 Click="MenuSerialPort_Click"
@@ -77,12 +77,13 @@
             Name="GroupBox_ControlPanel"
             Grid.Row="1"
             Margin="10"
+            Background="AliceBlue"
             Header="控制"
             Style="{StaticResource InputElementBaseStyle}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="3*" />
-                    <RowDefinition Height="7*" />
+                    <RowDefinition Height="4*" />
+                    <RowDefinition Height="6*" />
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
@@ -137,13 +138,23 @@
                             <TextBlock
                                 Margin="10"
                                 VerticalAlignment="Center"
-                                Text="当前光强:"
-                                TextAlignment="Center" />
-                            <TextBox
+                                Text="照度:"
+                                TextAlignment="Center"
+                                Visibility="Hidden" />
+                            <TextBlock
                                 Name="TextBox_Light"
-                                Width="100"
+                                Width="200"
                                 Margin="10"
                                 VerticalAlignment="Center"
+                                FontSize="48"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource PrimaryBrush}"
+                                Text="0"
+                                TextAlignment="Center" />
+                            <TextBlock
+                                Margin="20"
+                                VerticalAlignment="Bottom"
+                                Text="Lx"
                                 TextAlignment="Center" />
                         </StackPanel>
                         <!--
@@ -172,8 +183,8 @@
 
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
+                        <RowDefinition Height="8*" />
+                        <RowDefinition Height="2*" />
                     </Grid.RowDefinitions>
                     <Grid>
                         <Grid.RowDefinitions>
@@ -184,7 +195,7 @@
                             <TextBlock
                                 Margin="10"
                                 VerticalAlignment="Center"
-                                Text="单次移动距离:" />
+                                Text="步距:" />
                             <TextBox
                                 Name="TextBox_step"
                                 Width="100"
@@ -202,15 +213,33 @@
                             HorizontalAlignment="Center"
                             Orientation="Horizontal">
                             <Button
+                                Width="70"
+                                Height="70"
                                 Margin="10"
-                                Click="Button_Click_1"
-                                Content="狭缝调小"
-                                Style="{StaticResource ButtonDashedPrimary}" />
+                                BorderThickness="0"
+                                Click="Button_Click_1">
+                                <Button.Background>
+                                    <ImageBrush>
+                                        <ImageBrush.ImageSource>
+                                            <BitmapImage UriSource="/Resources/icon_left.png" />
+                                        </ImageBrush.ImageSource>
+                                    </ImageBrush>
+                                </Button.Background>
+                            </Button>
                             <Button
+                                Width="70"
+                                Height="70"
                                 Margin="10"
-                                Click="Button_Click_2"
-                                Content="狭缝调大"
-                                Style="{StaticResource ButtonDashedPrimary}" />
+                                BorderThickness="0"
+                                Click="Button_Click_2">
+                                <Button.Background>
+                                    <ImageBrush>
+                                        <ImageBrush.ImageSource>
+                                            <BitmapImage UriSource="/Resources/icon_right.png" />
+                                        </ImageBrush.ImageSource>
+                                    </ImageBrush>
+                                </Button.Background>
+                            </Button>
                         </StackPanel>
                     </Grid>
 
@@ -241,23 +270,23 @@
                     -->
 
                     <StackPanel
-                        Grid.Row="2"
+                        Grid.Row="1"
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">
                         <Button
                             Margin="10"
                             Click="Button_Click_4"
-                            Content="狭缝全开"
-                            Style="{StaticResource ButtonDashedSuccess}" />
+                            Content="全开"
+                            Style="{StaticResource ButtonPrimary}" />
                         <Button
                             Margin="10"
                             Click="Button_Click_5"
-                            Content="狭缝全闭"
-                            Style="{StaticResource ButtonDashedSuccess}" />
+                            Content="全闭"
+                            Style="{StaticResource ButtonPrimary}" />
                         <Button
                             Margin="10"
                             Click="Button_Click_6"
-                            Content="紧急停止"
+                            Content="停止"
                             Style="{StaticResource ButtonDanger}" />
                     </StackPanel>
                 </Grid>
@@ -265,6 +294,7 @@
                 <GroupBox
                     Grid.RowSpan="2"
                     Grid.Column="1"
+                    Background="AliceBlue"
                     Header="设定值列表"
                     Style="{StaticResource InputElementBaseStyle}">
                     <Grid>
@@ -277,7 +307,7 @@
                             <TextBlock
                                 Margin="10"
                                 VerticalAlignment="Center"
-                                Text="设定光强"
+                                Text="设定照度"
                                 TextAlignment="Center" />
                             <TextBox
                                 Name="TextBox_LightSet"
@@ -292,11 +322,6 @@
                                 Style="{StaticResource ButtonPrimary}" />
                             <Button
                                 Margin="10"
-                                Click="Button_Click_9"
-                                Content="删除"
-                                Style="{StaticResource ButtonWarning}" />
-                            <Button
-                                Margin="10"
                                 Click="Button_Click_8"
                                 Content="应用"
                                 Style="{StaticResource ButtonInfo}" />
@@ -307,7 +332,8 @@
                             Grid.Row="1"
                             Margin="10"
                             Background="AliceBlue"
-                            ItemsSource="{Binding Path=DataList}">
+                            KeyDown="ListView_Set_KeyDown"
+                            MouseRightButtonUp="ListView_Set_MouseRightButtonUp">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn
@@ -317,14 +343,12 @@
                                     <GridViewColumn
                                         Width="150"
                                         DisplayMemberBinding="{Binding Path=Light}"
-                                        Header="光强" />
+                                        Header="照度" />
                                 </GridView>
                             </ListView.View>
                         </ListView>
-
                     </Grid>
                 </GroupBox>
-
             </Grid>
         </GroupBox>
 
@@ -347,7 +371,7 @@
                 <TextBlock
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
-                    Text="当前狭缝宽度:"
+                    Text="狭缝宽度:"
                     TextAlignment="Center" />
                 <TextBlock
                     Name="TextBlock_CurrentWidth"

@@ -1,5 +1,6 @@
 ﻿using ElectricSlit.ViewModels;
 using HandyControl.Controls;
+using HandyControl.Tools.Extension;
 using ImTools;
 using MotorAPIPlus;
 using MotorTestDemo.Views;
@@ -14,6 +15,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Controls.Ribbon;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -44,7 +48,7 @@ namespace ElectricSlit.Views
         public List<double> list_Light = new List<double>();
 
         public double a, b, c = 0;//映射 二次多项式系数
-        public double maxLight;
+        public double maxLight = 10000;
 
         public ObservableCollection<string> PortList { get; set; } = new ObservableCollection<string>();//当前串口列表
         public double CurrentPosition;
@@ -101,7 +105,7 @@ namespace ElectricSlit.Views
         //初始化
         private void Init()
         {
-            //GroupBox_ControlPanel.IsEnabled = false;
+            GroupBox_ControlPanel.IsEnabled = false;
 
             //GetPortList();
             SetUI();
@@ -113,35 +117,10 @@ namespace ElectricSlit.Views
             //初始化时打开串口连接窗口
             //portName = cbxSerialPortList.Text.ToString();
             portSetWindow = new PortSetWindow(this);
-            portSetWindow.Show();
+            portSetWindow.ReadCom();
+            portSetWindow.CommonConnect();
+            //portSetWindow.Show();
 
-/*            if (portSetWindow != null)
-            {
-                portName = portSetWindow.PortName_Motor;
-            }
-
-            if (portName != null)
-            {
-                _serialPort_Motor = new SerialPortHelper(portName);
-                if (_serialPort_Motor.Connect())
-                {
-                    _motorEntity = new MotorEntity(_serialPort_Motor);
-                    _motorFunc = new MotorFunc(_motorEntity);
-                    if (_motorFunc.CheckAvailable())
-                    {
-                        MotorConfig();
-
-                        //TextBox_Current.Text = _motorEntity.GetCurrent().ToString();
-                        GetCurrentPosition();
-
-                        //GroupBox_ControlPanel.IsEnabled = true;//仅当电机通信正常控制面板可用
-                    }
-                    else
-                    {
-                        MessageBox.Show("连接失败!请检查串口和电路");
-                    }
-                }
-            }*/
         }
 
         //界面进度条
@@ -238,7 +217,7 @@ namespace ElectricSlit.Views
             }
             else
             {
-                MessageBox.Show("输入值非法！", "错误");
+                MessageBox.Show("步距过大！", "错误");
             }
         }
 
@@ -263,7 +242,7 @@ namespace ElectricSlit.Views
             }
             else
             {
-                MessageBox.Show("输入值非法！", "错误");
+                MessageBox.Show("步距过大！", "错误");
             }
         }
 
@@ -322,11 +301,11 @@ namespace ElectricSlit.Views
         {
             LightSetModel lightSetModel = new LightSetModel();
 
-            tableCount++;
-            lightSetModel.Index = tableCount;
-
             if(TextBox_LightSet.Text != "")
             {
+                tableCount++;
+                lightSetModel.Index = tableCount;
+
                 double lightset = Convert.ToDouble(TextBox_LightSet.Text.ToString());
                 lightSetModel.Light = lightset;
 
@@ -353,25 +332,28 @@ namespace ElectricSlit.Views
         {
             int selectedIndex = Convert.ToInt32(ListView_Set.SelectedIndex.ToString());//0,1,2,...
 
-            if(list_Light[selectedIndex] > maxLight)
+            if(TextBox_LightSet.Text != "" && selectedIndex >= 0)
             {
-                MessageBox.Show("输入值大于最大值!", "错误");
-            }
-
-            else
-            {
-                double targetPosition = toolWindow.Gx(list_Light[selectedIndex]);//光强对应的实际位置
-
-                if (_motorEntity != null)
+                if(list_Light[selectedIndex] > maxLight)
                 {
-                    _motorFunc.MoveToPosition(targetPosition, true);
-                    Thread.Sleep(200);
-
-                    //GetCurrentPosition();
+                    MessageBox.Show("设定值超出最大值！", "错误");
                 }
+
+                else
+                {
+                    double targetPosition = toolWindow.Gx(list_Light[selectedIndex]);//光强对应的实际位置
+
+                    if (_motorEntity != null)
+                    {
+                        _motorFunc.MoveToPosition(targetPosition, true);
+                        Thread.Sleep(200);
+
+                        //GetCurrentPosition();
+                    }
             
-                TextBox_Light.Text = list_Light[selectedIndex].ToString();
-                ProgressBar_Light.Value = (list_Light[selectedIndex] / maxLight) * 100;
+                    TextBox_Light.Text = list_Light[selectedIndex].ToString();
+                    ProgressBar_Light.Value = (list_Light[selectedIndex] / maxLight) * 100;
+                }
             }
         }
 
@@ -380,6 +362,33 @@ namespace ElectricSlit.Views
         {
             portSetWindow.Show();
         }
+
+        private void ListView_Set_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Point position = e.GetPosition(this);
+            double x = position.X;
+            double y = position.Y;
+
+/*            ContextMenu_listview.PlacementTarget = sender as UIElement;
+            ContextMenu_listview.Placement = PlacementMode.MousePoint;
+            ContextMenu_listview.IsOpen = true;*/      
+        }
+
+        //delete键删除
+        private void ListView_Set_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Delete)
+            {
+                if (ListView_Set.SelectedIndex >= 0)
+                {
+                    int selectedIndex = Convert.ToInt32(ListView_Set.SelectedIndex.ToString());//0,1,2,...
+                    list_Light.RemoveAt(selectedIndex);
+                    ListView_Set.Items.RemoveAt(selectedIndex);
+                    tableCount--;
+                }
+            }
+        }
+
 
         //打开工具界面(狭缝宽度调节)
         private void MenuTool_Click(object sender, RoutedEventArgs e)

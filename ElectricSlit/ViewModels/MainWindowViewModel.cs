@@ -19,7 +19,7 @@ namespace ElectricSlit.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        private string _title = "电动狭缝控制";
+        private string _title = "光源控制";
         public string Title
         {
             get { return _title; }

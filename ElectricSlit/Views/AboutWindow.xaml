@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:ElectricSlit.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mpp="clr-namespace:MoonPdfLib;assembly=MoonPdfLib"
-    Title="关于 ElectricSlitController"
+    Title="关于"
     Width="600"
     Height="550"
     Background="AliceBlue"

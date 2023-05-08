@@ -88,16 +88,22 @@ namespace MotorTestDemo.Views
         {
             portName_Motor = ComboBox_PortName.Text.ToString();//获取电机串口名
             part_mainwindow.portName = portName_Motor;
-                        
+
+            CommonConnect();
+        }
+
+        //连接操作
+        public void CommonConnect()
+        {
             part_mainwindow._serialPort_Motor = new SerialPortHelper(part_mainwindow.portName);
 
-            if(part_mainwindow._serialPort_Motor.Connect())//
+            if (part_mainwindow._serialPort_Motor.Connect())//
             {
                 //串口连接成功 创建实例
                 part_mainwindow._motorEntity = new MotorEntity(part_mainwindow._serialPort_Motor);
                 part_mainwindow._motorFunc = new MotorFunc(part_mainwindow._motorEntity);
 
-                if(part_mainwindow._motorFunc.CheckAvailable())
+                if (part_mainwindow._motorFunc.CheckAvailable())
                 {
                     part_mainwindow.MotorConfig();
                     part_mainwindow.GetCurrentPosition();
@@ -113,6 +119,9 @@ namespace MotorTestDemo.Views
                     part_mainwindow.TextBlock_CurrentWidth.Text = part_mainwindow._motorFunc.GetCurrentPosition().ToString();
 
                     part_mainwindow.GroupBox_ControlPanel.IsEnabled = true;//将主窗口控制面板设为可用
+
+                    //成功连接后记录下串口号，之后打开软件尝试自动连接
+                    SaveCom();
 
                     MessageBox.Show("连接成功!");
                     this.Hide();
@@ -131,5 +140,40 @@ namespace MotorTestDemo.Views
                 MessageBox.Show("无法打开串口", "错误");
             }
         }
+
+        private void SaveCom()
+        {
+            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\com.txt");
+
+            if (filePath != null)
+            {
+                StreamWriter writer = new StreamWriter(filePath);
+                writer.WriteLine(part_mainwindow.portName.ToString());
+                writer.Close();
+
+                //MessageBox.Show("保存完成!");
+            }
+        }
+
+        public void ReadCom()
+        {
+            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\com.txt");
+
+            using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                try
+                {
+                    StreamReader reader = new StreamReader(fs);
+                    string line1 = reader.ReadLine();
+
+                    part_mainwindow.portName = line1;
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
     }
 }
