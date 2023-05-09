@@ -306,8 +306,8 @@ namespace ElectricSlit.Views
             if (ListView_Set.SelectedIndex >= 0)
             {
                 int selectedIndex = Convert.ToInt32(ListView_Set.SelectedIndex.ToString());//0,1,2,...
-                list_Light.RemoveAt(selectedIndex);
                 ListView_Set.Items.RemoveAt(selectedIndex);
+                list_Light.RemoveAt(selectedIndex);
                 tableCount--;
             }
         }
@@ -351,16 +351,19 @@ namespace ElectricSlit.Views
             ContextMenu_listview.IsOpen = true;*/      
         }
 
-        //Ddelete键删除
+        //Delete键删除
         private void ListView_Set_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Delete)
             {
-                if (ListView_Set.SelectedIndex >= 0)
+                if (ListView_Set.SelectedIndex >= 0)//有选中一项
                 {
                     int selectedIndex = Convert.ToInt32(ListView_Set.SelectedIndex.ToString());//0,1,2,...
-                    list_Light.RemoveAt(selectedIndex);
+                                       
                     ListView_Set.Items.RemoveAt(selectedIndex);
+
+                    list_Light.RemoveAt(selectedIndex);
+
                     tableCount--;
                 }
             }

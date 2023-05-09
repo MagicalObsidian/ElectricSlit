@@ -273,7 +273,7 @@
                                     <GridViewColumn
                                         Width="100"
                                         DisplayMemberBinding="{Binding Path=Index}"
-                                        Header="序号" />
+                                        Header="编号" />
                                     <GridViewColumn
                                         Width="150"
                                         DisplayMemberBinding="{Binding Path=Light}"
