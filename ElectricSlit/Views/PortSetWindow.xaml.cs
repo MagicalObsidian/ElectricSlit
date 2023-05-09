@@ -97,7 +97,7 @@ namespace MotorTestDemo.Views
         {
             part_mainwindow._serialPort_Motor = new SerialPortHelper(part_mainwindow.portName);
 
-            if (part_mainwindow._serialPort_Motor.Connect())//
+            if (part_mainwindow._serialPort_Motor.Connect())
             {
                 //串口连接成功 创建实例
                 part_mainwindow._motorEntity = new MotorEntity(part_mainwindow._serialPort_Motor);
@@ -106,7 +106,6 @@ namespace MotorTestDemo.Views
                 if (part_mainwindow._motorFunc.CheckAvailable())
                 {
                     part_mainwindow.MotorConfig();
-                    part_mainwindow.GetCurrentPosition();
 
                     Btn_Connect.Content = "已连接";
                     Btn_Connect.IsEnabled = false;
@@ -132,15 +131,16 @@ namespace MotorTestDemo.Views
                     part_mainwindow._serialPort_Motor = null;
                     part_mainwindow._motorEntity = null;
                     part_mainwindow._motorFunc = null;
-                    MessageBox.Show("连接失败!  请检查串口和电路", "错误");
+                    MessageBox.Show("连接失败!  请检查硬件连接。", "错误");
                 }
             }
             else
             {
-                MessageBox.Show("无法打开串口", "错误");
+                MessageBox.Show("无法打开串口, 请检查串口是否被占用。", "错误");
             }
         }
 
+        //保存串口配置
         private void SaveCom()
         {
             string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\com.txt");
@@ -155,6 +155,7 @@ namespace MotorTestDemo.Views
             }
         }
 
+        //读取串口配置
         public void ReadCom()
         {
             string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\com.txt");
@@ -170,7 +171,7 @@ namespace MotorTestDemo.Views
                 }
                 catch
                 {
-
+                    
                 }
             }
         }

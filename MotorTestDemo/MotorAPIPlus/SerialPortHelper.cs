@@ -110,7 +110,14 @@ namespace MotorAPIPlus
             }
             else
             {
-                _serialPort.Open();//打开串口
+                try
+                {
+                    _serialPort.Open();//打开串口
+                }
+                catch(Exception e)
+                {
+                    return false;
+                }
                 if (_serialPort.IsOpen)
                 {
                     res = true;

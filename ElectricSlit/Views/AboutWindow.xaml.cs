@@ -80,7 +80,6 @@ namespace ElectricSlit.Views
         {
             //String fileName = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "\\doc\\readme.docx";//输入打开文件路径
             string fileName = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"doc\readme.docx");
-            //Console.WriteLine(fileName);
             //String fileName = System.Environment.CurrentDirectory + "\\doc\\readme.docx";
             Process.Start(fileName);
         }

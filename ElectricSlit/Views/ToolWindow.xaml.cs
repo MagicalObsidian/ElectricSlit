@@ -116,8 +116,6 @@ namespace ElectricSlit.Views
             //string filePath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "\\config\\abc.txt";
             string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\abc.txt");
 
-
-
             if (filePath != null)
             {
                 StreamWriter writer = new StreamWriter(filePath);
@@ -129,28 +127,12 @@ namespace ElectricSlit.Views
 
                 MessageBox.Show("保存完成!");
             }
-
             else
             {
                 MessageBox.Show("保存失败!");
             }
 
         }
-
-        //赋予文件管理员权限
-        private void SetFilePermissions(string filePath)
-        {
-            FileInfo fileInfo = new FileInfo(filePath);
-            FileSecurity fileSecurity = fileInfo.GetAccessControl();
-
-            SecurityIdentifier adminId = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
-
-            FileSystemAccessRule accessRule = new FileSystemAccessRule(adminId, FileSystemRights.FullControl, AccessControlType.Allow);
-            fileSecurity.AddAccessRule(accessRule);
-
-            fileInfo.SetAccessControl(fileSecurity);
-        }
-
 
         //f(x) = a*x^2 + b*x + c 解一元二次方程 得到光强对应位置
         public double Gx(double light)

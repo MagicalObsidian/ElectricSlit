@@ -35,43 +35,6 @@
                 Header="帮助(H)" />
         </Menu>
 
-        <!--
-        <GroupBox
-            Margin="10"
-            Header="串口通信"
-            Style="{StaticResource InputElementBaseStyle}">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock
-                    Margin="10"
-                    VerticalAlignment="Center"
-                    Text="可用串口" />
-                <ComboBox
-                    x:Name="cbxSerialPortList"
-                    Width="150"
-                    Margin="10"
-                    ItemsSource="{Binding}" />
-                <Button
-                    Name="Btn_Connect"
-                    Margin="10"
-                    Click="Button_Click"
-                    Content="连接"
-                    Style="{StaticResource ButtonPrimary}" />
-
-                <TextBlock
-                    Margin="10"
-                    VerticalAlignment="Center"
-                    Text="电流："
-                    Visibility="Hidden" />
-                <TextBox
-                    Name="TextBox_Current"
-                    Width="50"
-                    Margin="10"
-                    VerticalAlignment="Center"
-                    TextAlignment="Center"
-                    Visibility="Hidden" />
-            </StackPanel>
-        </GroupBox>-->
-
         <!--  控制界面  -->
         <GroupBox
             Name="GroupBox_ControlPanel"
@@ -91,41 +54,8 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
+                <!--  显示  -->
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <!--
-                    <StackPanel Orientation="Horizontal">
-
-                        <TextBlock
-                            Margin="10"
-                            VerticalAlignment="Center"
-                            Text="当前位置:"
-                            TextAlignment="Center" />
-                        <TextBox
-                            Name="TextBox_Position"
-                            Width="50"
-                            Margin="10"
-                            VerticalAlignment="Center"
-                            Text="{Binding ElementName=Slider_Position, Path=Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                            TextAlignment="Center" />
-                        <hc:PreviewSlider
-                            Name="Slider_Position"
-                            Width="{Binding}"
-                            Margin="10"
-                            Maximum="50"
-                            Value="{Binding CurrentPosition}">
-                            <hc:PreviewSlider.PreviewContent>
-                                <Label
-                                    Content="{Binding Path=(hc:PreviewSlider.PreviewPosition), RelativeSource={RelativeSource Self}}"
-                                    ContentStringFormat="#0.0 mm"
-                                    Style="{StaticResource LabelPrimary}" />
-                            </hc:PreviewSlider.PreviewContent>
-                        </hc:PreviewSlider>
-                    </StackPanel
-                    -->
                     <Grid
                         Grid.Row="0"
                         Grid.RowSpan="2"
@@ -181,6 +111,7 @@
                     </Grid>
                 </Grid>
 
+                <!--  移动  -->
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="8*" />
@@ -291,6 +222,7 @@
                     </StackPanel>
                 </Grid>
 
+                <!--  设定值  -->
                 <GroupBox
                     Grid.RowSpan="2"
                     Grid.Column="1"
@@ -303,6 +235,7 @@
                             <RowDefinition Height="8*" />
                         </Grid.RowDefinitions>
 
+                        <!--  输入 按钮  -->
                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                             <TextBlock
                                 Margin="10"
@@ -327,6 +260,7 @@
                                 Style="{StaticResource ButtonInfo}" />
                         </StackPanel>
 
+                        <!--  列表  -->
                         <ListView
                             Name="ListView_Set"
                             Grid.Row="1"

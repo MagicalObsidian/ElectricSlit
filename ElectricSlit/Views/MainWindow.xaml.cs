@@ -73,11 +73,12 @@ namespace ElectricSlit.Views
         {
             Init();
 
-            //开启线程
+            //开启显示实时位置的线程
             thread_getPosition = new Thread(new ThreadStart(RefreshPosition));
             thread_getPosition.Priority = ThreadPriority.Lowest;
             thread_getPosition.Start();
 
+            //获取应用程序路径
             exePath = System.Reflection.Assembly.GetEntryAssembly().Location;
             debugFolderPath = System.IO.Path.GetDirectoryName(exePath);
             projectFolderPath = System.IO.Directory.GetParent(debugFolderPath).Parent.FullName;
@@ -120,7 +121,6 @@ namespace ElectricSlit.Views
             portSetWindow.ReadCom();
             portSetWindow.CommonConnect();
             //portSetWindow.Show();
-
         }
 
         //界面进度条
@@ -152,9 +152,10 @@ namespace ElectricSlit.Views
             }
         }
 
+        //获得实时位置
         public void GetCurrentPosition()
         {
-            if(_motorEntity != null)//
+            if(_motorEntity != null)
             {
                 Thread.Sleep(100);
                 CurrentPosition = _motorFunc.GetCurrentPosition();
@@ -163,9 +164,8 @@ namespace ElectricSlit.Views
                 //TextBox_Position.Text = CurrentPosition.ToString();
                 this.Dispatcher.BeginInvoke((Action)delegate ()
                 {
-                    TextBlock_CurrentWidth.Text = CurrentPosition.ToString();
+                    TextBlock_CurrentWidth.Text = CurrentPosition.ToString("0.00");
                 });
-
             }
         }
 
@@ -188,9 +188,6 @@ namespace ElectricSlit.Views
         {
             _motorEntity.SetPS();//设置为上下限位模式
             //_motorFunc.MoveToZero();//初始化置于零位
-
-            //GetCurrentPosition();
-            //TextBox_Position.Text = CurrentPosition.ToString();
         }
 
         #endregion
@@ -211,8 +208,6 @@ namespace ElectricSlit.Views
                 if(_motorEntity != null)
                 {
                     _motorFunc.MoveRight(singleStep);
-
-                    //GetCurrentPosition();
                 }
             }
             else
@@ -236,8 +231,6 @@ namespace ElectricSlit.Views
                 if (_motorEntity != null)
                 {
                     _motorFunc.MoveLeft(singleStep);
-
-                    //GetCurrentPosition();
                 }
             }
             else
@@ -258,8 +251,6 @@ namespace ElectricSlit.Views
             if(_motorEntity != null)
             {
                 _motorFunc.MoveToPosition(targetPosition, true);//仅设置可运动路径位原点右侧部分，位置坐标符号位正
-
-                //GetCurrentPosition();
             }
         }
 
@@ -269,8 +260,6 @@ namespace ElectricSlit.Views
             if(_motorEntity != null)
             {
                 _motorFunc.MoveToLowerLimmit();
-
-                //GetCurrentPosition();
             }
         }
 
@@ -280,8 +269,6 @@ namespace ElectricSlit.Views
             if(_motorEntity != null)
             {
                 _motorFunc.MoveToUpperLimmit();
-
-                //GetCurrentPosition();
             }
         }
 
@@ -291,8 +278,6 @@ namespace ElectricSlit.Views
             if(_motorEntity != null)
             {
                 _motorFunc.DisEnable();
-
-                //GetCurrentPosition();
             }
         }
 
@@ -347,20 +332,12 @@ namespace ElectricSlit.Views
                     {
                         _motorFunc.MoveToPosition(targetPosition, true);
                         Thread.Sleep(200);
-
-                        //GetCurrentPosition();
                     }
             
                     TextBox_Light.Text = list_Light[selectedIndex].ToString();
                     ProgressBar_Light.Value = (list_Light[selectedIndex] / maxLight) * 100;
                 }
             }
-        }
-
-        //打开串口连接界面
-        private void MenuSerialPort_Click(object sender, RoutedEventArgs e)
-        {
-            portSetWindow.Show();
         }
 
         private void ListView_Set_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
@@ -374,7 +351,7 @@ namespace ElectricSlit.Views
             ContextMenu_listview.IsOpen = true;*/      
         }
 
-        //delete键删除
+        //Ddelete键删除
         private void ListView_Set_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Delete)
@@ -389,6 +366,11 @@ namespace ElectricSlit.Views
             }
         }
 
+        //打开串口连接界面
+        private void MenuSerialPort_Click(object sender, RoutedEventArgs e)
+        {
+            portSetWindow.Show();
+        }
 
         //打开工具界面(狭缝宽度调节)
         private void MenuTool_Click(object sender, RoutedEventArgs e)
