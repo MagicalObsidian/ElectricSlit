@@ -118,6 +118,7 @@ namespace ElectricSlit.Views
             //初始化时打开串口连接窗口
             //portName = cbxSerialPortList.Text.ToString();
             portSetWindow = new PortSetWindow(this);
+            //读取配置尝试连接
             portSetWindow.ReadCom();
             portSetWindow.CommonConnect();
             //portSetWindow.Show();
@@ -164,7 +165,7 @@ namespace ElectricSlit.Views
                 //TextBox_Position.Text = CurrentPosition.ToString();
                 this.Dispatcher.BeginInvoke((Action)delegate ()
                 {
-                    TextBlock_CurrentWidth.Text = CurrentPosition.ToString("0.00");
+                    TextBlock_CurrentWidth.Text = CurrentPosition.ToString("f2");
                 });
             }
         }
@@ -321,7 +322,7 @@ namespace ElectricSlit.Views
             {
                 if(list_Light[selectedIndex] > maxLight)
                 {
-                    MessageBox.Show("设定值超出最大值！", "错误");
+                    //MessageBox.Show("设定值超出最大照度！", "错误");
                 }
 
                 else
@@ -331,7 +332,7 @@ namespace ElectricSlit.Views
                     if (_motorEntity != null)
                     {
                         _motorFunc.MoveToPosition(targetPosition, true);
-                        Thread.Sleep(200);
+                        Thread.Sleep(100);
                     }
             
                     TextBox_Light.Text = list_Light[selectedIndex].ToString();
@@ -358,12 +359,9 @@ namespace ElectricSlit.Views
             {
                 if (ListView_Set.SelectedIndex >= 0)//有选中一项
                 {
-                    int selectedIndex = Convert.ToInt32(ListView_Set.SelectedIndex.ToString());//0,1,2,...
-                                       
+                    int selectedIndex = Convert.ToInt32(ListView_Set.SelectedIndex.ToString());//0,1,2,...                            
                     ListView_Set.Items.RemoveAt(selectedIndex);
-
                     list_Light.RemoveAt(selectedIndex);
-
                     tableCount--;
                 }
             }
@@ -375,7 +373,7 @@ namespace ElectricSlit.Views
             portSetWindow.Show();
         }
 
-        //打开工具界面(狭缝宽度调节)
+        //打开工具界面
         private void MenuTool_Click(object sender, RoutedEventArgs e)
         {
             toolWindow.Show();
