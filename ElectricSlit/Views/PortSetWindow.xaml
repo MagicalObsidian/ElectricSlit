@@ -8,7 +8,7 @@
     Title="串口设置"
     Width="400"
     Height="450"
-    Background="AliceBlue"
+    Background="#ffffff"
     FontSize="12"
     FontWeight="Black"
     Icon="/Resources/icon_serialport2.png"
@@ -135,9 +135,9 @@
                 Name="Btn_Connect"
                 Width="100"
                 Margin="10"
+                Background="#f0f0f0"
                 Click="Btn_Connect_Click"
-                Content="连接"
-                Style="{StaticResource ButtonPrimary}" />
+                Content="连接" />
         </StackPanel>
     </Grid>
 </Window>

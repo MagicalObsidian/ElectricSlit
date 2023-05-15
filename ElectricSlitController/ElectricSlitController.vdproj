@@ -411,6 +411,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_CDC6B382E7D4440DB7EB2AAC5BD41B5A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D364F573400E8AD579E2271202D97CB2"
         "OwnerKey" = "8:_514D1EA1E2409DAC02CB56BD9831A414"
         "MsmSig" = "8:_UNDEFINED"
@@ -441,7 +447,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_E2B3ED00A6FC4C0597F0D643C1D88D33"
+        "MsmKey" = "8:_E454060E0A164AB89F7B5077BBE7EBC5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E6A61CE27D4842CDBBC8774826886855"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -473,12 +485,6 @@
         {
         "MsmKey" = "8:_E9A18FFB4DD2E74C34FC768C5056711E"
         "OwnerKey" = "8:_514D1EA1E2409DAC02CB56BD9831A414"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EDBD87A50E70460EB03A8A0BD471E710"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -854,7 +860,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MotorAPIPlus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MotorAPIPlus, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_071047B10C544F599A450BC16530C41A"
@@ -1399,7 +1405,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:MotorAPIPlus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:MotorAPIPlus, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_569A30E7A6D5C314AC0FD13396EF37F3"
@@ -2352,6 +2358,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CDC6B382E7D4440DB7EB2AAC5BD41B5A"
+            {
+            "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\doc\\readme.docx"
+            "TargetName" = "8:readme.docx"
+            "Tag" = "8:"
+            "Folder" = "8:_37DB3615FE134F22BCD307AD15394271"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D364F573400E8AD579E2271202D97CB2"
             {
             "AssemblyRegister" = "3:1"
@@ -2465,12 +2491,32 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E2B3ED00A6FC4C0597F0D643C1D88D33"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E454060E0A164AB89F7B5077BBE7EBC5"
             {
             "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\doc\\readme.pdf"
             "TargetName" = "8:readme.pdf"
             "Tag" = "8:"
             "Folder" = "8:_37DB3615FE134F22BCD307AD15394271"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E6A61CE27D4842CDBBC8774826886855"
+            {
+            "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\config\\ic.txt"
+            "TargetName" = "8:ic.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_CBC8C83B93B64DAA8FC34336038786DA"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2514,26 +2560,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EDBD87A50E70460EB03A8A0BD471E710"
-            {
-            "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\doc\\readme.docx"
-            "TargetName" = "8:readme.docx"
-            "Tag" = "8:"
-            "Folder" = "8:_37DB3615FE134F22BCD307AD15394271"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F08B2EDBBA5D4C22A772C4C592B6BA96"

@@ -1,4 +1,5 @@
-﻿using ElectricSlit.ViewModels;
+﻿using DevExpress.Pdf.Native;
+using ElectricSlit.ViewModels;
 using HandyControl.Controls;
 using HandyControl.Tools.Extension;
 using ImTools;
@@ -23,6 +24,12 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using MessageBox = System.Windows.MessageBox;
 using Task = System.Threading.Tasks.Task;
+using MathNet.Numerics.Interpolation;
+using OxyPlot;
+using OxyPlot.Series;
+using System.Windows.Markup;
+using MathNet.Numerics;
+using static ImTools.ImMap;
 
 namespace ElectricSlit.Views
 {
@@ -43,17 +50,22 @@ namespace ElectricSlit.Views
         public PortSetWindow portSetWindow = null;
         public ToolWindow toolWindow = null;
         public AboutWindow aboutWindow = null;
+        public TipsWindow tipsWindow = null;
+
         private MainWindowViewModel mainWindowviewModel = null;
         private int tableCount = 0;
         public List<double> list_Light = new List<double>();
+        public List<IColorTempViewModel> list_ic = null;
 
+        public PlotModel pointModel = null;
+
+        List<WLModel> list_wl = null; //当前listview的 宽度-照度 列表 
         public double a, b, c = 0;//映射 二次多项式系数
         public double maxLight = 10000;
 
         public ObservableCollection<string> PortList { get; set; } = new ObservableCollection<string>();//当前串口列表
         public double CurrentPosition;
         private Thread thread_getPosition = null;
-
 
         private static string exePath;
         private static string debugFolderPath;
@@ -106,7 +118,7 @@ namespace ElectricSlit.Views
         //初始化
         private void Init()
         {
-            GroupBox_ControlPanel.IsEnabled = false;
+            //GroupBox_ControlPanel.IsEnabled = false;
 
             //GetPortList();
             SetUI();
@@ -114,6 +126,7 @@ namespace ElectricSlit.Views
             toolWindow = new ToolWindow(this);
             //toolWindow.Hide();
             aboutWindow = new AboutWindow(this);
+            tipsWindow = new TipsWindow(this);
 
             //初始化时打开串口连接窗口
             //portName = cbxSerialPortList.Text.ToString();
@@ -130,7 +143,22 @@ namespace ElectricSlit.Views
             CurrentPosition = 50;//mm
             double sliderWidth = 200;
             //Slider_Position.Width = CurrentPosition / 50 * sliderWidth;
-            ProgressBar_Light.Width = CurrentPosition / 50 * sliderWidth;
+            //ProgressBar_Light.Width = CurrentPosition / 50 * sliderWidth;
+
+            if(list_ic == null)
+            {
+                list_ic = new List<IColorTempViewModel>();
+
+
+                list_ic.Add(new IColorTempViewModel(0, 0));
+                Readic();
+
+                DataGrid_ColorTemp.ItemsSource = list_ic;
+
+                DataGrid_ColorTemp.Columns[0].Header = "电流(A)            ";
+                DataGrid_ColorTemp.Columns[1].Header = "色温(K)";
+            }
+
         }
 
         //获取实时实际位置
@@ -194,17 +222,37 @@ namespace ElectricSlit.Views
         #endregion
 
         #region 按钮方法
+        //单选按钮
+        private double CheckRadioButton()
+        {
+            if(RadioButton_1.IsChecked == true)
+            {
+                return Convert.ToDouble(0.1);
+            }
+            else if(RadioButton_2.IsChecked == true)
+            {
+                return Convert.ToDouble(1);
+            }
+            else if (RadioButton_3.IsChecked == true)
+            {
+                return Convert.ToDouble(5);
+            }
+            return 0;
+        }
+
         //狭缝调小
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             double singleStep = 0;
 
-            if (TextBox_step != null)
+/*            if (TextBox_step != null)
             {
-                singleStep = Convert.ToDouble(TextBox_step.Text.ToString());
-            }
+                //singleStep = Convert.ToDouble(TextBox_step.Text.ToString());
 
-            if(singleStep >= 0 && singleStep <= 50)
+            }*/
+
+            singleStep = CheckRadioButton();
+            if (singleStep >= 0 && singleStep <= 50)
             {
                 if(_motorEntity != null)
                 {
@@ -222,12 +270,13 @@ namespace ElectricSlit.Views
         {
             double singleStep = 0;
 
-            if (TextBox_step != null)
-            {
-                singleStep = Convert.ToDouble(TextBox_step.Text.ToString());
-            }
+            /*            if (TextBox_step != null)
+                        {
+                            singleStep = Convert.ToDouble(TextBox_step.Text.ToString());
+                        }*/
 
-            if(singleStep >= 0 && singleStep <= 50)
+            singleStep = CheckRadioButton();
+            if (singleStep >= 0 && singleStep <= 50)
             { 
                 if (_motorEntity != null)
                 {
@@ -327,7 +376,8 @@ namespace ElectricSlit.Views
 
                 else
                 {
-                    double targetPosition = toolWindow.Gx(list_Light[selectedIndex]);//光强对应的实际位置
+                    //double targetPosition = toolWindow.Gx(list_Light[selectedIndex]);//光强对应的实际位置
+                    double targetPosition = list_wl[selectedIndex].Width;
 
                     if (_motorEntity != null)
                     {
@@ -336,7 +386,7 @@ namespace ElectricSlit.Views
                     }
             
                     TextBox_Light.Text = list_Light[selectedIndex].ToString();
-                    ProgressBar_Light.Value = (list_Light[selectedIndex] / maxLight) * 100;
+                    //ProgressBar_Light.Value = (list_Light[selectedIndex] / maxLight) * 100;
                 }
             }
         }
@@ -367,16 +417,154 @@ namespace ElectricSlit.Views
             }
         }
 
+        //色温调节 修改
+        private void Button_Click_10(object sender, RoutedEventArgs e)
+        {
+            DataGrid_ColorTemp.IsEnabled = true;
+
+            list_ic.Add(new IColorTempViewModel(0, 0));
+
+            DataGrid_ColorTemp.ItemsSource = null;
+            DataGrid_ColorTemp.ItemsSource = list_ic;
+
+            DataGrid_ColorTemp.Columns[0].Header = "电流(A)            ";
+            DataGrid_ColorTemp.Columns[1].Header = "色温(K)";
+
+            System.Windows.Media.Brush brush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 255, 255));
+            DataGrid_ColorTemp.Background = brush;
+
+        }
+
+        private void Readic()
+        {
+            list_ic = new List<IColorTempViewModel>();
+
+            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\ic.txt");
+
+            using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                try
+                {
+                    StreamReader reader = new StreamReader(fs);
+                    string line = reader.ReadLine();
+                    int n = 0;
+                    while (line != null)
+                    {
+                        line = reader.ReadLine();
+                        if (line != null)
+                        {
+                            var stringls = line.Split(' ');
+                            if (stringls.Length == 2)
+                            {
+                                double.TryParse(stringls[0], out double i);
+                                int.TryParse(stringls[1], out int c);
+                                list_ic.Add(new IColorTempViewModel(i, c));
+                            }
+                        }
+                        n++;
+                    }
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
+        //色温调节 保存
+
+        private void Button_Click_11(object sender, RoutedEventArgs e)
+        {
+            DataGrid_ColorTemp.IsEnabled = false;
+            System.Windows.Media.Brush brush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(240, 240, 240));
+            DataGrid_ColorTemp.Background = brush;
+
+            //保存到文件
+            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\ic.txt");
+
+            if (filePath != null)
+            {
+                StreamWriter writer = new StreamWriter(filePath);
+                writer.WriteLine("ic");
+                for (int i = 0; i < list_ic.Count; i++)
+                {
+                    writer.WriteLine(list_ic[i].Current.ToString() + " " + list_ic[i].ColorTemp.ToString());
+                }
+                writer.Close();
+                MessageBox.Show("保存完成!");
+            }
+        }
+
         //打开串口连接界面
         private void MenuSerialPort_Click(object sender, RoutedEventArgs e)
         {
             portSetWindow.Show();
         }
 
+        //打开关于界面
+        private void MenuAbout_Click_1(object sender, RoutedEventArgs e)
+        {
+            tipsWindow.Show();
+        }
+
+        //计算映射 显示图表
+        private void Button_Click_12(object sender, RoutedEventArgs e)
+        {
+            if(ListView_Set.Items.Count >= 2)
+            {
+                double[] dList_Width = new double[list_Light.Count];//当前listview的 宽度 数组
+                double[] dList_Light = new double[list_Light.Count];//当前listview的 照度 数组
+
+                list_wl = new List<WLModel>();//当前listview的 宽度-照度 列表
+
+                //添加到宽度-照度 列表
+                for (int i = 0; i < list_Light.Count; i++)
+                {
+                    //dList_Width[i] = _motorFunc.GetCurrentPosition();
+                    dList_Width[i] = 10 + i * 4;
+                    dList_Light[i] = list_Light[i];
+
+                    list_wl.Add(new WLModel(dList_Width[i], dList_Light[i]));
+                }
+
+                //list_wl.Sort();//排序
+
+                pointModel = new PlotModel();
+                //对排序后区间 进行插值计算 并得到每个区间的新的照度列表
+                if (list_wl.Count >= 2)
+                {
+                    for(int i = 0; i < list_wl.Count - 1; i++)
+                    {
+                        //IInterpolation interpolation = CubicSpline.InterpolateNaturalSorted(dList_Width, dList_Light);
+                        IInterpolation interpolation = MathNet.Numerics.Interpolation.LinearSpline.InterpolateSorted(dList_Width, dList_Light);
+
+                        List<double> list_LightInter = new List<double>();//一个区间的插值后照度列表
+                        var series = new ScatterSeries
+                        {
+                            MarkerType = MarkerType.Circle, // 散点的形状
+                            MarkerSize = 2, // 散点的大小
+                        };
+                        
+
+                        for (int j = Convert.ToInt32(dList_Width[i]); j < Convert.ToInt32(dList_Width[i + 1]); j++)
+                        {
+                            list_LightInter.Add(interpolation.Interpolate(j));
+                            series.Points.Add(new ScatterPoint(j, list_LightInter[j - Convert.ToInt32(dList_Width[i])]));
+                        }
+                        pointModel.Series.Add(series);
+                    }
+                }
+            }
+
+            pointPlot.Model = pointModel;
+            pointPlot.InvalidatePlot();
+            //pointPlot.Model.Series.Clear();
+        }
+
         //打开工具界面
         private void MenuTool_Click(object sender, RoutedEventArgs e)
         {
-            toolWindow.Show();
+            //toolWindow.Show();
         }
 
         //打开关于界面

@@ -112,7 +112,7 @@ namespace MotorTestDemo.Views
 
                     isConnnected_Motor = true;
                     part_mainwindow.TextBlock_isConnected.Text = "已连接";
-                    Brush brush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 255, 0));
+                    System.Windows.Media.Brush brush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 255, 0));
                     part_mainwindow.TextBlock_isConnected.Foreground = brush;
 
                     part_mainwindow.TextBlock_CurrentWidth.Text = part_mainwindow._motorFunc.GetCurrentPosition().ToString();

@@ -6,10 +6,10 @@
     xmlns:local="clr-namespace:ElectricSlit.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mpp="clr-namespace:MoonPdfLib;assembly=MoonPdfLib"
-    Title="关于"
+    Title="使用说明"
     Width="600"
     Height="550"
-    Background="AliceBlue"
+    Background="#ffffff"
     FontSize="12"
     FontWeight="Black"
     Icon="/Resources/icon_about.png"
@@ -29,9 +29,9 @@
                     Width="100"
                     Margin="10"
                     HorizontalAlignment="Center"
+                    Background="#f0f0f0"
                     Click="Button_Click"
                     Content="查看使用说明"
-                    Style="{StaticResource ButtonPrimary}"
                     ToolTip="Tips"
                     ToolTipService.ShowDuration="0">
                     <!--
@@ -80,7 +80,7 @@
             <mpp:MoonPdfPanel
                 x:Name="moonPdfPanel"
                 AllowDrop="True"
-                Background="AliceBlue"
+                Background="#f0f0f0"
                 PageMargin="0,2,4,2"
                 PageRowDisplay="ContinuousPageRows"
                 ViewType="SinglePage" />
