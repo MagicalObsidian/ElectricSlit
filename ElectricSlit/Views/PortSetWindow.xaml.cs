@@ -118,6 +118,7 @@ namespace MotorTestDemo.Views
                     part_mainwindow.TextBlock_CurrentWidth.Text = part_mainwindow._motorFunc.GetCurrentPosition().ToString();
 
                     part_mainwindow.GroupBox_ControlPanel.IsEnabled = true;//将主窗口控制面板设为可用
+                    part_mainwindow.GroupBox_Lux.IsEnabled = true;
 
                     //成功连接后记录下串口号，之后打开软件尝试自动连接
                     SaveCom();

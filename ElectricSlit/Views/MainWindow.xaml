@@ -76,27 +76,6 @@
                 Header="控制"
                 Style="{StaticResource InputElementBaseStyle}">
                 <Grid>
-                    <!--  显示  -->
-                    <!--
-                    <Grid>
-                        <Grid
-                            Grid.Row="0"
-                            Grid.RowSpan="2"
-                            HorizontalAlignment="Center">
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-
-                            <ProgressBar
-                                Name="ProgressBar_Light"
-                                Grid.Row="1"
-                                Width="{Binding}"
-                                Margin="10"
-                                Value="100" />
-
-                        </Grid>
-                    </Grid>
-                    -->
                     <!--  移动  -->
                     <Grid>
                         <StackPanel Orientation="Horizontal">
@@ -113,6 +92,7 @@
                                         Text="0"
                                         TextAlignment="Center" />
                             -->
+
                             <hc:ButtonGroup Margin="10" Orientation="Horizontal">
                                 <RadioButton
                                     x:Name="RadioButton_1"
@@ -128,6 +108,13 @@
                                     Margin="10"
                                     Content="5 mm" />
                             </hc:ButtonGroup>
+                            <ComboBox Name="ComboBox_SingleStep" Margin="10">
+                                <ComboBoxItem Content="0.1 mm" IsSelected="True" />
+                                <ComboBoxItem Content="1 mm" />
+                                <ComboBoxItem Content="2 mm" />
+                                <ComboBoxItem Content="5 mm" />
+                            </ComboBox>
+
                             <Button
                                 Width="30"
                                 Height="30"
@@ -222,7 +209,7 @@
                         <TextBlock
                             Margin="20"
                             VerticalAlignment="Bottom"
-                            Text="Lx"
+                            Text="lx"
                             TextAlignment="Center" />
                     </StackPanel>
 
@@ -276,11 +263,19 @@
                                     Header="编号" />
                                 <GridViewColumn
                                     Width="150"
+                                    DisplayMemberBinding="{Binding Width}"
+                                    Header="宽度(mm)" />
+                                <GridViewColumn
+                                    Width="150"
                                     DisplayMemberBinding="{Binding Light}"
-                                    Header="照度" />
+                                    Header="照度(lx)" />
                             </GridView>
                         </ListView.View>
-
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Height" Value="20" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
                     </ListView>
 
                     <!--  图表  -->
@@ -293,14 +288,14 @@
                 </Grid>
             </GroupBox>
 
-            <!--  色温调节  -->
+            <!--  色温记录  -->
             <GroupBox
                 x:Name="GroupBox_ColorTemperature"
                 Grid.Row="1"
                 Grid.Column="1"
                 Margin="10"
                 Background="#ffffff"
-                Header="色温调节"
+                Header="色温记录"
                 Style="{StaticResource InputElementBaseStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -311,8 +306,9 @@
                         Name="DataGrid_ColorTemp"
                         Margin="10"
                         AutoGenerateColumns="True"
-                        Background="#ffffff"
-                        ItemsSource="{Binding}" />
+                        Background="#f0f0f0"
+                        ItemsSource="{Binding}"
+                        RowHeight="50" />
                     <StackPanel
                         Grid.Row="1"
                         Margin="10"

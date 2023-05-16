@@ -30,6 +30,7 @@ using OxyPlot.Series;
 using System.Windows.Markup;
 using MathNet.Numerics;
 using static ImTools.ImMap;
+using OxyPlot.Axes;
 
 namespace ElectricSlit.Views
 {
@@ -55,11 +56,10 @@ namespace ElectricSlit.Views
         private MainWindowViewModel mainWindowviewModel = null;
         private int tableCount = 0;
         public List<double> list_Light = new List<double>();
+
         public List<IColorTempViewModel> list_ic = null;
-
+        public List<WLModel> list_wl = null; //当前listview的 宽度-照度 列表 
         public PlotModel pointModel = null;
-
-        List<WLModel> list_wl = null; //当前listview的 宽度-照度 列表 
         public double a, b, c = 0;//映射 二次多项式系数
         public double maxLight = 10000;
 
@@ -119,8 +119,8 @@ namespace ElectricSlit.Views
         private void Init()
         {
             //GroupBox_ControlPanel.IsEnabled = false;
+            //GroupBox_Lux.IsEnabled = false;
 
-            //GetPortList();
             SetUI();
 
             toolWindow = new ToolWindow(this);
@@ -145,10 +145,10 @@ namespace ElectricSlit.Views
             //Slider_Position.Width = CurrentPosition / 50 * sliderWidth;
             //ProgressBar_Light.Width = CurrentPosition / 50 * sliderWidth;
 
-            if(list_ic == null)
+            if(list_ic == null)//&& list_wl == null
             {
                 list_ic = new List<IColorTempViewModel>();
-
+                list_wl = new List<WLModel>();
 
                 list_ic.Add(new IColorTempViewModel(0, 0));
                 Readic();
@@ -157,8 +157,26 @@ namespace ElectricSlit.Views
 
                 DataGrid_ColorTemp.Columns[0].Header = "电流(A)            ";
                 DataGrid_ColorTemp.Columns[1].Header = "色温(K)";
-            }
 
+                var xAxis = new LinearAxis
+                {
+                    Position = AxisPosition.Bottom,
+                    Title = "狭缝宽度(mm)"
+                };
+                var yAxis = new LinearAxis
+                {
+                    Position = AxisPosition.Left,
+                    Title = "照度(Lx)"
+                };
+
+                pointModel = new PlotModel();
+                var series = new LineSeries();
+                pointModel.Series.Add(series);
+                pointModel.Axes.Add(xAxis);
+                pointModel.Axes.Add(yAxis);
+                pointPlot.Model = pointModel;
+                pointPlot.InvalidatePlot();
+            }
         }
 
         //获取实时实际位置
@@ -187,7 +205,7 @@ namespace ElectricSlit.Views
             if(_motorEntity != null)
             {
                 Thread.Sleep(100);
-                CurrentPosition = _motorFunc.GetCurrentPosition();
+                CurrentPosition = 50 - _motorFunc.GetCurrentPosition();
                 //CurrentPosition++;
 
                 //TextBox_Position.Text = CurrentPosition.ToString();
@@ -245,14 +263,14 @@ namespace ElectricSlit.Views
         {
             double singleStep = 0;
 
-/*            if (TextBox_step != null)
+/*          if (TextBox_step != null)
             {
                 //singleStep = Convert.ToDouble(TextBox_step.Text.ToString());
 
             }*/
 
             singleStep = CheckRadioButton();
-            if (singleStep >= 0 && singleStep <= 50)
+            if (CurrentPosition - singleStep < 0)
             {
                 if(_motorEntity != null)
                 {
@@ -261,7 +279,7 @@ namespace ElectricSlit.Views
             }
             else
             {
-                MessageBox.Show("步距过大！", "错误");
+                //MessageBox.Show("步距过大！", "错误");
             }
         }
 
@@ -276,7 +294,7 @@ namespace ElectricSlit.Views
                         }*/
 
             singleStep = CheckRadioButton();
-            if (singleStep >= 0 && singleStep <= 50)
+            if (CurrentPosition + singleStep > 50)
             { 
                 if (_motorEntity != null)
                 {
@@ -285,7 +303,7 @@ namespace ElectricSlit.Views
             }
             else
             {
-                MessageBox.Show("步距过大！", "错误");
+                //MessageBox.Show("步距过大！", "错误");
             }
         }
 
@@ -347,6 +365,7 @@ namespace ElectricSlit.Views
                 ListView_Set.Items.Add(lightSetModel);
 
                 list_Light.Add(lightset);
+                list_wl.Add(new WLModel(0, lightset));//CurrentPosition
             }
         }
 
@@ -417,7 +436,7 @@ namespace ElectricSlit.Views
             }
         }
 
-        //色温调节 修改
+        //色温记录 修改
         private void Button_Click_10(object sender, RoutedEventArgs e)
         {
             DataGrid_ColorTemp.IsEnabled = true;
@@ -428,13 +447,14 @@ namespace ElectricSlit.Views
             DataGrid_ColorTemp.ItemsSource = list_ic;
 
             DataGrid_ColorTemp.Columns[0].Header = "电流(A)            ";
-            DataGrid_ColorTemp.Columns[1].Header = "色温(K)";
+            DataGrid_ColorTemp.Columns[1].Header = "色温(K)      ";
 
             System.Windows.Media.Brush brush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 255, 255));
             DataGrid_ColorTemp.Background = brush;
 
         }
 
+        //读取电流色温表
         private void Readic()
         {
             list_ic = new List<IColorTempViewModel>();
@@ -472,7 +492,6 @@ namespace ElectricSlit.Views
         }
 
         //色温调节 保存
-
         private void Button_Click_11(object sender, RoutedEventArgs e)
         {
             DataGrid_ColorTemp.IsEnabled = false;
@@ -515,17 +534,17 @@ namespace ElectricSlit.Views
                 double[] dList_Width = new double[list_Light.Count];//当前listview的 宽度 数组
                 double[] dList_Light = new double[list_Light.Count];//当前listview的 照度 数组
 
-                list_wl = new List<WLModel>();//当前listview的 宽度-照度 列表
-
+                //添加按钮里加入到 list_wl 列表
+                /*list_wl = new List<WLModel>();//当前listview的 宽度-照度 列表
                 //添加到宽度-照度 列表
                 for (int i = 0; i < list_Light.Count; i++)
                 {
-                    //dList_Width[i] = _motorFunc.GetCurrentPosition();
-                    dList_Width[i] = 10 + i * 4;
+                    //dList_Width[i] = CurrentPosition;
+                    dList_Width[i] = i * 5; //测试图表
                     dList_Light[i] = list_Light[i];
 
                     list_wl.Add(new WLModel(dList_Width[i], dList_Light[i]));
-                }
+                }*/
 
                 //list_wl.Sort();//排序
 
@@ -536,26 +555,36 @@ namespace ElectricSlit.Views
                     for(int i = 0; i < list_wl.Count - 1; i++)
                     {
                         //IInterpolation interpolation = CubicSpline.InterpolateNaturalSorted(dList_Width, dList_Light);
-                        IInterpolation interpolation = MathNet.Numerics.Interpolation.LinearSpline.InterpolateSorted(dList_Width, dList_Light);
+                        IInterpolation interpolation = LinearSpline.InterpolateSorted(dList_Width, dList_Light);
 
                         List<double> list_LightInter = new List<double>();//一个区间的插值后照度列表
-                        var series = new ScatterSeries
+                        var series = new LineSeries
                         {
-                            MarkerType = MarkerType.Circle, // 散点的形状
-                            MarkerSize = 2, // 散点的大小
+                            //MarkerType = MarkerType.Circle, // 散点的形状
                         };
                         
-
-                        for (int j = Convert.ToInt32(dList_Width[i]); j < Convert.ToInt32(dList_Width[i + 1]); j++)
+                        for (int j = Convert.ToInt32(dList_Width[i]); j <= Convert.ToInt32(dList_Width[i + 1]); j++)
                         {
                             list_LightInter.Add(interpolation.Interpolate(j));
-                            series.Points.Add(new ScatterPoint(j, list_LightInter[j - Convert.ToInt32(dList_Width[i])]));
+                            //series.Points.Add(new ScatterPoint(j, list_LightInter[j - Convert.ToInt32(dList_Width[i])]));
+                            series.Points.Add(new DataPoint(j, list_LightInter[j - Convert.ToInt32(dList_Width[i])]));
                         }
                         pointModel.Series.Add(series);
                     }
                 }
             }
-
+            var xAxis = new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                Title = "狭缝宽度(mm)"
+            };
+            var yAxis = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Title = "照度(Lx)"
+            };
+            pointModel.Axes.Add(xAxis);
+            pointModel.Axes.Add(yAxis);
             pointPlot.Model = pointModel;
             pointPlot.InvalidatePlot();
             //pointPlot.Model.Series.Clear();
