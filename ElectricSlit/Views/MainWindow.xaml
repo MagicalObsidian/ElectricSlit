@@ -108,6 +108,7 @@
                                     Margin="10"
                                     Content="5 mm" />
                             </hc:ButtonGroup>
+                            
                             <ComboBox Name="ComboBox_SingleStep" Margin="10">
                                 <ComboBoxItem Content="0.1 mm" IsSelected="True" />
                                 <ComboBoxItem Content="1 mm" />
