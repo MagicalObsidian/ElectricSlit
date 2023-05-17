@@ -18,9 +18,19 @@ namespace ElectricSlit.ViewModels
 			set { index = value; OnPropertyChanged(); }
 		}
 
+		private double width;
+		/// <summary>
+		/// 狭缝宽度
+		/// </summary>
+		public double Width
+		{
+			get { return width; }
+			set { width = value; OnPropertyChanged(); }
+		}
+
 		private double light;
 		/// <summary>
-		/// 光强
+		/// 照度
 		/// </summary>
 		public double Light
 		{
@@ -30,9 +40,10 @@ namespace ElectricSlit.ViewModels
 
 		public LightSetModel() { }
 
-		public LightSetModel(int index, double light)
+		public LightSetModel(int index, double width,double light)
 		{
 			this.Index = index;
+			this.Width = width;
 			this.Light = light;
 		}
 

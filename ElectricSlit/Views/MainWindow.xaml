@@ -7,8 +7,8 @@
     xmlns:oxy="http://oxyplot.org/wpf"
     xmlns:prism="http://prismlibrary.com/"
     Title="{Binding Title}"
-    Width="1200"
-    Height="750"
+    Width="1400"
+    Height="850"
     prism:ViewModelLocator.AutoWireViewModel="True"
     FontSize="12"
     Icon="/Resources/icon_power.png"
@@ -57,8 +57,8 @@
         <!--  主界面  -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="7*" />
-                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="8*" />
+                <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
@@ -93,6 +93,7 @@
                                         TextAlignment="Center" />
                             -->
 
+                            <!--
                             <hc:ButtonGroup Margin="10" Orientation="Horizontal">
                                 <RadioButton
                                     x:Name="RadioButton_1"
@@ -108,9 +109,14 @@
                                     Margin="10"
                                     Content="5 mm" />
                             </hc:ButtonGroup>
-                            
-                            <ComboBox Name="ComboBox_SingleStep" Margin="10">
+                            -->
+
+                            <ComboBox
+                                Name="ComboBox_SingleStep"
+                                Height="30"
+                                Margin="10">
                                 <ComboBoxItem Content="0.1 mm" IsSelected="True" />
+                                <ComboBoxItem Content="0.5 mm" />
                                 <ComboBoxItem Content="1 mm" />
                                 <ComboBoxItem Content="2 mm" />
                                 <ComboBoxItem Content="5 mm" />
@@ -176,9 +182,8 @@
                 <!--  设定值  -->
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="8*" />
                         <RowDefinition Height="2*" />
-                        <RowDefinition Height="2*" />
-                        <RowDefinition Height="6*" />
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -186,7 +191,7 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
-                    <!--  显示  -->
+                    <!--
                     <StackPanel
                         Grid.ColumnSpan="2"
                         HorizontalAlignment="Center"
@@ -213,6 +218,7 @@
                             Text="lx"
                             TextAlignment="Center" />
                     </StackPanel>
+                    -->
 
                     <!--  输入 按钮  -->
                     <StackPanel
@@ -248,43 +254,70 @@
                             Content="计算" />
                     </StackPanel>
 
-                    <!--  列表  -->
-                    <ListView
-                        x:Name="ListView_Set"
-                        Grid.Row="2"
-                        Margin="10"
-                        Background="#f0f0f0"
-                        KeyDown="ListView_Set_KeyDown"
-                        MouseRightButtonUp="ListView_Set_MouseRightButtonUp">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn
-                                    Width="100"
-                                    DisplayMemberBinding="{Binding Index}"
-                                    Header="编号" />
-                                <GridViewColumn
-                                    Width="150"
-                                    DisplayMemberBinding="{Binding Width}"
-                                    Header="宽度(mm)" />
-                                <GridViewColumn
-                                    Width="150"
-                                    DisplayMemberBinding="{Binding Light}"
-                                    Header="照度(lx)" />
-                            </GridView>
-                        </ListView.View>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="Height" Value="20" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                    </ListView>
+                    <!--  列表 图表  -->
+                    <Grid Grid.Row="0" Grid.ColumnSpan="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="4*" />
+                        </Grid.ColumnDefinitions>
 
-                    <!--  图表  -->
-                    <Grid
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        Margin="10">
-                        <oxy:PlotView x:Name="pointPlot" Model="{Binding pointModels}" />
+                        <!--  主光源 列表  -->
+                        <GroupBox
+                            Margin="10"
+                            Header="主光源"
+                            Style="{StaticResource InputElementBaseStyle}">
+                            <ListView
+                                x:Name="ListView_Set"
+                                Background="#f0f0f0"
+                                KeyDown="ListView_Set_KeyDown"
+                                MouseRightButtonUp="ListView_Set_MouseRightButtonUp">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn
+                                            Width="100"
+                                            DisplayMemberBinding="{Binding Width}"
+                                            Header="宽度(mm)" />
+                                        <GridViewColumn
+                                            Width="100"
+                                            DisplayMemberBinding="{Binding Light}"
+                                            Header="照度(lx)" />
+                                    </GridView>
+                                </ListView.View>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="Height" Value="50" />
+                                        <Setter Property="Margin" Value="10,0,0,0" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                            </ListView>
+                        </GroupBox>
+
+                        <!--  辅助光源 列表  -->
+                        <GroupBox
+                            Grid.Column="1"
+                            Margin="10"
+                            Header="辅助光源"
+                            Style="{StaticResource InputElementBaseStyle}">
+                            <DataGrid
+                                x:Name="DataGrid_Manual"
+                                AutoGenerateColumns="True"
+                                Background="#f0f0f0"
+                                ItemsSource="{Binding}"
+                                RowHeight="50" />
+                        </GroupBox>
+
+                        <!--  图表  -->
+                        <GroupBox
+                            Grid.Column="2"
+                            Margin="10"
+                            Header="映射"
+                            Style="{StaticResource InputElementBaseStyle}">
+                            <oxy:PlotView
+                                x:Name="pointPlot"
+                                IsMouseWheelEnabled="False"
+                                Model="{Binding pointModels}" />
+                        </GroupBox>
                     </Grid>
                 </Grid>
             </GroupBox>
