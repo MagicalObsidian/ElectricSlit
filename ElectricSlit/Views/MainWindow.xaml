@@ -26,7 +26,12 @@
             <MenuItem
                 x:Name="MenuFile"
                 FontSize="12"
-                Header="文件(F)" />
+                Header="文件(F)">
+                <MenuItem
+                    x:Name="MenuExportMap"
+                    FontSize="12"
+                    Header="导出映射文件" />
+            </MenuItem>
             <MenuItem
                 x:Name="MenuSerialPort"
                 Click="MenuSerialPort_Click"
@@ -245,21 +250,32 @@
                         <Button
                             Margin="10"
                             Background="#f0f0f0"
-                            Click="Button_Click_8"
-                            Content="应用" />
+                            Click="Button_Click_12"
+                            Content="计算" />
                         <Button
                             Margin="10"
                             Background="#f0f0f0"
-                            Click="Button_Click_12"
-                            Content="计算" />
+                            Click="Button_Click_13"
+                            Content="保存" />
+                        <TextBox
+                            x:Name="TextBox_LightTarget"
+                            Width="100"
+                            Margin="10"
+                            VerticalAlignment="Center"
+                            TextAlignment="Center" />
+                        <Button
+                            Margin="10"
+                            Background="#f0f0f0"
+                            Click="Button_Click_8"
+                            Content="应用" />
                     </StackPanel>
 
                     <!--  列表 图表  -->
                     <Grid Grid.Row="0" Grid.ColumnSpan="2">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition Width="2.5*" />
+                            <ColumnDefinition Width="2.5*" />
+                            <ColumnDefinition Width="5*" />
                         </Grid.ColumnDefinitions>
 
                         <!--  主光源 列表  -->
@@ -337,11 +353,13 @@
                         <RowDefinition Height="2*" />
                     </Grid.RowDefinitions>
                     <DataGrid
-                        Name="DataGrid_ColorTemp"
+                        x:Name="DataGrid_ColorTemp"
                         Margin="10"
                         AutoGenerateColumns="True"
                         Background="#f0f0f0"
+                        CanUserDeleteRows="True"
                         ItemsSource="{Binding}"
+                        KeyDown="DataGrid_ColorTemp_KeyDown"
                         RowHeight="50" />
                     <StackPanel
                         Grid.Row="1"

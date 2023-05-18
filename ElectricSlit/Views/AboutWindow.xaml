@@ -32,6 +32,7 @@
                     Background="#f0f0f0"
                     Click="Button_Click"
                     Content="查看使用说明"
+                    IsEnabled="False"
                     ToolTip="Tips"
                     ToolTipService.ShowDuration="0">
                     <!--
