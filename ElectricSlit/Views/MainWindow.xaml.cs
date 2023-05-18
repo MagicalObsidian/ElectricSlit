@@ -661,11 +661,12 @@ namespace ElectricSlit.Views
 
                             int txLast = Convert.ToInt32(Convert.ToDouble(dList_Width[i].ToString("f1")) * 10);
                             int tyLast = Convert.ToInt32(Convert.ToDouble(dList_Width[i + 1].ToString("f1")) * 10);
-
                             double temp = Convert.ToDouble(dList_Width[i].ToString("f1"));//保留小数点后一位 宽度
+                            double kLast = (dList_Light[i + 1] -dList_Light[i])
+                                / (Convert.ToDouble(dList_Width[i + 1].ToString("f1")) - temp); //每个区间的系数 k//系数 k
 
                             //步距为整数
-                            for (int j = txLast; j <= tyLast; j++)
+                            /*for (int j = txLast; j <= tyLast; j++)
                             {
                                 //得到每个细分区间插值后的照度列表
                                 list_LightInter.Add(interpolation.Interpolate(j / 10));
@@ -691,24 +692,25 @@ namespace ElectricSlit.Views
                                     list_LightInterWL.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInter[j - txLast].ToString("f1"))));
                                     list_LightInterWLM.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInterOverlay[j - txLast].ToString("f1"))));
                                 }
-                            }
+                            }*/
 
                             //步距小数点后一位
-                            /*for (int j = txLast; j <= tyLast; j++)
+                            for (int j = txLast; j <= tyLast; j++)
                             {
                                 //得到每个细分区间插值后的照度列表
-                                list_LightInter.Add(interpolation.Interpolate(temp + (j - txLast) * 0.1));
-                                list_LightInterOverlay.Add(list_LightInter[j - txLast] + interpolation1.Interpolate(temp + (j-txLast) * 0.1));
+                                double dw = Convert.ToDouble(((j - txLast) * 0.1).ToString("f1"));
+                                list_LightInter.Add(dList_Light[i] + kLast * dw);
+                                list_LightInterOverlay.Add(list_LightInter[j - txLast] + dList_LightM[i] + kLast * dw);
 
                                 //将点添加到图例中
-                                seriesLast.Points.Add(new DataPoint(j/10, list_LightInter[j - txLast]));
-                                series1Last.Points.Add(new DataPoint(j/10, list_LightInterOverlay[j - txLast]));
+                                seriesLast.Points.Add(new DataPoint(j, list_LightInter[j - txLast]));
+                                series1Last.Points.Add(new DataPoint(j, list_LightInterOverlay[j - txLast]));
 
                                 //添加最后一个点
                                 if (j == 500)
                                 {
-                                    seriesLast.Points.Add(new DataPoint(j/10, list_LightInter[j - txLast]));
-                                    series1Last.Points.Add(new DataPoint(j/10, list_LightInterOverlay[j - txLast]));
+                                    seriesLast.Points.Add(new DataPoint(j, list_LightInter[j - txLast]));
+                                    series1Last.Points.Add(new DataPoint(j, list_LightInterOverlay[j - txLast]));
 
                                     list_LightInterWL.Add(new WLModel(temp, Convert.ToDouble(list_LightInter[j - txLast].ToString("f1"))));
                                     list_LightInterWLM.Add(new WLModel(temp, Convert.ToDouble(list_LightInterOverlay[j - txLast].ToString("f1"))));
@@ -720,8 +722,8 @@ namespace ElectricSlit.Views
                                     list_LightInterWL.Add(new WLModel(temp, Convert.ToDouble(list_LightInter[j - txLast].ToString("f1"))));
                                     list_LightInterWLM.Add(new WLModel(temp, Convert.ToDouble(list_LightInterOverlay[j - txLast].ToString("f1"))));
                                 }
-                            }*/
-                            
+                            }
+
                             pointModel.Series.Add(seriesLast);
                             pointModel.Series.Add(series1Last);
                         }
@@ -730,11 +732,12 @@ namespace ElectricSlit.Views
                             //每个细分区间的上下限
                             int tx = Convert.ToInt32(Convert.ToDouble(dList_Width[i].ToString("f1")) * 10);
                             int ty = Convert.ToInt32(Convert.ToDouble(dList_Width[i+1].ToString("f1")) * 10);
-
                             double temp = Convert.ToDouble(dList_Width[i].ToString("f1"));//保留小数点后一位 宽度
+                            double k = (dList_Light[i+1] - dList_Light[i])
+                                / (Convert.ToDouble(dList_Width[i + 1].ToString("f1")) - temp); //每个区间的系数 k
 
                             //步距为整数
-                            for (int j = tx; j <= ty; j++)
+                            /*for (int j = tx; j <= ty; j++)
                             {
                                 //得到每个细分区间插值后的照度列表
                                 list_LightInter.Add(interpolation.Interpolate(j / 10));
@@ -761,37 +764,38 @@ namespace ElectricSlit.Views
                                     list_LightInterWL.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInter[j - tx].ToString("f1"))));
                                     list_LightInterWLM.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInterOverlay[j - tx].ToString("f1"))));
                                 }
-                            }
+                            }*/
 
                             //步距小数点后一位
-                            /*for (int j = tx; j <= ty; j++)
+                            for (int j = tx; j <= ty; j++)
                             {
                                 //得到每个细分区间插值后的照度列表
-                                list_LightInter.Add(interpolation.Interpolate(temp + (j - tx) * 0.1));
-                                list_LightInterOverlay.Add(list_LightInter[j - tx] + interpolation1.Interpolate(temp + (j - tx) * 0.1));
-
+                                double dw = Convert.ToDouble(((j - tx) * 0.1).ToString("f1"));
+                                list_LightInter.Add(dList_Light[i] + k * dw);
+                                list_LightInterOverlay.Add(list_LightInter[j - tx] + dList_LightM[i] + k * dw);
+                                
                                 //将点添加到图例中
                                 //series.Points.Add(new ScatterPoint(j, list_LightInter[j - Convert.ToInt32(dList_Width[i])]));
-                                series.Points.Add(new DataPoint(j/10, list_LightInter[j - tx]));
-                                series1.Points.Add(new DataPoint(j/10, list_LightInterOverlay[j - tx]));
+                                series.Points.Add(new DataPoint(j, list_LightInter[j - tx]));
+                                series1.Points.Add(new DataPoint(j, list_LightInterOverlay[j - tx]));
 
                                 //添加最后一个点
-                                if(j == 500)
+                                if (j == 500)
                                 {
-                                    series.Points.Add(new DataPoint(j/10, list_LightInter[j - tx]));
-                                    series1.Points.Add(new DataPoint(j/10, list_LightInterOverlay[j - tx]));
+                                    series.Points.Add(new DataPoint(j, list_LightInter[j - tx]));
+                                    series1.Points.Add(new DataPoint(j, list_LightInterOverlay[j - tx]));
 
                                     list_LightInterWL.Add(new WLModel(temp, Convert.ToDouble(list_LightInter[j - tx].ToString("f1"))));
                                     list_LightInterWLM.Add(new WLModel(temp, Convert.ToDouble(list_LightInterOverlay[j - tx].ToString("f1"))));
                                 }
 
                                 //获得整个映射的列表
-                                if(j < ty)
+                                if (j < ty)
                                 {
                                     list_LightInterWL.Add(new WLModel(temp, Convert.ToDouble(list_LightInter[j - tx].ToString("f1"))));
                                     list_LightInterWLM.Add(new WLModel(temp, Convert.ToDouble(list_LightInterOverlay[j - tx].ToString("f1"))));
                                 }
-                            }*/
+                            }
                         }
 
                         //设置图例
