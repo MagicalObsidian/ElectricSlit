@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_02F162843D7E475496D8A27682EE78D5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_071047B10C544F599A450BC16530C41A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -135,6 +141,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_3D35CC69E4E7C61DC312DA688F772DE4"
+        "OwnerKey" = "8:_F08B2EDBBA5D4C22A772C4C592B6BA96"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3E6CCFAA9C9AA38D0131853B941E9FCD"
+        "OwnerKey" = "8:_F08B2EDBBA5D4C22A772C4C592B6BA96"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4DD8BD0357824F6CBA373B460427C0A6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -165,8 +183,32 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_51ED4FD155BD35A8F6B1948D8DD8D05C"
+        "OwnerKey" = "8:_F08B2EDBBA5D4C22A772C4C592B6BA96"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_569A30E7A6D5C314AC0FD13396EF37F3"
         "OwnerKey" = "8:_F08B2EDBBA5D4C22A772C4C592B6BA96"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5B9C1375348A9F0E1AA15BF472A2D5EE"
+        "OwnerKey" = "8:_F08B2EDBBA5D4C22A772C4C592B6BA96"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5B9C1375348A9F0E1AA15BF472A2D5EE"
+        "OwnerKey" = "8:_8FDD83BEF454090318BA253B920705D0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5B9C1375348A9F0E1AA15BF472A2D5EE"
+        "OwnerKey" = "8:_3E6CCFAA9C9AA38D0131853B941E9FCD"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -243,6 +285,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7FEFC3447B144482B5A698082BF79905"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_82C31860AC5A64F461360532F35DD0BA"
         "OwnerKey" = "8:_C71B20E72D7C2E71F4C6DC8AD8299B74"
         "MsmSig" = "8:_UNDEFINED"
@@ -287,6 +335,18 @@
         {
         "MsmKey" = "8:_8941A9D111879CD507D3B4CBDD4A403F"
         "OwnerKey" = "8:_1878361F49BE2121148CD9D0382518D4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8FDD83BEF454090318BA253B920705D0"
+        "OwnerKey" = "8:_3E6CCFAA9C9AA38D0131853B941E9FCD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8FDD83BEF454090318BA253B920705D0"
+        "OwnerKey" = "8:_F08B2EDBBA5D4C22A772C4C592B6BA96"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -406,7 +466,19 @@
         "Entry"
         {
         "MsmKey" = "8:_C71B20E72D7C2E71F4C6DC8AD8299B74"
+        "OwnerKey" = "8:_5B9C1375348A9F0E1AA15BF472A2D5EE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C71B20E72D7C2E71F4C6DC8AD8299B74"
         "OwnerKey" = "8:_3D35CC69E4E7C61DC312DA688F772DE4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CA5738C973BB416C9BCBB3F10019C362"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -527,6 +599,18 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_A6DF7B191006821F5884A40FC66DAEA2"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_3E6CCFAA9C9AA38D0131853B941E9FCD"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_8FDD83BEF454090318BA253B920705D0"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -856,6 +940,26 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_02F162843D7E475496D8A27682EE78D5"
+            {
+            "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\config\\curve.txt"
+            "TargetName" = "8:curve.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_CBC8C83B93B64DAA8FC34336038786DA"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_071047B10C544F599A450BC16530C41A"
             {
             "AssemblyRegister" = "3:1"
@@ -1350,6 +1454,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3E6CCFAA9C9AA38D0131853B941E9FCD"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:OxyPlot.Wpf, Version=2.1.2.0, Culture=neutral, PublicKeyToken=75e952ba404cdbb0, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_3E6CCFAA9C9AA38D0131853B941E9FCD"
+                    {
+                    "Name" = "8:OxyPlot.Wpf.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:OxyPlot.Wpf.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_4F253688179249C285668FF4F6AF77B6"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5069EC6AD5D24B23AD092EB911F24C71"
             {
             "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\ElectricSlit.exe"
@@ -1401,6 +1536,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_51ED4FD155BD35A8F6B1948D8DD8D05C"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:MathNet.Numerics, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_51ED4FD155BD35A8F6B1948D8DD8D05C"
+                    {
+                    "Name" = "8:MathNet.Numerics.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:MathNet.Numerics.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_4F253688179249C285668FF4F6AF77B6"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_569A30E7A6D5C314AC0FD13396EF37F3"
             {
             "AssemblyRegister" = "3:1"
@@ -1415,6 +1581,37 @@
                     }
                 }
             "SourcePath" = "8:MotorAPIPlus.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_4F253688179249C285668FF4F6AF77B6"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5B9C1375348A9F0E1AA15BF472A2D5EE"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:OxyPlot, Version=2.1.2.0, Culture=neutral, PublicKeyToken=638079a8f0bd61e9, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_5B9C1375348A9F0E1AA15BF472A2D5EE"
+                    {
+                    "Name" = "8:OxyPlot.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:OxyPlot.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_4F253688179249C285668FF4F6AF77B6"
@@ -1782,6 +1979,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7FEFC3447B144482B5A698082BF79905"
+            {
+            "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\config\\curvePlus.txt"
+            "TargetName" = "8:curvePlus.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_CBC8C83B93B64DAA8FC34336038786DA"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_82C31860AC5A64F461360532F35DD0BA"
             {
             "AssemblyRegister" = "3:1"
@@ -1940,6 +2157,37 @@
                     }
                 }
             "SourcePath" = "8:Microsoft.mshtml.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_4F253688179249C285668FF4F6AF77B6"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8FDD83BEF454090318BA253B920705D0"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:OxyPlot.Wpf.Shared, Version=2.1.2.0, Culture=neutral, PublicKeyToken=75e952ba404cdbb0, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_8FDD83BEF454090318BA253B920705D0"
+                    {
+                    "Name" = "8:OxyPlot.Wpf.Shared.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:OxyPlot.Wpf.Shared.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_4F253688179249C285668FF4F6AF77B6"
@@ -2356,6 +2604,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CA5738C973BB416C9BCBB3F10019C362"
+            {
+            "SourcePath" = "8:..\\ElectricSlit\\bin\\x86\\Release\\net6.0-windows\\config\\wl.txt"
+            "TargetName" = "8:wl.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_CBC8C83B93B64DAA8FC34336038786DA"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CDC6B382E7D4440DB7EB2AAC5BD41B5A"

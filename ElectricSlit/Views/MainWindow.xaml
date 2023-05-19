@@ -120,9 +120,9 @@
                                 Name="ComboBox_SingleStep"
                                 Height="30"
                                 Margin="10">
-                                <ComboBoxItem Content="0.1 mm" IsSelected="True" />
+                                <ComboBoxItem Content="0.1 mm" />
                                 <ComboBoxItem Content="0.5 mm" />
-                                <ComboBoxItem Content="1 mm" />
+                                <ComboBoxItem Content="1 mm" IsSelected="True" />
                                 <ComboBoxItem Content="2 mm" />
                                 <ComboBoxItem Content="5 mm" />
                             </ComboBox>
@@ -231,43 +231,68 @@
                         Grid.ColumnSpan="2"
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">
-                        <TextBlock
-                            Margin="10"
-                            VerticalAlignment="Center"
-                            Text="设定照度"
-                            TextAlignment="Center" />
-                        <TextBox
-                            x:Name="TextBox_LightSet"
-                            Width="100"
-                            Margin="10"
-                            VerticalAlignment="Center"
-                            TextAlignment="Center" />
-                        <Button
-                            Margin="10"
-                            Background="#f0f0f0"
-                            Click="Button_Click_7"
-                            Content="添加" />
-                        <Button
-                            Margin="10"
-                            Background="#f0f0f0"
-                            Click="Button_Click_12"
-                            Content="计算" />
-                        <Button
-                            Margin="10"
-                            Background="#f0f0f0"
-                            Click="Button_Click_13"
-                            Content="保存" />
-                        <TextBox
-                            x:Name="TextBox_LightTarget"
-                            Width="100"
-                            Margin="10"
-                            VerticalAlignment="Center"
-                            TextAlignment="Center" />
-                        <Button
-                            Margin="10"
-                            Background="#f0f0f0"
-                            Click="Button_Click_8"
-                            Content="应用" />
+                        <StackPanel Margin="10" Orientation="Horizontal">
+                            <TextBlock
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                Text="设定照度:"
+                                TextAlignment="Center" />
+                            <TextBox
+                                x:Name="TextBox_LightSet"
+                                Width="100"
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center" />
+                            <Button
+                                Margin="10"
+                                Background="#f0f0f0"
+                                Click="Button_Click_7"
+                                Content="添加" />
+                            <Button
+                                Margin="10"
+                                Background="#f0f0f0"
+                                Click="Button_Click_12"
+                                Content="计算" />
+                            <Button
+                                Margin="10"
+                                Background="#f0f0f0"
+                                Click="Button_Click_13"
+                                Content="保存" />
+                        </StackPanel>
+                        <StackPanel Margin="10" Orientation="Horizontal">
+                            <ToggleButton
+                                Name="ToggleButton_ManualSwitch"
+                                Margin="10"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Checked="ToggleButton_ManualSwitch_Checked"
+                                IsChecked="False"
+                                IsEnabled="True"
+                                Style="{StaticResource ToggleButtonSwitch}"
+                                Unchecked="ToggleButton_ManualSwitch_Unchecked" />
+                            <TextBlock
+                                Name="TextBlock_ManualSwitch"
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                Text="辅助光源关"
+                                TextAlignment="Center" />
+                            <TextBlock
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                Text="目标照度:"
+                                TextAlignment="Center" />
+                            <TextBox
+                                x:Name="TextBox_LightTarget"
+                                Width="100"
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center" />
+                            <Button
+                                Margin="10"
+                                Background="#f0f0f0"
+                                Click="Button_Click_8"
+                                Content="应用" />
+                        </StackPanel>
                     </StackPanel>
 
                     <!--  列表 图表  -->

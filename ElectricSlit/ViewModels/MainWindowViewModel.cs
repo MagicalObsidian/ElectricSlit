@@ -19,7 +19,7 @@ namespace ElectricSlit.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        private string _title = "环境光模拟器照度调节 V1.0";
+        private string _title = "环境光模拟器照度调节 V1.1";
         public string Title
         {
             get { return _title; }

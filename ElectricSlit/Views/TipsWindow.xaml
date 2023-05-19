@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ElectricSlit.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="关于 环境光模拟器照度调节 V1.0"
+    Title="关于 环境光模拟器照度调节 V1.1"
     Width="550"
     Height="350"
     Background="#f0f0f0"
@@ -55,7 +55,7 @@
             <TextBlock
                 Margin="10"
                 FontSize="12"
-                Text="版本 2023.5.15.1.0" />
+                Text="版本 2023.5.19.1.1" />
             <TextBlock
                 Margin="10"
                 FontSize="12"

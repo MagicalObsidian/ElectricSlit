@@ -33,6 +33,7 @@ using static ImTools.ImMap;
 using OxyPlot.Axes;
 using DevExpress.Xpf.Core.Native;
 using OxyPlot.Legends;
+using DevExpress.Utils.Filtering.Internal;
 
 namespace ElectricSlit.Views
 {
@@ -67,7 +68,19 @@ namespace ElectricSlit.Views
         List<WLModel> list_LightInterWL = null;//插值后映射关系宽度照度表
         List<WLModel> list_LightInterWLM = null;//插值后映射关系宽度照度表(加辅助光源)
 
+        List<double> list_k = null; //区间系数列表
+        struct Interval //区间
+        { 
+            public double low { get; set; }
+            public double high { get; set; }
+            public double k { get; set; }
+        }
+        List<Interval> list_interval = null;
+        List<Interval> list_intervalPlus = null;
+
         public List<IColorTempViewModel> list_ic = null; //电流-色温 列表
+
+        public bool useManual = false;
 
         public PlotModel pointModel = null;//图表
 
@@ -92,22 +105,6 @@ namespace ElectricSlit.Views
             this.Loaded += MainWindow_Loaded;
         }
 
-        #region 初始化配置等
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            Init();
-
-            //开启显示实时位置的线程
-            thread_getPosition = new Thread(new ThreadStart(RefreshPosition));
-            thread_getPosition.Priority = ThreadPriority.Lowest;
-            thread_getPosition.Start();
-
-            //获取应用程序路径
-            exePath = System.Reflection.Assembly.GetEntryAssembly().Location;
-            debugFolderPath = System.IO.Path.GetDirectoryName(exePath);
-            projectFolderPath = System.IO.Directory.GetParent(debugFolderPath).Parent.FullName;
-        }
-
         #region 窗体事件关闭进程
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -126,6 +123,22 @@ namespace ElectricSlit.Views
             return IntPtr.Zero;
         }
         #endregion
+
+        #region 初始化配置等
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            Init();
+
+            //开启显示实时位置的线程
+            thread_getPosition = new Thread(new ThreadStart(RefreshPosition));
+            thread_getPosition.Priority = ThreadPriority.Lowest;
+            thread_getPosition.Start();
+
+            //获取应用程序路径
+            exePath = System.Reflection.Assembly.GetEntryAssembly().Location;
+            debugFolderPath = System.IO.Path.GetDirectoryName(exePath);
+            projectFolderPath = System.IO.Directory.GetParent(debugFolderPath).Parent.FullName;
+        }
 
         //初始化
         private void Init()
@@ -149,7 +162,7 @@ namespace ElectricSlit.Views
             //portSetWindow.Show();
         }
 
-        //界面进度条
+        //界面初始化
         private void SetUI()
         {
             CurrentPosition = 0.0;//mm
@@ -157,7 +170,7 @@ namespace ElectricSlit.Views
             //Slider_Position.Width = CurrentPosition / 50 * sliderWidth;
             //ProgressBar_Light.Width = CurrentPosition / 50 * sliderWidth;
 
-            if(list_ic == null && list_wl == null && list_wlM == null)
+            if(list_ic == null && list_wl == null && list_wlM == null && list_interval == null)
             {
                 list_Light = new List<double>();
                 list_ic = new List<IColorTempViewModel>();
@@ -165,6 +178,8 @@ namespace ElectricSlit.Views
                 list_wlM = new List<WLModel>();
                 list_LightInterWL = new List<WLModel>();
                 list_LightInterWLM = new List<WLModel>();
+                list_interval = new List<Interval>();
+                list_intervalPlus = new List<Interval>();
 
                 Readwl();
                 Readic();
@@ -179,36 +194,44 @@ namespace ElectricSlit.Views
                     ListView_Set.Items.Add(lightSetModel);
                 }
 
+                if (list_wl.Count > 0)
+                {
+                    maxLight2 = list_wl[list_wl.Count - 1].Light;
+
+                    var xAxis = new LinearAxis
+                    {
+                        Position = AxisPosition.Bottom,
+                        Title = "狭缝宽度(mm)",
+                        Minimum = 0,
+                        Maximum = 50
+                    };
+                    var yAxis = new LinearAxis
+                    {
+                        Position = AxisPosition.Left,
+                        Title = "照度(lx)",
+                        Minimum = 0
+                    };
+
+                    pointModel = new PlotModel();
+                    var series = new LineSeries();
+                    pointModel.Series.Add(series);
+                    pointModel.Axes.Add(xAxis);
+                    pointModel.Axes.Add(yAxis);
+                    pointPlot.Model = pointModel;
+                    pointPlot.InvalidatePlot();
+
+                    CalAndPlot();
+                }
+
                 DataGrid_Manual.ItemsSource = null;
                 DataGrid_Manual.ItemsSource = list_wlM;
                 DataGrid_Manual.Columns[0].Header = "宽度(mm)            ";
                 DataGrid_Manual.Columns[1].Header = "照度(lx)";
+                DataGrid_Manual.IsEnabled = false;
 
                 DataGrid_ColorTemp.ItemsSource = list_ic;
                 DataGrid_ColorTemp.Columns[0].Header = "电流(A)    ";
                 DataGrid_ColorTemp.Columns[1].Header = "色温(K)";
-
-                var xAxis = new LinearAxis
-                {
-                    Position = AxisPosition.Bottom,
-                    Title = "狭缝宽度(mm)",
-                    Minimum = 0,
-                    Maximum = 50
-                };
-                var yAxis = new LinearAxis
-                {
-                    Position = AxisPosition.Left,
-                    Title = "照度(lx)",
-                    Minimum = 0
-                };
-
-                pointModel = new PlotModel();
-                var series = new LineSeries();
-                pointModel.Series.Add(series);
-                pointModel.Axes.Add(xAxis);
-                pointModel.Axes.Add(yAxis);
-                pointPlot.Model = pointModel;
-                pointPlot.InvalidatePlot();
             }
         }
 
@@ -473,12 +496,32 @@ namespace ElectricSlit.Views
             {
                 double targetLight = Convert.ToDouble(TextBox_LightTarget.Text);
 
-                if(targetLight >= 0 && targetLight < maxLight2)
+                if(targetLight >= 0 && targetLight < list_wl[list_wl.Count - 1].Light + list_wlM[list_wlM.Count-1].Light 
+                    && list_interval.Count > 0 && list_intervalPlus.Count > 0)
                 {
-                    if(_motorEntity != null)
+                    if(_motorEntity != null)//
                     {
-                        
+                        double targetPosition = 0;
+                        if(useManual) //如果使用辅助光源
+                        {
+                            targetPosition = GetIntervalPos(targetLight, list_intervalPlus);//应用主光源+辅助光源曲线
+                        }
+                        else
+                        {
+                            targetPosition = GetIntervalPos(targetLight, list_interval);
+                        }
+
+                        _motorFunc.MoveToPosition(targetPosition, true);
+                        Thread.Sleep(100);
                     }
+                    else
+                    {
+                        MessageBox.Show("未连接设备!", "错误");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("输入值不正确!", "错误");
                 }
             }
         }
@@ -598,15 +641,108 @@ namespace ElectricSlit.Views
             tipsWindow.Show();
         }
 
-        //计算映射 显示图表
+        //计算按钮事件
         private void Button_Click_12(object sender, RoutedEventArgs e)
         {
-            if(ListView_Set.Items.Count < 2)
+            CalAndPlot();
+        }
+
+        //保存映射到文件
+        private void Button_Click_13(object sender, RoutedEventArgs e)
+        {
+            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\wl.txt");
+            string filePath1 = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\curve.txt");
+            string filePath2 = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\curvePlus.txt");
+
+            if (filePath != null && filePath1 != null && filePath2 != null)
+            {
+                StreamWriter writer = new StreamWriter(filePath);
+                StreamWriter writer1 = new StreamWriter(filePath1);
+                StreamWriter writer2 = new StreamWriter(filePath2);
+
+                writer.WriteLine("wl");
+                writer1.WriteLine("curve");
+                writer2.WriteLine("curvePlus");
+
+                if (list_wl.Count > 1)
+                {
+                    for(int i = 0; i < list_wl.Count; i++)
+                    {
+                        writer.WriteLine(list_wl[i].Width + "\t"
+                                        + list_wl[i].Light + "\t"
+                                        + list_wlM[i].Light);
+                    }
+
+                    for(int j = 0; j < list_interval.Count; j++)
+                    {
+                        /*writer1.WriteLine(list_LightInterWL[j].Width + "\t"
+                                        + list_LightInterWL[j].Light + "\t"
+                                        + list_LightInterWLM[j].Light);*/
+                        writer1.WriteLine(list_interval[j].low + "\t"
+                                        + list_interval[j].high + "\t"
+                                        + list_interval[j].k);
+                    }
+
+                    for(int k = 0; k < list_intervalPlus.Count; k++)
+                    {
+                        writer2.WriteLine(list_intervalPlus[k].low + "\t"
+                                        + list_intervalPlus[k].high + "\t"
+                                        + list_intervalPlus[k].k);
+                    }
+
+                    writer.Close();
+                    writer1.Close();
+                    writer2.Close();
+                    MessageBox.Show("保存完成!");
+                }
+                else
+                {
+                    MessageBox.Show("没有输入值！");
+                }
+            }
+        }
+
+        //勾选辅助光源
+        private void ToggleButton_ManualSwitch_Checked(object sender, RoutedEventArgs e)
+        {
+            useManual = true;
+            TextBlock_ManualSwitch.Text = "辅助光源开";
+            DataGrid_Manual.IsEnabled = true;
+        }
+
+        //取消辅助光源
+        private void ToggleButton_ManualSwitch_Unchecked(object sender, RoutedEventArgs e)
+        {
+            useManual = false;
+            TextBlock_ManualSwitch.Text = "辅助光源关";
+            DataGrid_Manual.IsEnabled = false;
+        }
+
+        //打开工具界面
+        private void MenuTool_Click(object sender, RoutedEventArgs e)
+        {
+            //toolWindow.Show();
+        }
+
+        //打开关于界面
+        private void MenuAbout_Click(object sender, RoutedEventArgs e)
+        {
+            aboutWindow.Show();
+        }
+
+
+        #endregion
+
+        #region 功能方法
+        //计算映射 显示图表
+        private void CalAndPlot()
+        {
+            if (ListView_Set.Items.Count < 2)
             {
                 MessageBox.Show("请添加两组及以上的值", "错误");
             }
 
-            if(ListView_Set.Items.Count >= 2)
+            if (ListView_Set.Items.Count >= 2)
             {
                 double[] dList_Width = new double[list_wl.Count];//当前listview的 宽度 数组
                 double[] dList_Light = new double[list_wl.Count];//当前listview的 照度 数组
@@ -622,11 +758,13 @@ namespace ElectricSlit.Views
                 }
 
                 pointModel = new PlotModel();
+                list_interval = new List<Interval>();
+                list_intervalPlus = new List<Interval>();
 
                 //对排序后区间 进行插值计算 并得到每个区间的新的照度列表
                 if (list_wl.Count >= 2)
                 {
-                    for(int i = 0; i < list_wl.Count - 1; i++)
+                    for (int i = 0; i < list_wl.Count - 1; i++)
                     {
                         //IInterpolation interpolation = CubicSpline.InterpolateNaturalSorted(dList_Width, dList_Light);
                         IInterpolation interpolation = LinearSpline.InterpolateSorted(dList_Width, dList_Light);
@@ -637,7 +775,7 @@ namespace ElectricSlit.Views
 
                         var series = new LineSeries
                         {
-                            Color = OxyColor.FromRgb(50, 108, 243),   
+                            Color = OxyColor.FromRgb(50, 108, 243),
                         };
                         var series1 = new LineSeries
                         {
@@ -662,15 +800,31 @@ namespace ElectricSlit.Views
                             int txLast = Convert.ToInt32(Convert.ToDouble(dList_Width[i].ToString("f1")) * 10);
                             int tyLast = Convert.ToInt32(Convert.ToDouble(dList_Width[i + 1].ToString("f1")) * 10);
                             double temp = Convert.ToDouble(dList_Width[i].ToString("f1"));//保留小数点后一位 宽度
-                            double kLast = (dList_Light[i + 1] -dList_Light[i])
+                            double kLast = (dList_Light[i + 1] - dList_Light[i])
+                                / (Convert.ToDouble(dList_Width[i + 1].ToString("f1")) - temp); //每个区间的系数 k//系数 k
+                            double kLastM = ((dList_Light[i + 1] + dList_LightM[i + 1]) - (dList_Light[i] + dList_LightM[i]))
                                 / (Convert.ToDouble(dList_Width[i + 1].ToString("f1")) - temp); //每个区间的系数 k//系数 k
 
+                            list_interval.Add(new Interval
+                            {
+                                low = Convert.ToDouble(dList_Light[i].ToString("f1")),
+                                high = Convert.ToDouble(dList_Light[i + 1].ToString("f1")),
+                                k = kLast
+                            });
+
+                            list_intervalPlus.Add(new Interval
+                            {
+                                low = Convert.ToDouble(dList_Light[i].ToString("f1")) + Convert.ToDouble(dList_LightM[i].ToString("f1")),
+                                high = Convert.ToDouble(dList_Light[i + 1].ToString("f1")) + Convert.ToDouble(dList_LightM[i + 1].ToString("f1")),
+                                k = kLastM
+                            });
+
                             //步距为整数
-                            /*for (int j = txLast; j <= tyLast; j++)
+                            for (int j = txLast; j <= tyLast; j++)
                             {
                                 //得到每个细分区间插值后的照度列表
                                 list_LightInter.Add(interpolation.Interpolate(j / 10));
-                                list_LightInterOverlay.Add(list_LightInter[j - txLast] + interpolation1.Interpolate(j/10));
+                                list_LightInterOverlay.Add(list_LightInter[j - txLast] + interpolation1.Interpolate(j / 10));
 
                                 //将点添加到图例中
                                 seriesLast.Points.Add(new DataPoint(j / 10, list_LightInter[j - txLast]));
@@ -692,10 +846,10 @@ namespace ElectricSlit.Views
                                     list_LightInterWL.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInter[j - txLast].ToString("f1"))));
                                     list_LightInterWLM.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInterOverlay[j - txLast].ToString("f1"))));
                                 }
-                            }*/
+                            }
 
                             //步距小数点后一位
-                            for (int j = txLast; j <= tyLast; j++)
+                            /*for (int j = txLast; j <= tyLast; j++)
                             {
                                 //得到每个细分区间插值后的照度列表
                                 double dw = Convert.ToDouble(((j - txLast) * 0.1).ToString("f1"));
@@ -722,22 +876,38 @@ namespace ElectricSlit.Views
                                     list_LightInterWL.Add(new WLModel(temp, Convert.ToDouble(list_LightInter[j - txLast].ToString("f1"))));
                                     list_LightInterWLM.Add(new WLModel(temp, Convert.ToDouble(list_LightInterOverlay[j - txLast].ToString("f1"))));
                                 }
-                            }
+                            }*/
 
                             pointModel.Series.Add(seriesLast);
                             pointModel.Series.Add(series1Last);
                         }
                         else
-                        {               
+                        {
                             //每个细分区间的上下限
                             int tx = Convert.ToInt32(Convert.ToDouble(dList_Width[i].ToString("f1")) * 10);
-                            int ty = Convert.ToInt32(Convert.ToDouble(dList_Width[i+1].ToString("f1")) * 10);
+                            int ty = Convert.ToInt32(Convert.ToDouble(dList_Width[i + 1].ToString("f1")) * 10);
                             double temp = Convert.ToDouble(dList_Width[i].ToString("f1"));//保留小数点后一位 宽度
-                            double k = (dList_Light[i+1] - dList_Light[i])
+                            double k = (dList_Light[i + 1] - dList_Light[i])
+                                / (Convert.ToDouble(dList_Width[i + 1].ToString("f1")) - temp); //每个区间的系数 k
+                            double kM = ((dList_Light[i + 1] + dList_LightM[i + 1]) - (dList_Light[i] + dList_LightM[i]))
                                 / (Convert.ToDouble(dList_Width[i + 1].ToString("f1")) - temp); //每个区间的系数 k
 
+                            list_interval.Add(new Interval
+                            {
+                                low = Convert.ToDouble(dList_Light[i].ToString("f1")),
+                                high = Convert.ToDouble(dList_Light[i + 1].ToString("f1")),
+                                k = k
+                            });
+
+                            list_intervalPlus.Add(new Interval
+                            {
+                                low = Convert.ToDouble(dList_Light[i].ToString("f1")) + Convert.ToDouble(dList_LightM[i].ToString("f1")),
+                                high = Convert.ToDouble(dList_Light[i + 1].ToString("f1")) + Convert.ToDouble(dList_LightM[i + 1].ToString("f1")),
+                                k = kM
+                            });
+
                             //步距为整数
-                            /*for (int j = tx; j <= ty; j++)
+                            for (int j = tx; j <= ty; j++)
                             {
                                 //得到每个细分区间插值后的照度列表
                                 list_LightInter.Add(interpolation.Interpolate(j / 10));
@@ -764,10 +934,10 @@ namespace ElectricSlit.Views
                                     list_LightInterWL.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInter[j - tx].ToString("f1"))));
                                     list_LightInterWLM.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInterOverlay[j - tx].ToString("f1"))));
                                 }
-                            }*/
+                            }
 
                             //步距小数点后一位
-                            for (int j = tx; j <= ty; j++)
+                            /*for (int j = tx; j <= ty; j++)
                             {
                                 //得到每个细分区间插值后的照度列表
                                 double dw = Convert.ToDouble(((j - tx) * 0.1).ToString("f1"));
@@ -795,105 +965,47 @@ namespace ElectricSlit.Views
                                     list_LightInterWL.Add(new WLModel(temp, Convert.ToDouble(list_LightInter[j - tx].ToString("f1"))));
                                     list_LightInterWLM.Add(new WLModel(temp, Convert.ToDouble(list_LightInterOverlay[j - tx].ToString("f1"))));
                                 }
-                            }
+                            }*/
                         }
 
                         //设置图例
                         Legend legend = new Legend
                         {
-                            LegendPlacement = LegendPlacement.Outside,
-                            LegendPosition = LegendPosition.BottomRight,
+                            LegendPlacement = LegendPlacement.Inside,
+                            LegendPosition = LegendPosition.LeftTop,
                             LegendOrientation = LegendOrientation.Horizontal,
                             LegendBorderThickness = 1,
                             LegendTextColor = OxyColors.DarkGray,
                         };
                         pointModel.Legends.Add(legend);
 
-                        pointModel.Series.Add(series);             
-                        pointModel.Series.Add(series1);                        
+                        pointModel.Series.Add(series);
+                        pointModel.Series.Add(series1);
                     }
                 }
-            }
-            
-            //横纵坐标轴
-            var xAxis = new LinearAxis
-            {
-                Position = AxisPosition.Bottom,
-                Title = "狭缝宽度(mm)",
-                Minimum = 0,
-                Maximum = 50
-            };
-            var yAxis = new LinearAxis
-            {
-                Position = AxisPosition.Left,
-                Title = "照度(lx)",
-                Minimum = 0
-            };
-            
-            pointModel.Axes.Add(xAxis);
-            pointModel.Axes.Add(yAxis);
 
-            pointPlot.Model = pointModel;
-            pointPlot.InvalidatePlot();
-        }
-
-        //保存映射到文件
-        private void Button_Click_13(object sender, RoutedEventArgs e)
-        {
-            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\wl.txt");
-            string filePath1 = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\curve.txt");
-
-            if (filePath != null && filePath1 != null)
-            {
-                StreamWriter writer = new StreamWriter(filePath);
-                StreamWriter writer1 = new StreamWriter(filePath1);
-
-                writer.WriteLine("wl");
-                writer1.WriteLine("curve");
-
-                if (list_wl.Count > 1)
+                //横纵坐标轴
+                var xAxis = new LinearAxis
                 {
-                    for(int i = 0; i < list_wl.Count; i++)
-                    {
-                        writer.WriteLine(list_wl[i].Width + "\t"
-                                        + list_wl[i].Light + "\t"
-                                        + list_wlM[i].Light);
-                    }
-
-                    for(int j = 0; j < list_LightInterWL.Count; j++)
-                    {
-                        writer1.WriteLine(list_LightInterWL[j].Width + "\t"
-                                        + list_LightInterWL[j].Light + "\t"
-                                        + list_LightInterWLM[j].Light);
-                    }
-
-                    writer.Close();
-                    writer1.Close();
-                    MessageBox.Show("保存完成!");
-                }
-                else
+                    Position = AxisPosition.Bottom,
+                    Title = "狭缝宽度(mm)",
+                    Minimum = 0,
+                    Maximum = 50
+                };
+                var yAxis = new LinearAxis
                 {
-                    MessageBox.Show("没有输入值！");
-                }
+                    Position = AxisPosition.Left,
+                    Title = "照度(lx)",
+                    Minimum = 0
+                };
+
+                pointModel.Axes.Add(xAxis);
+                pointModel.Axes.Add(yAxis);
+
+                pointPlot.Model = pointModel;
+                pointPlot.InvalidatePlot();
             }
         }
-
-
-
-        //打开工具界面
-        private void MenuTool_Click(object sender, RoutedEventArgs e)
-        {
-            //toolWindow.Show();
-        }
-
-        //打开关于界面
-        private void MenuAbout_Click(object sender, RoutedEventArgs e)
-        {
-            aboutWindow.Show();
-        }
-
-
-        #endregion
 
         //读取电流色温表
         private void Readic()
@@ -967,5 +1079,19 @@ namespace ElectricSlit.Views
             }
         }
 
+        //输入指定照度值，从映射表中得到目标位置
+        private double GetIntervalPos(double number, List<Interval> intervals)
+        {
+            for(int i = 0; i < intervals.Count; i++)
+            {
+                if(number >= intervals[i].low && number < intervals[i].high)
+                {
+                    return intervals[i].low + number / intervals[i].k;
+                }
+            }
+            return 0;
+        }
+        
+        #endregion
     }
 }
