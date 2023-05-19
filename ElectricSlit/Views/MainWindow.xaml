@@ -30,7 +30,23 @@
                 <MenuItem
                     x:Name="MenuExportMap"
                     FontSize="12"
-                    Header="导出映射文件" />
+                    Header="导出映射文件">
+                    <MenuItem
+                        Name="MenuExportMap1"
+                        Click="MenuExportMap1_Click"
+                        FontSize="12"
+                        Header="设定值列表" />
+                    <MenuItem
+                        Name="MenuExportMap2"
+                        Click="MenuExportMap2_Click"
+                        FontSize="12"
+                        Header="主光源照度映射" />
+                    <MenuItem
+                        Name="MenuExportMap3"
+                        Click="MenuExportMap3_Click"
+                        FontSize="12"
+                        Header="主光源+辅助光源映射" />
+                </MenuItem>
             </MenuItem>
             <MenuItem
                 x:Name="MenuSerialPort"
@@ -327,7 +343,7 @@
                                 </ListView.View>
                                 <ListView.ItemContainerStyle>
                                     <Style TargetType="ListViewItem">
-                                        <Setter Property="Height" Value="50" />
+                                        <Setter Property="Height" Value="30" />
                                         <Setter Property="Margin" Value="10,0,0,0" />
                                     </Style>
                                 </ListView.ItemContainerStyle>
@@ -345,7 +361,7 @@
                                 AutoGenerateColumns="True"
                                 Background="#f0f0f0"
                                 ItemsSource="{Binding}"
-                                RowHeight="50" />
+                                RowHeight="30" />
                         </GroupBox>
 
                         <!--  图表  -->
@@ -385,7 +401,7 @@
                         CanUserDeleteRows="True"
                         ItemsSource="{Binding}"
                         KeyDown="DataGrid_ColorTemp_KeyDown"
-                        RowHeight="50" />
+                        RowHeight="30" />
                     <StackPanel
                         Grid.Row="1"
                         Margin="10"

@@ -34,6 +34,7 @@ using OxyPlot.Axes;
 using DevExpress.Xpf.Core.Native;
 using OxyPlot.Legends;
 using DevExpress.Utils.Filtering.Internal;
+using Microsoft.Win32;
 
 namespace ElectricSlit.Views
 {
@@ -675,9 +676,6 @@ namespace ElectricSlit.Views
 
                     for(int j = 0; j < list_interval.Count; j++)
                     {
-                        /*writer1.WriteLine(list_LightInterWL[j].Width + "\t"
-                                        + list_LightInterWL[j].Light + "\t"
-                                        + list_LightInterWLM[j].Light);*/
                         writer1.WriteLine(list_interval[j].low + "\t"
                                         + list_interval[j].high + "\t"
                                         + list_interval[j].k);
@@ -716,6 +714,81 @@ namespace ElectricSlit.Views
             useManual = false;
             TextBlock_ManualSwitch.Text = "辅助光源关";
             DataGrid_Manual.IsEnabled = false;
+        }
+
+        //文件导出 宽度-照度表
+        private void MenuExportMap1_Click(object sender, RoutedEventArgs e)
+        {
+            if (list_wl.Count > 0)
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "文本文件|*.txt";
+                saveFileDialog.Title = "导出文件";
+                saveFileDialog.ShowDialog();
+                if (saveFileDialog.FileName != "")
+                {
+                    string outputPath = saveFileDialog.FileName;
+                    StreamWriter writer = new StreamWriter(outputPath);
+                    writer.WriteLine("wl");
+                    for (int i = 0; i < list_wl.Count; i++)
+                    {
+                        writer.WriteLine(list_wl[i].Width + "\t"
+                                        + list_wl[i].Light + "\t"
+                                        + list_wlM[i].Light);
+                    }
+                    writer.Close();
+                }
+            }
+        }
+
+        //文件导出 主光源照度映射
+        private void MenuExportMap2_Click(object sender, RoutedEventArgs e)
+        {
+            if (list_interval.Count > 0)
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "文本文件|*.txt";
+                saveFileDialog.Title = "导出文件";
+                saveFileDialog.ShowDialog();
+                if (saveFileDialog.FileName != "")
+                {
+                    string outputPath = saveFileDialog.FileName;
+                    StreamWriter writer = new StreamWriter(outputPath);
+                    writer.WriteLine("curve");
+                    for (int i = 0; i < list_interval.Count; i++)
+                    {
+                        writer.WriteLine(list_interval[i].low + "\t"
+                                        + list_interval[i].high + "\t"
+                                        + list_interval[i].k);
+                    }
+                    writer.Close();
+                }
+            }
+        }
+
+        //文件导出 主光源+辅助光源映射
+        private void MenuExportMap3_Click(object sender, RoutedEventArgs e)
+        {
+            if (list_intervalPlus.Count > 0)
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "文本文件|*.txt";
+                saveFileDialog.Title = "导出文件";
+                saveFileDialog.ShowDialog();
+                if (saveFileDialog.FileName != "")
+                {
+                    string outputPath = saveFileDialog.FileName;
+                    StreamWriter writer = new StreamWriter(outputPath);
+                    writer.WriteLine("curve");
+                    for (int i = 0; i < list_intervalPlus.Count; i++)
+                    {
+                        writer.WriteLine(list_intervalPlus[i].low + "\t"
+                                        + list_intervalPlus[i].high + "\t"
+                                        + list_intervalPlus[i].k);
+                    }
+                    writer.Close();
+                }
+            }
         }
 
         //打开工具界面
