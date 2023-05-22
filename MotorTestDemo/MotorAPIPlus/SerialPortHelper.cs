@@ -47,9 +47,9 @@ namespace MotorAPIPlus
         public int SlaveID { get; set; } = 1;
 
 
-
         private SerialPort _serialPort;//串口
         public bool comStatus = false;//串口连接状态
+        //private readonly Lazy<SerialPort> _instance = new Lazy<SerialPort>(() => new SerialPort()); //单例模式
 
         /// <summary>
         /// 默认构造 只需指定串口名
@@ -69,7 +69,6 @@ namespace MotorAPIPlus
             _serialPort.StopBits = stopBits;
             //_serialPort.ReadTimeout = 2000;
         }
-
 
         /// <summary>
         /// 关闭串口

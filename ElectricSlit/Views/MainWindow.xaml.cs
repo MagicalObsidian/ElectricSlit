@@ -46,13 +46,13 @@ namespace ElectricSlit.Views
         private const int SC_CLOSE = 0xF060;
         private const int WM_SYSCOMMAND = 0x0112;
 
-        public string portName = "";
+        public string portName = ""; //连接的串口名
 
-        public SerialPortHelper _serialPort_Motor = null;
-        public MotorEntity _motorEntity = null;
-        public MotorFunc _motorFunc = null;
+        public SerialPortHelper _serialPort_Motor = null; //串口实例
+        public MotorEntity _motorEntity = null; //电机实例
+        public MotorFunc _motorFunc = null; //电机功能实例
 
-        public PortSetWindow portSetWindow = null;
+        public PortSetWindow portSetWindow = null; //子窗口对象
         public ToolWindow toolWindow = null;
         public AboutWindow aboutWindow = null;
         public TipsWindow tipsWindow = null;
@@ -72,16 +72,16 @@ namespace ElectricSlit.Views
         List<double> list_k = null; //区间系数列表
         struct Interval //区间
         { 
-            public double low { get; set; }
-            public double high { get; set; }
-            public double k { get; set; }
+            public double low { get; set; } //下限
+            public double high { get; set; } //上限
+            public double k { get; set; } //系数
         }
-        List<Interval> list_interval = null;
-        List<Interval> list_intervalPlus = null;
+        List<Interval> list_interval = null; //插值后映射 区间和系数列表
+        List<Interval> list_intervalPlus = null; //插值后映射 区间和系数列表（加辅助光源）
 
         public List<IColorTempViewModel> list_ic = null; //电流-色温 列表
 
-        public bool useManual = false;
+        public bool useManual = false;//是否使用手动辅助光源
 
         public PlotModel pointModel = null;//图表
 
@@ -90,10 +90,10 @@ namespace ElectricSlit.Views
         public double maxLight2; //最大照度 全开/50mm
 
         public ObservableCollection<string> PortList { get; set; } = new ObservableCollection<string>();//当前串口列表
-        public double CurrentPosition;
-        private Thread thread_getPosition = null;
+        public double CurrentPosition; //记录当前电机实时位置
+        private Thread thread_getPosition = null; //获取电机实时位置的线程
 
-        private static string exePath;
+        private static string exePath; //exe程序路径
         private static string debugFolderPath;
         private static string projectFolderPath;
 
@@ -417,7 +417,7 @@ namespace ElectricSlit.Views
                 lightSetModel.Index = tableCount;
                 lightManulModel.Index = tableCount;
 
-                lightSetModel.Width = Convert.ToDouble(CurrentPosition.ToString("f1"));
+                lightSetModel.Width = DoubleFormat(CurrentPosition);
                 lightManulModel.Width = lightSetModel.Width;//对应主光源狭缝宽度
 
                 double lightset = Convert.ToDouble(TextBox_LightSet.Text.ToString());
@@ -438,7 +438,7 @@ namespace ElectricSlit.Views
                     maxLight2 = lightset;//得到当前全开状态下输入的最大照度
                 }
 
-                CurrentPosition += 5;//测试 模拟狭缝移动
+                //CurrentPosition += 5;//测试 模拟狭缝移动
 
                 DataGrid_Manual.ItemsSource = null;
                 DataGrid_Manual.ItemsSource = list_wlM;
@@ -870,25 +870,25 @@ namespace ElectricSlit.Views
                                 Title = "主光源+辅助光源照度"
                             };
 
-                            int txLast = Convert.ToInt32(Convert.ToDouble(dList_Width[i].ToString("f1")) * 10);
-                            int tyLast = Convert.ToInt32(Convert.ToDouble(dList_Width[i + 1].ToString("f1")) * 10);
-                            double temp = Convert.ToDouble(dList_Width[i].ToString("f1"));//保留小数点后一位 宽度
+                            int txLast = Convert.ToInt32(DoubleFormat(dList_Width[i]) * 10);
+                            int tyLast = Convert.ToInt32(DoubleFormat(dList_Width[i + 1]) * 10);
+                            double temp = DoubleFormat(dList_Width[i]);//保留小数点后一位 宽度
                             double kLast = (dList_Light[i + 1] - dList_Light[i])
-                                / (Convert.ToDouble(dList_Width[i + 1].ToString("f1")) - temp); //每个区间的系数 k//系数 k
+                                / (DoubleFormat(dList_Width[i + 1]) - temp); //每个区间的系数 k//系数 k
                             double kLastM = ((dList_Light[i + 1] + dList_LightM[i + 1]) - (dList_Light[i] + dList_LightM[i]))
-                                / (Convert.ToDouble(dList_Width[i + 1].ToString("f1")) - temp); //每个区间的系数 k//系数 k
+                                / (DoubleFormat(dList_Width[i + 1]) - temp); //每个区间的系数 k//系数 k
 
                             list_interval.Add(new Interval
                             {
-                                low = Convert.ToDouble(dList_Light[i].ToString("f1")),
-                                high = Convert.ToDouble(dList_Light[i + 1].ToString("f1")),
+                                low = DoubleFormat(dList_Light[i]),
+                                high = DoubleFormat(dList_Light[i + 1]),
                                 k = kLast
                             });
 
                             list_intervalPlus.Add(new Interval
                             {
-                                low = Convert.ToDouble(dList_Light[i].ToString("f1")) + Convert.ToDouble(dList_LightM[i].ToString("f1")),
-                                high = Convert.ToDouble(dList_Light[i + 1].ToString("f1")) + Convert.ToDouble(dList_LightM[i + 1].ToString("f1")),
+                                low = DoubleFormat(dList_Light[i]) + DoubleFormat(dList_LightM[i]),
+                                high = DoubleFormat(dList_Light[i + 1]) + DoubleFormat(dList_LightM[i + 1]),
                                 k = kLastM
                             });
 
@@ -909,15 +909,15 @@ namespace ElectricSlit.Views
                                     seriesLast.Points.Add(new DataPoint(j / 10, list_LightInter[j - txLast]));
                                     series1Last.Points.Add(new DataPoint(j / 10, list_LightInterOverlay[j - txLast]));
 
-                                    list_LightInterWL.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInter[j - txLast].ToString("f1"))));
-                                    list_LightInterWLM.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInterOverlay[j - txLast].ToString("f1"))));
+                                    list_LightInterWL.Add(new WLModel(j / 10, DoubleFormat(list_LightInter[j - txLast])));
+                                    list_LightInterWLM.Add(new WLModel(j / 10, DoubleFormat(list_LightInterOverlay[j - txLast])));
                                 }
 
                                 //获得整个映射的列表
                                 if (j < tyLast)
                                 {
-                                    list_LightInterWL.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInter[j - txLast].ToString("f1"))));
-                                    list_LightInterWLM.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInterOverlay[j - txLast].ToString("f1"))));
+                                    list_LightInterWL.Add(new WLModel(j / 10, DoubleFormat(list_LightInter[j - txLast])));
+                                    list_LightInterWLM.Add(new WLModel(j / 10, DoubleFormat(list_LightInterOverlay[j - txLast])));
                                 }
                             }
 
@@ -957,25 +957,25 @@ namespace ElectricSlit.Views
                         else
                         {
                             //每个细分区间的上下限
-                            int tx = Convert.ToInt32(Convert.ToDouble(dList_Width[i].ToString("f1")) * 10);
-                            int ty = Convert.ToInt32(Convert.ToDouble(dList_Width[i + 1].ToString("f1")) * 10);
-                            double temp = Convert.ToDouble(dList_Width[i].ToString("f1"));//保留小数点后一位 宽度
+                            int tx = Convert.ToInt32(DoubleFormat(dList_Width[i]) * 10);
+                            int ty = Convert.ToInt32(DoubleFormat(dList_Width[i + 1]) * 10);
+                            double temp = DoubleFormat(dList_Width[i]);//保留小数点后一位 宽度
                             double k = (dList_Light[i + 1] - dList_Light[i])
-                                / (Convert.ToDouble(dList_Width[i + 1].ToString("f1")) - temp); //每个区间的系数 k
+                                / (DoubleFormat(dList_Width[i + 1]) - temp); //每个区间的系数 k
                             double kM = ((dList_Light[i + 1] + dList_LightM[i + 1]) - (dList_Light[i] + dList_LightM[i]))
-                                / (Convert.ToDouble(dList_Width[i + 1].ToString("f1")) - temp); //每个区间的系数 k
+                                / (DoubleFormat(dList_Width[i + 1]) - temp); //每个区间的系数 k
 
                             list_interval.Add(new Interval
                             {
-                                low = Convert.ToDouble(dList_Light[i].ToString("f1")),
-                                high = Convert.ToDouble(dList_Light[i + 1].ToString("f1")),
+                                low = DoubleFormat(dList_Light[i]),
+                                high = DoubleFormat(dList_Light[i + 1]),
                                 k = k
                             });
 
                             list_intervalPlus.Add(new Interval
                             {
-                                low = Convert.ToDouble(dList_Light[i].ToString("f1")) + Convert.ToDouble(dList_LightM[i].ToString("f1")),
-                                high = Convert.ToDouble(dList_Light[i + 1].ToString("f1")) + Convert.ToDouble(dList_LightM[i + 1].ToString("f1")),
+                                low = DoubleFormat(dList_Light[i]) + DoubleFormat(dList_LightM[i]),
+                                high = DoubleFormat(dList_Light[i + 1]) + DoubleFormat(dList_LightM[i + 1]),
                                 k = kM
                             });
 
@@ -997,15 +997,15 @@ namespace ElectricSlit.Views
                                     series.Points.Add(new DataPoint(j / 10, list_LightInter[j - tx]));
                                     series1.Points.Add(new DataPoint(j / 10, list_LightInterOverlay[j - tx]));
 
-                                    list_LightInterWL.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInter[j - tx].ToString("f1"))));
-                                    list_LightInterWLM.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInterOverlay[j - tx].ToString("f1"))));
+                                    list_LightInterWL.Add(new WLModel(j / 10, DoubleFormat(list_LightInter[j - tx])));
+                                    list_LightInterWLM.Add(new WLModel(j / 10, DoubleFormat(list_LightInterOverlay[j - tx])));
                                 }
 
                                 //获得整个映射的列表
                                 if (j < ty)
                                 {
-                                    list_LightInterWL.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInter[j - tx].ToString("f1"))));
-                                    list_LightInterWLM.Add(new WLModel(j / 10, Convert.ToDouble(list_LightInterOverlay[j - tx].ToString("f1"))));
+                                    list_LightInterWL.Add(new WLModel(j / 10, DoubleFormat(list_LightInter[j - tx])));
+                                    list_LightInterWLM.Add(new WLModel(j / 10, DoubleFormat(list_LightInterOverlay[j - tx])));
                                 }
                             }
 
@@ -1165,6 +1165,11 @@ namespace ElectricSlit.Views
             return 0;
         }
         
+        //double 数据保留一位小数
+        private double DoubleFormat(double num)
+        {
+            return Convert.ToDouble(num.ToString("f1"));
+        }
         #endregion
     }
 }
