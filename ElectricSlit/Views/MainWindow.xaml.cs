@@ -171,6 +171,7 @@ namespace ElectricSlit.Views
             //Slider_Position.Width = CurrentPosition / 50 * sliderWidth;
             //ProgressBar_Light.Width = CurrentPosition / 50 * sliderWidth;
 
+            //初始化读取文件配置
             if(list_ic == null && list_wl == null && list_wlM == null && list_interval == null)
             {
                 list_Light = new List<double>();
@@ -183,8 +184,10 @@ namespace ElectricSlit.Views
                 list_intervalPlus = new List<Interval>();
 
                 Readwl();
+                ReadCurve();//读取映射
                 Readic();
 
+                //添加到 ListView
                 for(int i = 0; i < list_wl.Count; i++)
                 {
                     list_Light.Add(list_wl[i].Light);
@@ -362,7 +365,7 @@ namespace ElectricSlit.Views
             }
         }
 
-        //移动到指定亮度位置
+        //移动到指定亮度位置(不用)
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             double targetPosition = 0;
@@ -417,6 +420,8 @@ namespace ElectricSlit.Views
                 lightSetModel.Index = tableCount;
                 lightManulModel.Index = tableCount;
 
+                GetCurrentPosition();
+                Thread.Sleep(100);
                 lightSetModel.Width = DoubleFormat(CurrentPosition);
                 lightManulModel.Width = lightSetModel.Width;//对应主光源狭缝宽度
 
@@ -429,6 +434,7 @@ namespace ElectricSlit.Views
 
                 if(CurrentPosition <= 50)
                 {
+                    //添加数据
                     list_wl.Add(new WLModel(lightSetModel.Width, lightset));//CurrentPosition 电动宽度-照度表
                     list_wlM.Add(new WLModel(lightSetModel.Width, 0));//手动宽度-照度表
                 }
@@ -445,6 +451,10 @@ namespace ElectricSlit.Views
 
                 DataGrid_Manual.Columns[0].Header = "宽度(mm)            ";
                 DataGrid_Manual.Columns[1].Header = "照度(lx)";
+            }
+            else
+            {
+                MessageBox.Show("请输入值!", "错误");
             }
         }
 
@@ -471,7 +481,7 @@ namespace ElectricSlit.Views
             //从列表中选择设定值
             if(TextBox_LightSet.Text != "" && selectedIndex >= 0)
             {
-                if(list_Light[selectedIndex] > maxLight)
+                if(list_Light[selectedIndex] > maxLight2)
                 {
                     //MessageBox.Show("设定值超出最大照度！", "错误");
                 }
@@ -483,7 +493,7 @@ namespace ElectricSlit.Views
 
                     if (_motorEntity != null)
                     {
-                        _motorFunc.MoveToPosition(targetPosition, true);
+                        _motorFunc.MoveToPosition(50 - targetPosition, true);
                         Thread.Sleep(100);
                     }
             
@@ -512,7 +522,7 @@ namespace ElectricSlit.Views
                             targetPosition = GetIntervalPos(targetLight, list_interval);
                         }
 
-                        _motorFunc.MoveToPosition(targetPosition, true);
+                        _motorFunc.MoveToPosition(50 - targetPosition, true);
                         Thread.Sleep(100);
                     }
                     else
@@ -524,6 +534,10 @@ namespace ElectricSlit.Views
                 {
                     MessageBox.Show("输入值不正确!", "错误");
                 }
+            }
+            else
+            {
+                MessageBox.Show("未输入值!", "错误");
             }
         }
 
@@ -1140,6 +1154,73 @@ namespace ElectricSlit.Views
                                 double.TryParse(stringls[2], out double lightM);
                                 list_wl.Add(new WLModel(width, light));
                                 list_wlM.Add(new WLModel(width, lightM));
+                            }
+                        }
+                        n++;
+                    }
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
+        //读取主光源映射表/主光源+辅助光源映射表
+        private void ReadCurve()
+        {
+            string filePath1 = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\curve.txt");
+            string filePath2 = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\curvePlus.txt");
+
+            using (FileStream fs = new FileStream(filePath1, FileMode.Open, FileAccess.Read))
+            {
+                try
+                {
+                    StreamReader reader = new StreamReader(fs);
+                    string line = reader.ReadLine();
+                    int n = 0;
+                    while (line != null)
+                    {
+                        line = reader.ReadLine();
+                        if (line != null)
+                        {
+                            var stringls = line.Split("\t");
+                            if (stringls.Length == 3)
+                            {
+                                double.TryParse(stringls[0], out double low);
+                                double.TryParse(stringls[1], out double high);
+                                double.TryParse(stringls[2], out double k);
+                                list_interval.Add(new Interval { low = low, high = high, k = k });
+                            }
+                        }
+                        n++;
+                    }
+                }
+                catch
+                {
+
+                }
+            }
+
+            using (FileStream fs = new FileStream(filePath2, FileMode.Open, FileAccess.Read))
+            {
+                try
+                {
+                    StreamReader reader = new StreamReader(fs);
+                    string line = reader.ReadLine();
+                    int n = 0;
+                    while (line != null)
+                    {
+                        line = reader.ReadLine();
+                        if (line != null)
+                        {
+                            var stringls = line.Split("\t");
+                            if (stringls.Length == 3)
+                            {
+                                double.TryParse(stringls[0], out double low);
+                                double.TryParse(stringls[1], out double high);
+                                double.TryParse(stringls[2], out double k);
+                                list_intervalPlus.Add(new Interval { low = low, high = high, k = k });
                             }
                         }
                         n++;
