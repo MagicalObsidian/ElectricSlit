@@ -150,5 +150,18 @@ namespace MotorAPIPlus
         {
             _motor.MovePSL();
         }
+
+        /// <summary>
+        /// 设置零位
+        /// </summary>
+        public void SetZero()
+        {
+            _motor.SetZero();
+        }
+
+        public void SetSpeed(double speed)
+        {
+            _motor.SetVelSet(speed);
+        }
     }
 }

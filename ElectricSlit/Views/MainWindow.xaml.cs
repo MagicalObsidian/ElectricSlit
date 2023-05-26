@@ -255,32 +255,32 @@ namespace ElectricSlit.Views
             while(true)
             {
                 GetCurrentPosition();
-                Thread.Sleep(800);
+                Thread.Sleep(1000);//
             }
         }
 
         //获得实时位置
-        public void GetCurrentPosition()
+        public void GetCurrentPosition()    
         {
             if(_motorEntity != null)
             {
-                Thread.Sleep(100);
-                CurrentPosition = 50 - _motorFunc.GetCurrentPosition();
+                //Thread.Sleep(100);
+                CurrentPosition = 50 - _motorFunc.GetCurrentPosition();//调整为狭缝宽度
                 //CurrentPosition++;
                 this.Dispatcher.BeginInvoke((Action)delegate ()
                 {
                     //范围外的值处理
-                    if (CurrentPosition <= 0)
+/*                    if (CurrentPosition <= 0)
                     {
                         CurrentPosition = 0;
                     }
                     else if (CurrentPosition >= 50)
                     {
                         CurrentPosition = 50;
-                    }
+                    }*/
 
                     //四舍五入
-                    if(CurrentPosition >= 49.9)
+                    if (CurrentPosition >= 49.9)
                     {
                         TextBlock_CurrentWidth.Text = Math.Ceiling(Convert.ToDouble(CurrentPosition.ToString("f1"))).ToString("f1");
                     }
@@ -314,7 +314,8 @@ namespace ElectricSlit.Views
         public void MotorConfig()
         {
             _motorEntity.SetPS();//设置为上下限位模式
-            //_motorFunc.MoveToZero();//初始化置于零位
+            _motorFunc.MoveToZero();//初始化置于零位
+            //_motorFunc.SetSpeed();
         }
 
         #endregion
@@ -343,25 +344,26 @@ namespace ElectricSlit.Views
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             double singleStep = GetComboBox_SingleStep();
-            if (CurrentPosition - singleStep >= 0)
+            if (_motorEntity != null)
             {
-                if(_motorEntity != null)
+                if (_motorEntity.ReadPortPSL() == 0)//0 PSL 光耦 LED 导通 1 PSL 光耦 LED 截止
                 {
                     _motorFunc.MoveRight(singleStep);
                 }
             }
+            
         }
 
         //狭缝调大
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             double singleStep = GetComboBox_SingleStep();
-            if (CurrentPosition + singleStep <= 50)
-            { 
-                if (_motorEntity != null)
+            if (_motorEntity != null)
+            {
+                if(_motorEntity.ReadPortPSH() == 0)
                 {
                     _motorFunc.MoveLeft(singleStep);
-                }
+                }               
             }
         }
 
@@ -386,6 +388,8 @@ namespace ElectricSlit.Views
             if(_motorEntity != null)
             {
                 _motorFunc.MoveToLowerLimmit();
+
+                _motorFunc.SetZero();//重设零位
             }
         }
 
@@ -488,15 +492,15 @@ namespace ElectricSlit.Views
 
                 else
                 {
-                    //double targetPosition = toolWindow.Gx(list_Light[selectedIndex]);//光强对应的实际位置
-                    double targetPosition = list_wl[selectedIndex].Width;
+                    //double targetPosition = toolWindow.Gx(list_Light[selectedIndex]);
+                    double targetPosition = DoubleFormat(list_wl[selectedIndex].Width);//列表对应照度电机实际位置
+                    
 
                     if (_motorEntity != null)
                     {
                         _motorFunc.MoveToPosition(50 - targetPosition, true);
                         Thread.Sleep(100);
-                    }
-            
+                    }            
                     //TextBox_Light.Text = list_Light[selectedIndex].ToString();
                     //ProgressBar_Light.Value = (list_Light[selectedIndex] / maxLight) * 100;
                 }
@@ -510,16 +514,16 @@ namespace ElectricSlit.Views
                 if(targetLight >= 0 && targetLight < list_wl[list_wl.Count - 1].Light + list_wlM[list_wlM.Count-1].Light 
                     && list_interval.Count > 0 && list_intervalPlus.Count > 0)
                 {
-                    if(_motorEntity != null)//
+                    if(_motorEntity != null)
                     {
-                        double targetPosition = 0;
+                        double targetPosition;
                         if(useManual) //如果使用辅助光源
                         {
-                            targetPosition = GetIntervalPos(targetLight, list_intervalPlus);//应用主光源+辅助光源曲线
+                            targetPosition = DoubleFormat(GetIntervalPos(targetLight, list_intervalPlus));//应用主光源+辅助光源曲线
                         }
                         else
                         {
-                            targetPosition = GetIntervalPos(targetLight, list_interval);
+                            targetPosition = DoubleFormat(GetIntervalPos(targetLight, list_interval));
                         }
 
                         _motorFunc.MoveToPosition(50 - targetPosition, true);

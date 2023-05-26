@@ -255,7 +255,7 @@ namespace MotorAPIPlus
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        private void SetVelSet(ushort data)
+        public void SetVelSet(double data)
         {
             List<byte> bytes = BitConverter.GetBytes(data).ToList();
             bytes.Reverse();
@@ -320,6 +320,44 @@ namespace MotorAPIPlus
             byte[] cmd = GetWriteCommand(slaveID, 0x06, 0x0000, bytes);
             _serialPort.SendAndReceive(cmd);
         }
+
+        /// <summary>
+        /// 读端口寄存器 PSL
+        /// </summary>
+        public int ReadPortPSL()
+        {
+            Result<byte> data = new Result<byte>();
+            int value;
+            int result = 0;
+            //0x01 0x04 0x00 0x80 0x00 0x01 0x30 0x22
+            byte[] bytes = new byte[] { 0x00, 0x12 };
+            byte[] cmd = GetReadCommand(slaveID, 0x04, 0x0080, bytes.ToArray());
+            data = _serialPort.SendAndReceive(cmd);
+            result = Convert.ToInt32(ConvertValue(data, typeof(int)));
+            return result;
+        }
+
+        /// <summary>
+        /// 读端口寄存器 PSH
+        /// </summary>
+        public int ReadPortPSH()
+        {
+            Result<byte> data = new Result<byte>();
+            int value;
+            int result = 0;
+            //0x01 0x04 0x00 0x80 0x00 0x01 0x30 0x22
+            byte[] bytes = new byte[] { 0x00, 0x13 };
+            byte[] cmd = GetReadCommand(slaveID, 0x04, 0x0080, bytes.ToArray());
+            data = _serialPort.SendAndReceive(cmd);
+            result = Convert.ToInt32(ConvertValue(data, typeof(int)));
+            return result;
+        }
+
+
+
+
+
+
 
         //-------读取上下限位
         /// <summary>
@@ -652,7 +690,7 @@ namespace MotorAPIPlus
 
             int pulsepositionSet;//脉冲偏移位置
 
-            if (Dir)
+            if (Dir)//true 右
             {
                 pulsepositionSet = current + offset;
             }

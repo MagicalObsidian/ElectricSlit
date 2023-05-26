@@ -378,7 +378,8 @@ namespace MotorTestDemo
                 try
                 {
                     PortInit();
-                    _serialPort = new SerialPortHelper(this.PortName);
+                    //_serialPort = new SerialPortHelper(this.PortName);//
+                    _serialPort = new SerialPortHelper("COM4");
                     _serialPort.Connect();
                     _motorEntity = new MotorEntity(_serialPort);
                     _motorFunc = new MotorFunc(_motorEntity);

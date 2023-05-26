@@ -27,6 +27,7 @@
                 x:Name="MenuFile"
                 FontSize="12"
                 Header="文件(F)">
+                <!--
                 <MenuItem
                     x:Name="MenuExportMap"
                     FontSize="12"
@@ -47,6 +48,7 @@
                         FontSize="12"
                         Header="主光源+辅助光源映射" />
                 </MenuItem>
+                -->
             </MenuItem>
             <MenuItem
                 x:Name="MenuSerialPort"
