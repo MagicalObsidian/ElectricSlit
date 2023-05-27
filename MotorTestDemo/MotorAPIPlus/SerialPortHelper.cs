@@ -112,6 +112,7 @@ namespace MotorAPIPlus
                 try
                 {
                     _serialPort.Open();//打开串口
+                    comStatus = true;
                 }
                 catch(Exception e)
                 {

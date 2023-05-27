@@ -264,6 +264,22 @@ namespace MotorAPIPlus
         }
 
         /// <summary>
+        /// 获取电机的实时速度
+        /// </summary>
+        /// <returns></returns>
+        public int GetCurVel()
+        {
+            Result<byte> data = new Result<byte>();
+            int result;
+            //0x01 0x04 0x00 0x45 0x00 0x01 0x20 0x1F
+            byte[] bytes = new byte[] { 0x00, 0x01 };
+            byte[] cmd = GetReadCommand(slaveID, 0x04, 0x0045, bytes);
+            data = _serialPort.SendAndReceive(cmd);
+            result = Convert.ToInt32(ConvertValue(data, typeof(Int32)));
+            return result;
+        }
+
+        /// <summary>
         /// 设置脉冲单步长度
         /// </summary>
         /// <param name="data"></param>
@@ -322,19 +338,38 @@ namespace MotorAPIPlus
         }
 
         /// <summary>
+        /// 读端口寄存器
+        /// </summary>
+        public int ReadPort()
+        {
+            Result<byte> data = new Result<byte>();
+            int result = 0;
+            //0x01 0x04 0x00 0x80 0x00 0x01 0x30 0x22
+            byte[] bytes = new byte[] { 0x00, 0x01 };
+            byte[] cmd = GetReadCommand(slaveID, 0x04, 0x0080, bytes.ToArray());
+            data = _serialPort.SendAndReceive(cmd);
+            result = Convert.ToInt32(ConvertValue(data, typeof(int)));
+            string binaryString = Convert.ToString(result, 2).PadLeft(16, '0');
+            return result;
+        }
+
+        /// <summary>
         /// 读端口寄存器 PSL
         /// </summary>
         public int ReadPortPSL()
         {
             Result<byte> data = new Result<byte>();
-            int value;
             int result = 0;
             //0x01 0x04 0x00 0x80 0x00 0x01 0x30 0x22
-            byte[] bytes = new byte[] { 0x00, 0x12 };
+            byte[] bytes = new byte[] { 0x00, 0x01 };
             byte[] cmd = GetReadCommand(slaveID, 0x04, 0x0080, bytes.ToArray());
             data = _serialPort.SendAndReceive(cmd);
             result = Convert.ToInt32(ConvertValue(data, typeof(int)));
-            return result;
+            //string binaryString = Convert.ToString(result, 2).PadLeft(16, '0');
+            //char bit12 = binaryString[12];                      
+            //char bit1 = binaryString[1];
+            //return Convert.ToInt16(bit1.ToString());
+            return result == 268530992 ? 1 : 0;
         }
 
         /// <summary>
@@ -343,14 +378,17 @@ namespace MotorAPIPlus
         public int ReadPortPSH()
         {
             Result<byte> data = new Result<byte>();
-            int value;
             int result = 0;
             //0x01 0x04 0x00 0x80 0x00 0x01 0x30 0x22
-            byte[] bytes = new byte[] { 0x00, 0x13 };
+            byte[] bytes = new byte[] { 0x00, 0x01   };
             byte[] cmd = GetReadCommand(slaveID, 0x04, 0x0080, bytes.ToArray());
             data = _serialPort.SendAndReceive(cmd);
             result = Convert.ToInt32(ConvertValue(data, typeof(int)));
-            return result;
+            //string binaryString = Convert.ToString(result, 2).PadLeft(16, '0');
+            //char bit13 = binaryString[13];
+            //char bit15 = binaryString[15];
+            //return Convert.ToInt16(bit15.ToString());
+            return result == 537010481 ? 1 : 0;
         }
 
 
@@ -634,37 +672,37 @@ namespace MotorAPIPlus
             //Result<int> state = new Result<int>();
             int state;
 
-            int offset = 0;
-            double APosition;//要移动到的绝对位置
-            double ACurrentPosition;//当前实际绝对位置
+            int offset = 0;//偏移脉冲数
+            double targetABSPosition;//要移动到的绝对位置
+            double currentABSPosition;//当前实际绝对位置
             
-            state = GetPulsePosition();//获取实时脉冲位置
-            int current = state;//实时脉冲位置
+            int currentPulsePosition = GetPulsePosition();//实时脉冲位置
 
             SetPulseLength(pulseLen);//设置脉冲步进长度
 
-            APosition = positionSign ? d : -d;//指定位置 positionSign是其相对于原点的方向， -为原点往左， +为原点向右
-            ACurrentPosition = Convert.ToDouble((current * K).ToString("f2"));//实时脉冲位置转为实时绝对位置
+            targetABSPosition = positionSign ? d : -d;//指定位置 positionSign是其相对于原点的方向， -为原点往左， +为原点向右
+            currentABSPosition = Convert.ToDouble((currentPulsePosition * K).ToString("f2"));//实时脉冲位置转为实时绝对位置
 
-            int n = ((int)(Math.Abs(ACurrentPosition - APosition) / K));//偏移脉冲数
+            int n = ((int)(Math.Abs(currentABSPosition - targetABSPosition) / K));//偏移脉冲数
             offset = Convert.ToInt32(n);//偏移脉冲数
 
-            int APulsePosition = 0;//要移动到的绝对脉冲位置
+            int targetABSPulsePositon = 0;//要移动到的绝对脉冲位置
 
-            if (ACurrentPosition - APosition > 0)//如果当前位置在指定位置右侧 则向左移动
+            if (currentABSPosition - targetABSPosition > 0)//如果当前位置在指定位置右侧 则向左移动
             {
-                APulsePosition = current - offset;
+                targetABSPulsePositon = currentPulsePosition - offset;
             }
-            else if (ACurrentPosition - APosition < 0)//如果当前位置在指定位置左侧 则向右移动
+            else if (currentABSPosition - targetABSPosition < 0)//如果当前位置在指定位置左侧 则向右移动
             {
-                APulsePosition = current + offset;
+                targetABSPulsePositon = currentPulsePosition + offset;
             }
-            else if (ACurrentPosition - APosition == 0)//如果不需要运动
+            else if (currentABSPosition - targetABSPosition == 0)//如果不需要运动
             {
-                APulsePosition = current;
+                targetABSPulsePositon = currentPulsePosition;
             }
 
-            SetPulsePositionSet(APulsePosition);
+            Thread.Sleep(800);
+            SetPulsePositionSet(targetABSPulsePositon);//移动至目标绝对脉冲位置
         }
 
         /// <summary>
@@ -678,28 +716,27 @@ namespace MotorAPIPlus
             //Result<int> state = new Result<int>();
             int state;
 
-            int offset = 0;
-            
-            state = GetPulsePosition();//获取实时脉冲位置
-            int current = state;//获取当前脉冲位置
+            int currentPulsePosition = GetPulsePosition();//获取当前脉冲位置
+
 
             SetPulseLength(pulseLen);//设置脉冲步进长度
 
             int n = (int)(d / K);
-            offset = Convert.ToInt32(n);//脉冲数
+            int offset = Convert.ToInt32(n);//脉冲数
 
-            int pulsepositionSet;//脉冲偏移位置
+            int targetPulsePositon;//目标脉冲位置
 
             if (Dir)//true 右
             {
-                pulsepositionSet = current + offset;
+                targetPulsePositon = currentPulsePosition + offset;//目标脉冲位置
             }
             else
             {
-                pulsepositionSet = current - offset;
+                targetPulsePositon = currentPulsePosition - offset;
             }
 
-            SetPulsePositionSet(pulsepositionSet);
+            Thread.Sleep(800);
+            SetPulsePositionSet(targetPulsePositon);
         }
 
 

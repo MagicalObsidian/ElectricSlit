@@ -85,8 +85,8 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="2*" />
-                <RowDefinition Height="8*" />
+                <RowDefinition Height="1.5*" />
+                <RowDefinition Height="8.5*" />
             </Grid.RowDefinitions>
 
             <!--  控制界面  -->
@@ -146,6 +146,7 @@
                             </ComboBox>
 
                             <Button
+                                Name="Button_GoSmall"
                                 Width="30"
                                 Height="30"
                                 Margin="10"
@@ -160,6 +161,7 @@
                                 </Button.Background>
                             </Button>
                             <Button
+                                Name="Button_GoBig"
                                 Width="30"
                                 Height="30"
                                 Margin="10"
@@ -174,16 +176,19 @@
                                 </Button.Background>
                             </Button>
                             <Button
+                                Name="Button_Max"
                                 Margin="10"
                                 Background="#f0f0f0"
                                 Click="Button_Click_4"
                                 Content="全开" />
                             <Button
+                                Name="Button_Min"
                                 Margin="10"
                                 Background="#f0f0f0"
                                 Click="Button_Click_5"
                                 Content="全闭" />
                             <Button
+                                Name="Button_Stop"
                                 Margin="10"
                                 Background="#f0f0f0"
                                 Click="Button_Click_6"
@@ -461,6 +466,84 @@
                     FontSize="12"
                     Text="mm"
                     TextAlignment="Center" />
+                <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                    <TextBlock
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="Debug:"
+                        TextAlignment="Center" />
+                    <TextBlock
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="当前脉冲位置:"
+                        TextAlignment="Center" />
+                    <TextBlock
+                        x:Name="TextBlock_PulsePosition"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Foreground="Green"
+                        Text="0"
+                        TextAlignment="Center" />
+                    <TextBlock
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="上限位光耦:"
+                        TextAlignment="Center" />
+                    <TextBlock
+                        x:Name="TextBlock_PSHStatus"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Foreground="Green"
+                        Text="0"
+                        TextAlignment="Center" />
+                    <TextBlock
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="下限位光耦:"
+                        TextAlignment="Center" />
+                    <TextBlock
+                        x:Name="TextBlock_PSLStatus"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Foreground="Green"
+                        Text="0"
+                        TextAlignment="Center" />
+                    <TextBlock
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="读端口寄存器:"
+                        TextAlignment="Center" />
+                    <TextBlock
+                        x:Name="TextBlock_Port"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Foreground="Green"
+                        Text="0"
+                        TextAlignment="Center" />
+                    <TextBlock
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="电机实时速度:"
+                        TextAlignment="Center" />
+                    <TextBlock
+                        x:Name="TextBlock_Vel"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Foreground="Green"
+                        Text="0"
+                        TextAlignment="Center" />
+                </StackPanel>
             </StackPanel>
         </Border>
     </Grid>

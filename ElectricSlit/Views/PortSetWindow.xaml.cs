@@ -123,7 +123,7 @@ namespace MotorTestDemo.Views
                     //成功连接后记录下串口号，之后打开软件尝试自动连接
                     SaveCom();
 
-                    MessageBox.Show("连接成功!");
+                    //MessageBox.Show("连接成功!");
                     this.Hide();
                 }
                 else

@@ -35,6 +35,7 @@ using DevExpress.Xpf.Core.Native;
 using OxyPlot.Legends;
 using DevExpress.Utils.Filtering.Internal;
 using Microsoft.Win32;
+using DevExpress.Internal.WinApi.Windows.UI.Notifications;
 
 namespace ElectricSlit.Views
 {
@@ -92,6 +93,7 @@ namespace ElectricSlit.Views
         public ObservableCollection<string> PortList { get; set; } = new ObservableCollection<string>();//当前串口列表
         public double CurrentPosition; //记录当前电机实时位置
         private Thread thread_getPosition = null; //获取电机实时位置的线程
+        private Thread thread_getVel = null; //获取电机实时速度的线程
 
         private static string exePath; //exe程序路径
         private static string debugFolderPath;
@@ -117,6 +119,10 @@ namespace ElectricSlit.Views
         {
             if (msg == WM_SYSCOMMAND && wParam.ToInt32() == SC_CLOSE)
             {
+                if(_serialPort_Motor != null && _serialPort_Motor.comStatus)
+                {
+                    _serialPort_Motor.Close();
+                }
                 this.Close();
                 Process.GetCurrentProcess().Kill();
                 //handled = true;
@@ -255,46 +261,84 @@ namespace ElectricSlit.Views
             while(true)
             {
                 GetCurrentPosition();
-                Thread.Sleep(1000);//
+                Thread.Sleep(1500);//
             }
         }
+
 
         //获得实时位置
         public void GetCurrentPosition()    
         {
             if(_motorEntity != null)
-            {
-                //Thread.Sleep(100);
-                CurrentPosition = 50 - _motorFunc.GetCurrentPosition();//调整为狭缝宽度
+            {       
                 //CurrentPosition++;
                 this.Dispatcher.BeginInvoke((Action)delegate ()
                 {
-                    //范围外的值处理
-/*                    if (CurrentPosition <= 0)
-                    {
-                        CurrentPosition = 0;
-                    }
-                    else if (CurrentPosition >= 50)
-                    {
-                        CurrentPosition = 50;
-                    }*/
+                    CurrentPosition = 50 - _motorFunc.GetCurrentPosition();//调整为狭缝宽度
 
-                    //四舍五入
-                    if (CurrentPosition >= 49.9)
+/*                    if(_motorEntity.ReadPortPSH() == 1)//到达上限位
                     {
-                        TextBlock_CurrentWidth.Text = Math.Ceiling(Convert.ToDouble(CurrentPosition.ToString("f1"))).ToString("f1");
+                        Button_GoSmall.IsEnabled = false;
                     }
-                    else if(CurrentPosition > 0 && CurrentPosition <= 0.1)
+                    else if(_motorEntity.ReadPortPSL() == 1)//到达下限位
                     {
-                        TextBlock_CurrentWidth.Text = "0.0";
+                        Button_GoBig.IsEnabled = false;
                     }
                     else
                     {
+                        Button_GoSmall.IsEnabled = true;
+                        Button_GoBig.IsEnabled = true;
+                    }*/
+
+                    if(_motorEntity.GetCurVel() == 47408)
+                    {
+                        Button_GoBig.IsEnabled = true;
+                        Button_GoSmall.IsEnabled = true;
+                        Button_Max.IsEnabled = true;
+                        Button_Min.IsEnabled = true;
+                    }
+                    else
+                    {
+                        Button_GoBig.IsEnabled = false;
+                        Button_GoSmall.IsEnabled = false;
+                        Button_Max.IsEnabled = false;
+                        Button_Min.IsEnabled = false;
+                    }
+
+                    //范围外的值处理
+                    /*                    if (CurrentPosition <= 0)
+                                        {
+                                            CurrentPosition = 0;
+                                        }
+                                        else if (CurrentPosition >= 50)
+                                        {
+                                            CurrentPosition = 50;
+                                        }*/
+
+                    //四舍五入
+                    /*                    if (CurrentPosition >= 49.9)
+                                        {
+                                            TextBlock_CurrentWidth.Text = Math.Ceiling(Convert.ToDouble(CurrentPosition.ToString("f1"))).ToString("f1");
+                                        }
+                                        else if(CurrentPosition > 0 && CurrentPosition <= 0.1)
+                                        {
+                                            TextBlock_CurrentWidth.Text = "0.0";
+                                        }
+                                        else*/
+                    {
                         TextBlock_CurrentWidth.Text = CurrentPosition.ToString("f1");
-                    }    
+                    }
+
+/*                    int pulsePosition = _motorEntity.GetPulsePosition();//返回当前脉冲位置
+                    TextBlock_PulsePosition.Text = pulsePosition.ToString("f1");
+                    TextBlock_PSHStatus.Text = _motorEntity.ReadPortPSH().ToString();//上限位
+                    TextBlock_PSLStatus.Text = _motorEntity.ReadPortPSL().ToString();//下限位
+                    TextBlock_Port.Text = _motorEntity.ReadPort().ToString();
+                    TextBlock_Vel.Text = _motorEntity.GetCurVel().ToString();*/
                 });
             }
         }
+
 
         //获取串口列表
         public void GetPortList()
@@ -314,13 +358,24 @@ namespace ElectricSlit.Views
         public void MotorConfig()
         {
             _motorEntity.SetPS();//设置为上下限位模式
-            _motorFunc.MoveToZero();//初始化置于零位
+            _motorFunc.MoveToZero();//初始化置零位
+            _motorFunc.Enable();
             //_motorFunc.SetSpeed();
+            _motorEntity.ReadPort();
         }
 
         #endregion
 
         #region 按钮方法
+        //按钮禁用
+        private void DisEnabledButtons()
+        {
+            Button_GoBig.IsEnabled = false;
+            Button_GoSmall.IsEnabled = false;
+            Button_Max.IsEnabled = false;
+            Button_Min.IsEnabled = false;
+        }
+
         //单选按钮
         private double GetComboBox_SingleStep()
         {
@@ -340,30 +395,41 @@ namespace ElectricSlit.Views
             return 0;
         }
 
-        //狭缝调小
+        //狭缝调小(对应电机向上限位运动)
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             double singleStep = GetComboBox_SingleStep();
-            if (_motorEntity != null)
+            if (_motorEntity != null)//
             {
-                if (_motorEntity.ReadPortPSL() == 0)//0 PSL 光耦 LED 导通 1 PSL 光耦 LED 截止
+                if (_motorEntity.ReadPortPSH() == 0)//0 导通
                 {
+                    DisEnabledButtons();
                     _motorFunc.MoveRight(singleStep);
                 }
+                else
+                {
+
+                }
             }
+
             
         }
 
-        //狭缝调大
+        //狭缝调大(对应电机向下限位运动)
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             double singleStep = GetComboBox_SingleStep();
-            if (_motorEntity != null)
+            if (_motorEntity != null)//
             {
-                if(_motorEntity.ReadPortPSH() == 0)
+                if (_motorEntity.ReadPortPSL() == 0)
                 {
+                    DisEnabledButtons();
                     _motorFunc.MoveLeft(singleStep);
-                }               
+                }
+                else
+                {
+                    _motorFunc.SetZero();
+                }
             }
         }
 
@@ -387,9 +453,13 @@ namespace ElectricSlit.Views
         {
             if(_motorEntity != null)
             {
+                DisEnabledButtons();
                 _motorFunc.MoveToLowerLimmit();
 
-                _motorFunc.SetZero();//重设零位
+                if(_motorEntity.ReadPortPSL() == 1)
+                {
+                    _motorFunc.SetZero();//重设零位
+                }
             }
         }
 
@@ -398,7 +468,13 @@ namespace ElectricSlit.Views
         {
             if(_motorEntity != null)
             {
+                DisEnabledButtons();
                 _motorFunc.MoveToUpperLimmit();
+
+                if (_motorEntity.ReadPortPSH() == 1)
+                {
+ 
+                }
             }
         }
 
@@ -1255,6 +1331,8 @@ namespace ElectricSlit.Views
         {
             return Convert.ToDouble(num.ToString("f1"));
         }
+        
+        
         #endregion
     }
 }

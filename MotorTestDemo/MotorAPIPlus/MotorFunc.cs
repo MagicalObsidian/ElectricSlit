@@ -130,8 +130,7 @@ namespace MotorAPIPlus
         /// <returns></returns>
         public double GetCurrentPosition()
         {
-            double currentPosition = 0;
-            currentPosition = _motor.GetPulsePosition() * _motor.K;
+            double currentPosition = _motor.GetPulsePosition() * _motor.K;
             return currentPosition;
         }
 
@@ -159,6 +158,10 @@ namespace MotorAPIPlus
             _motor.SetZero();
         }
 
+        /// <summary>
+        /// 设置速度
+        /// </summary>
+        /// <param name="speed"></param>
         public void SetSpeed(double speed)
         {
             _motor.SetVelSet(speed);
