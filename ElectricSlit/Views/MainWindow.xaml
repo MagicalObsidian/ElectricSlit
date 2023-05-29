@@ -466,6 +466,24 @@
                     FontSize="12"
                     Text="mm"
                     TextAlignment="Center" />
+                <!--
+                <TextBlock
+                    Name="Label_PSL"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="Red"
+                    Text="Low Limit"
+                    TextAlignment="Center" />
+                <TextBlock
+                    Name="Label_PSH"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="Green"
+                    Text="High Limit"
+                    TextAlignment="Center" />
+                -->
+
+                <!-- DEBUG
                 <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
                     <TextBlock
                         Margin="10,0,0,0"
@@ -544,6 +562,7 @@
                         Text="0"
                         TextAlignment="Center" />
                 </StackPanel>
+                -->
             </StackPanel>
         </Border>
     </Grid>

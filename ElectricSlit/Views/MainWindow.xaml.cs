@@ -73,6 +73,8 @@ namespace ElectricSlit.Views
         List<double> list_k = null; //区间系数列表
         struct Interval //区间
         { 
+            public double lwidth { get; set; }
+            public double hwidth { get; set; }
             public double low { get; set; } //下限
             public double high { get; set; } //上限
             public double k { get; set; } //系数
@@ -99,6 +101,8 @@ namespace ElectricSlit.Views
         private static string debugFolderPath;
         private static string projectFolderPath;
 
+        private Brush brushGreen = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 255, 0));
+        private Brush brushRed = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 0, 0));
 
         public MainWindow()
         {
@@ -256,12 +260,13 @@ namespace ElectricSlit.Views
         }*/
 
         //间隔 1s 刷新显示位置
-        public void RefreshPosition()
+        public async void RefreshPosition()
         {
             while(true)
             {
                 GetCurrentPosition();
-                Thread.Sleep(1500);//
+                //Thread.Sleep(1000);//
+                await Task.Delay(700);
             }
         }
 
@@ -272,45 +277,44 @@ namespace ElectricSlit.Views
             if(_motorEntity != null)
             {       
                 //CurrentPosition++;
-                this.Dispatcher.BeginInvoke((Action)delegate ()
+                this.Dispatcher.BeginInvoke((Action)async delegate ()
                 {
                     CurrentPosition = 50 - _motorFunc.GetCurrentPosition();//调整为狭缝宽度
 
-/*                    if(_motorEntity.ReadPortPSH() == 1)//到达上限位
+/*                    if (_motorEntity.ReadPortPSH() == 1)//到达上限位
                     {
-                        Button_GoSmall.IsEnabled = false;
+                        Label_PSH.Foreground = brushRed;
+                        Label_PSL.Foreground = brushGreen;
                     }
-                    else if(_motorEntity.ReadPortPSL() == 1)//到达下限位
+                    else if (_motorEntity.ReadPortPSL() == 1)//到达下限位
                     {
-                        Button_GoBig.IsEnabled = false;
+                        Label_PSL.Foreground = brushRed;
+                        Label_PSH.Foreground = brushGreen;
                     }
                     else
                     {
-                        Button_GoSmall.IsEnabled = true;
-                        Button_GoBig.IsEnabled = true;
+                        Label_PSL.Foreground = brushGreen;
+                        Label_PSH.Foreground = brushGreen;
                     }*/
 
-                    if(_motorEntity.GetCurVel() == 47408)
+                    if (_motorEntity.GetCurVel() != 47408) //速度不为0
+                    {
+                        DisEnabledButtons();
+                    }
+                    else
                     {
                         Button_GoBig.IsEnabled = true;
                         Button_GoSmall.IsEnabled = true;
                         Button_Max.IsEnabled = true;
                         Button_Min.IsEnabled = true;
                     }
-                    else
-                    {
-                        Button_GoBig.IsEnabled = false;
-                        Button_GoSmall.IsEnabled = false;
-                        Button_Max.IsEnabled = false;
-                        Button_Min.IsEnabled = false;
-                    }
 
                     //范围外的值处理
-                    /*                    if (CurrentPosition <= 0)
-                                        {
-                                            CurrentPosition = 0;
-                                        }
-                                        else if (CurrentPosition >= 50)
+                    if (CurrentPosition <= 0)
+                    {
+                        CurrentPosition = 0;
+                    }
+                    /*                    else if (CurrentPosition >= 50)
                                         {
                                             CurrentPosition = 50;
                                         }*/
@@ -329,13 +333,13 @@ namespace ElectricSlit.Views
                         TextBlock_CurrentWidth.Text = CurrentPosition.ToString("f1");
                     }
 
-/*                    int pulsePosition = _motorEntity.GetPulsePosition();//返回当前脉冲位置
-                    TextBlock_PulsePosition.Text = pulsePosition.ToString("f1");
-                    TextBlock_PSHStatus.Text = _motorEntity.ReadPortPSH().ToString();//上限位
-                    TextBlock_PSLStatus.Text = _motorEntity.ReadPortPSL().ToString();//下限位
-                    TextBlock_Port.Text = _motorEntity.ReadPort().ToString();
-                    TextBlock_Vel.Text = _motorEntity.GetCurVel().ToString();*/
-                });
+                /*                  int pulsePosition = _motorEntity.GetPulsePosition();//返回当前脉冲位置
+                                    TextBlock_PulsePosition.Text = pulsePosition.ToString("f1");
+                                    TextBlock_PSHStatus.Text = _motorEntity.ReadPortPSH().ToString();//上限位
+                                    TextBlock_PSLStatus.Text = _motorEntity.ReadPortPSL().ToString();//下限位
+                                    TextBlock_Port.Text = _motorEntity.ReadPort().ToString();
+                                    TextBlock_Vel.Text = _motorEntity.GetCurVel().ToString();*/
+            });
             }
         }
 
@@ -456,7 +460,7 @@ namespace ElectricSlit.Views
                 DisEnabledButtons();
                 _motorFunc.MoveToLowerLimmit();
 
-                if(_motorEntity.ReadPortPSL() == 1)
+                if(_motorEntity.ReadPortPSL() == 1) //限位截止
                 {
                     _motorFunc.SetZero();//重设零位
                 }
@@ -559,7 +563,7 @@ namespace ElectricSlit.Views
             int selectedIndex = Convert.ToInt32(ListView_Set.SelectedIndex.ToString());//0,1,2,...
 
             //从列表中选择设定值
-            if(TextBox_LightSet.Text != "" && selectedIndex >= 0)
+/*            if(selectedIndex >= 0) //TextBox_LightSet.Text != "" && 
             {
                 if(list_Light[selectedIndex] > maxLight2)
                 {
@@ -580,30 +584,37 @@ namespace ElectricSlit.Views
                     //TextBox_Light.Text = list_Light[selectedIndex].ToString();
                     //ProgressBar_Light.Value = (list_Light[selectedIndex] / maxLight) * 100;
                 }
-            }
+            }*/
 
             //从输入框中获得应用值
             if(TextBox_LightTarget.Text != "")
             {
                 double targetLight = Convert.ToDouble(TextBox_LightTarget.Text);
 
-                if(targetLight >= 0 && targetLight < list_wl[list_wl.Count - 1].Light + list_wlM[list_wlM.Count-1].Light 
-                    && list_interval.Count > 0 && list_intervalPlus.Count > 0)
+                if(targetLight >= 0  && list_interval.Count > 0 && list_intervalPlus.Count > 0)
                 {
                     if(_motorEntity != null)
                     {
-                        double targetPosition;
-                        if(useManual) //如果使用辅助光源
+                        double targetPosition = 0;
+                        //如果使用辅助光源
+                        if (useManual && targetLight <= list_wl[list_wl.Count - 1].Light + list_wlM[list_wlM.Count - 1].Light)
                         {
                             targetPosition = DoubleFormat(GetIntervalPos(targetLight, list_intervalPlus));//应用主光源+辅助光源曲线
+
+                            _motorFunc.MoveToPosition(50 - targetPosition, true);
+                            Thread.Sleep(100);
+                        }
+                        else if(targetLight <= list_wl[list_wl.Count - 1].Light)
+                        {
+                            targetPosition = DoubleFormat(GetIntervalPos(targetLight, list_interval));
+
+                            _motorFunc.MoveToPosition(50 - targetPosition, true);
+                            Thread.Sleep(100);
                         }
                         else
                         {
-                            targetPosition = DoubleFormat(GetIntervalPos(targetLight, list_interval));
+                            MessageBox.Show("输入值不正确!", "错误");
                         }
-
-                        _motorFunc.MoveToPosition(50 - targetPosition, true);
-                        Thread.Sleep(100);
                     }
                     else
                     {
@@ -770,14 +781,18 @@ namespace ElectricSlit.Views
 
                     for(int j = 0; j < list_interval.Count; j++)
                     {
-                        writer1.WriteLine(list_interval[j].low + "\t"
+                        writer1.WriteLine(list_wl[j].Width + "\t"
+                                        + list_wl[j+1].Width + "\t"
+                                        + list_interval[j].low + "\t"
                                         + list_interval[j].high + "\t"
                                         + list_interval[j].k);
                     }
 
                     for(int k = 0; k < list_intervalPlus.Count; k++)
                     {
-                        writer2.WriteLine(list_intervalPlus[k].low + "\t"
+                        writer2.WriteLine(list_wlM[k].Width + "\t"
+                                        + list_wlM[k+1].Width + "\t"
+                                        + list_intervalPlus[k].low + "\t"
                                         + list_intervalPlus[k].high + "\t"
                                         + list_intervalPlus[k].k);
                     }
@@ -974,6 +989,8 @@ namespace ElectricSlit.Views
 
                             list_interval.Add(new Interval
                             {
+                                lwidth = DoubleFormat(dList_Width[i]),
+                                hwidth = DoubleFormat(dList_Width[i + 1]),
                                 low = DoubleFormat(dList_Light[i]),
                                 high = DoubleFormat(dList_Light[i + 1]),
                                 k = kLast
@@ -981,6 +998,8 @@ namespace ElectricSlit.Views
 
                             list_intervalPlus.Add(new Interval
                             {
+                                lwidth = DoubleFormat(dList_Width[i]),
+                                hwidth = DoubleFormat(dList_Width[i + 1]),
                                 low = DoubleFormat(dList_Light[i]) + DoubleFormat(dList_LightM[i]),
                                 high = DoubleFormat(dList_Light[i + 1]) + DoubleFormat(dList_LightM[i + 1]),
                                 k = kLastM
@@ -1061,6 +1080,8 @@ namespace ElectricSlit.Views
 
                             list_interval.Add(new Interval
                             {
+                                lwidth = DoubleFormat(dList_Width[i]),
+                                hwidth = DoubleFormat(dList_Width[i + 1]),
                                 low = DoubleFormat(dList_Light[i]),
                                 high = DoubleFormat(dList_Light[i + 1]),
                                 k = k
@@ -1068,6 +1089,8 @@ namespace ElectricSlit.Views
 
                             list_intervalPlus.Add(new Interval
                             {
+                                lwidth = DoubleFormat(dList_Width[i]),
+                                hwidth = DoubleFormat(dList_Width[i + 1]),
                                 low = DoubleFormat(dList_Light[i]) + DoubleFormat(dList_LightM[i]),
                                 high = DoubleFormat(dList_Light[i + 1]) + DoubleFormat(dList_LightM[i + 1]),
                                 k = kM
@@ -1265,12 +1288,15 @@ namespace ElectricSlit.Views
                         if (line != null)
                         {
                             var stringls = line.Split("\t");
-                            if (stringls.Length == 3)
+                            if (stringls.Length == 5)
                             {
-                                double.TryParse(stringls[0], out double low);
-                                double.TryParse(stringls[1], out double high);
-                                double.TryParse(stringls[2], out double k);
-                                list_interval.Add(new Interval { low = low, high = high, k = k });
+                                double.TryParse(stringls[0], out double lwidth);
+                                double.TryParse(stringls[1], out double hwidth);
+                                double.TryParse(stringls[2], out double low);
+                                double.TryParse(stringls[3], out double high);
+                                double.TryParse(stringls[4], out double k);
+                                list_interval.Add(new Interval { lwidth = lwidth, hwidth = hwidth,
+                                    low = low, high = high, k = k });
                             }
                         }
                         n++;
@@ -1295,12 +1321,15 @@ namespace ElectricSlit.Views
                         if (line != null)
                         {
                             var stringls = line.Split("\t");
-                            if (stringls.Length == 3)
+                            if (stringls.Length == 5)
                             {
-                                double.TryParse(stringls[0], out double low);
-                                double.TryParse(stringls[1], out double high);
-                                double.TryParse(stringls[2], out double k);
-                                list_intervalPlus.Add(new Interval { low = low, high = high, k = k });
+                                double.TryParse(stringls[0], out double lwidth);
+                                double.TryParse(stringls[1], out double hwidth);
+                                double.TryParse(stringls[2], out double low);
+                                double.TryParse(stringls[3], out double high);
+                                double.TryParse(stringls[4], out double k);
+                                list_intervalPlus.Add(new Interval { lwidth = lwidth, hwidth = hwidth,
+                                    low = low, high = high, k = k });
                             }
                         }
                         n++;
@@ -1318,9 +1347,10 @@ namespace ElectricSlit.Views
         {
             for(int i = 0; i < intervals.Count; i++)
             {
-                if(number >= intervals[i].low && number < intervals[i].high)
+                if(number >= intervals[i].low && number <= intervals[i].high)
                 {
-                    return intervals[i].low + number / intervals[i].k;
+                    double ans = intervals[i].lwidth + (number - intervals[i].low) / intervals[i].k;
+                    return ans;
                 }
             }
             return 0;

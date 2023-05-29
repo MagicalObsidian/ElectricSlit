@@ -23,6 +23,16 @@ namespace MotorAPIPlus
         /// </summary>
         public double K { get; set; } = 0.0044706723891273;//系数 //0.00025  //0.0000025 //电动狭缝 0.0044706723891273
 
+        /// <summary>
+        /// 脉冲步进长度
+        /// </summary>
+        public int PulseLen { get; set; } = 19200;
+
+        /// <summary>
+        /// 速度
+        /// </summary>
+        public int Speed { get; set; } = 192; // 60 rpm ~ 192
+
         public SerialPortHelper _serialPort = null;
 
         public MotorEntity()
@@ -267,7 +277,7 @@ namespace MotorAPIPlus
         /// 获取电机的实时速度
         /// </summary>
         /// <returns></returns>
-        public int GetCurVel()
+        public int GetCurVel()//Velocity
         {
             Result<byte> data = new Result<byte>();
             int result;
@@ -285,6 +295,8 @@ namespace MotorAPIPlus
         /// <param name="data"></param>
         public void SetPulseLength(int data)
         {
+            /*如果使用脉冲位置（电机脉冲实时位置、电机脉冲设
+            定位置）来控制电机运行，需预先设定细分值。*/
             List<byte> bytes = BitConverter.GetBytes(data).ToList();
             bytes.Reverse();
             byte[] register = { 0x00, 0x02, 0x04};
@@ -678,6 +690,7 @@ namespace MotorAPIPlus
             
             int currentPulsePosition = GetPulsePosition();//实时脉冲位置
 
+            pulseLen = PulseLen;
             SetPulseLength(pulseLen);//设置脉冲步进长度
 
             targetABSPosition = positionSign ? d : -d;//指定位置 positionSign是其相对于原点的方向， -为原点往左， +为原点向右
@@ -701,7 +714,7 @@ namespace MotorAPIPlus
                 targetABSPulsePositon = currentPulsePosition;
             }
 
-            Thread.Sleep(800);
+            Thread.Sleep(100);
             SetPulsePositionSet(targetABSPulsePositon);//移动至目标绝对脉冲位置
         }
 
@@ -711,14 +724,14 @@ namespace MotorAPIPlus
         /// <param name="d">移动的距离</param>
         /// <param name="Dir">true 正向 ，false 反向</param>
         /// <returns></returns>
-        public void SetSingleMove(double d, bool Dir = true, int pulseLen = 19200)//3840000 / 19200 = 200
+        public void SetSingleMove(double d, bool Dir = true, int pulseLen = 19200)//3840000 / 19200 = 200 ppr (细分值)
         {
             //Result<int> state = new Result<int>();
             int state;
 
             int currentPulsePosition = GetPulsePosition();//获取当前脉冲位置
 
-
+            pulseLen = PulseLen;
             SetPulseLength(pulseLen);//设置脉冲步进长度
 
             int n = (int)(d / K);
@@ -735,7 +748,7 @@ namespace MotorAPIPlus
                 targetPulsePositon = currentPulsePosition - offset;
             }
 
-            Thread.Sleep(800);
+            Thread.Sleep(100);
             SetPulsePositionSet(targetPulsePositon);
         }
 

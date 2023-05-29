@@ -151,7 +151,7 @@ namespace MotorAPIPlus
         }
 
         /// <summary>
-        /// 设置零位
+        /// 设置当前位置为零位
         /// </summary>
         public void SetZero()
         {
