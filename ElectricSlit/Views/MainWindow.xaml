@@ -138,12 +138,18 @@
                                 Name="ComboBox_SingleStep"
                                 Height="30"
                                 Margin="10">
-                                <ComboBoxItem Content="0.1 mm" />
-                                <ComboBoxItem Content="0.5 mm" />
-                                <ComboBoxItem Content="1 mm" IsSelected="True" />
-                                <ComboBoxItem Content="2 mm" />
-                                <ComboBoxItem Content="5 mm" />
+                                <ComboBoxItem Content="0.1  " />
+                                <ComboBoxItem Content="0.5  " />
+                                <ComboBoxItem Content="1  " IsSelected="True" />
+                                <ComboBoxItem Content="2  " />
+                                <ComboBoxItem Content="5  " />
                             </ComboBox>
+
+                            <TextBlock
+                                Margin="10"
+                                VerticalAlignment="Center"
+                                Text="mm"
+                                TextAlignment="Center" />
 
                             <Button
                                 Name="Button_GoSmall"
@@ -252,9 +258,12 @@
                     <StackPanel
                         Grid.Row="1"
                         Grid.ColumnSpan="2"
-                        HorizontalAlignment="Center"
+                        HorizontalAlignment="Left"
                         Orientation="Horizontal">
-                        <StackPanel Margin="10" Orientation="Horizontal">
+                        <StackPanel
+                            Grid.Column="0"
+                            Margin="10"
+                            Orientation="Horizontal">
                             <TextBlock
                                 Margin="10"
                                 VerticalAlignment="Center"
@@ -282,7 +291,10 @@
                                 Click="Button_Click_13"
                                 Content="保存" />
                         </StackPanel>
-                        <StackPanel Margin="10" Orientation="Horizontal">
+                        <StackPanel
+                            Grid.Column="1"
+                            Margin="10"
+                            Orientation="Horizontal">
                             <ToggleButton
                                 Name="ToggleButton_ManualSwitch"
                                 Margin="10"
@@ -348,27 +360,20 @@
                                             Header="照度(lx)" />
                                     </GridView>
                                 </ListView.View>
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="Height" Value="30" />
-                                        <Setter Property="Margin" Value="10,0,0,0" />
-                                    </Style>
-                                </ListView.ItemContainerStyle>
                             </ListView>
                         </GroupBox>
 
-                        <!--  辅助光源 列表  -->
+                        <!--  主+辅助光源 列表  -->
                         <GroupBox
                             Grid.Column="1"
                             Margin="10"
-                            Header="辅助光源"
+                            Header="主光源+辅助光源"
                             Style="{StaticResource InputElementBaseStyle}">
                             <DataGrid
                                 x:Name="DataGrid_Manual"
                                 AutoGenerateColumns="True"
                                 Background="#f0f0f0"
-                                ItemsSource="{Binding}"
-                                RowHeight="30" />
+                                ItemsSource="{Binding}" />
                         </GroupBox>
 
                         <!--  图表  -->
@@ -397,20 +402,39 @@
                 Style="{StaticResource InputElementBaseStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="8*" />
+                        <RowDefinition Height="4*" />
+                        <RowDefinition Height="4*" />
                         <RowDefinition Height="2*" />
                     </Grid.RowDefinitions>
-                    <DataGrid
-                        x:Name="DataGrid_ColorTemp"
-                        Margin="10"
-                        AutoGenerateColumns="True"
-                        Background="#f0f0f0"
-                        CanUserDeleteRows="True"
-                        ItemsSource="{Binding}"
-                        KeyDown="DataGrid_ColorTemp_KeyDown"
-                        RowHeight="30" />
-                    <StackPanel
+                    <GroupBox
+                        Background="#ffffff"
+                        Header="主光源"
+                        Style="{StaticResource InputElementBaseStyle}">
+                        <DataGrid
+                            x:Name="DataGrid_ColorTemp"
+                            Margin="10"
+                            AutoGenerateColumns="True"
+                            Background="#f0f0f0"
+                            CanUserDeleteRows="True"
+                            ItemsSource="{Binding}"
+                            KeyDown="DataGrid_ColorTemp_KeyDown" />
+                    </GroupBox>
+                    <GroupBox
                         Grid.Row="1"
+                        Background="#ffffff"
+                        Header="主光源+辅助光源"
+                        Style="{StaticResource InputElementBaseStyle}">
+                        <DataGrid
+                            x:Name="DataGrid_ColorTempPlus"
+                            Margin="10"
+                            AutoGenerateColumns="True"
+                            Background="#f0f0f0"
+                            CanUserDeleteRows="True"
+                            ItemsSource="{Binding}"
+                            KeyDown="DataGrid_ColorTempPlus_KeyDown" />
+                    </GroupBox>
+                    <StackPanel
+                        Grid.Row="2"
                         Margin="10"
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">

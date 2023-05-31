@@ -83,6 +83,7 @@ namespace ElectricSlit.Views
         List<Interval> list_intervalPlus = null; //插值后映射 区间和系数列表（加辅助光源）
 
         public List<IColorTempViewModel> list_ic = null; //电流-色温 列表
+        public List<IColorTempViewModel> list_icPlus = null; //电流-色温 列表(主+辅)
 
         public bool useManual = false;//是否使用手动辅助光源
 
@@ -186,6 +187,7 @@ namespace ElectricSlit.Views
             {
                 list_Light = new List<double>();
                 list_ic = new List<IColorTempViewModel>();
+                list_icPlus = new List<IColorTempViewModel>();
                 list_wl = new List<WLModel>();
                 list_wlM = new List<WLModel>();
                 list_LightInterWL = new List<WLModel>();
@@ -246,6 +248,10 @@ namespace ElectricSlit.Views
                 DataGrid_ColorTemp.ItemsSource = list_ic;
                 DataGrid_ColorTemp.Columns[0].Header = "电流(A)    ";
                 DataGrid_ColorTemp.Columns[1].Header = "色温(K)";
+
+                DataGrid_ColorTempPlus.ItemsSource = list_icPlus;
+                DataGrid_ColorTempPlus.Columns[0].Header = "电流(A)    ";
+                DataGrid_ColorTempPlus.Columns[1].Header = "色温(K)";
             }
         }
 
@@ -279,7 +285,7 @@ namespace ElectricSlit.Views
                 //CurrentPosition++;
                 this.Dispatcher.BeginInvoke((Action)async delegate ()
                 {
-                    CurrentPosition = 50 - _motorFunc.GetCurrentPosition();//调整为狭缝宽度
+                    CurrentPosition = _motorFunc.GetCurrentPosition();//狭缝宽度直接对应电机位置
 
 /*                    if (_motorEntity.ReadPortPSH() == 1)//到达上限位
                     {
@@ -307,17 +313,18 @@ namespace ElectricSlit.Views
                         Button_GoSmall.IsEnabled = true;
                         Button_Max.IsEnabled = true;
                         Button_Min.IsEnabled = true;
+                        Button_Stop.IsEnabled = true;
                     }
 
                     //范围外的值处理
-                    if (CurrentPosition <= 0)
+/*                    if (CurrentPosition <= 0)
                     {
                         CurrentPosition = 0;
                     }
-                    /*                    else if (CurrentPosition >= 50)
-                                        {
-                                            CurrentPosition = 50;
-                                        }*/
+                    else if (CurrentPosition >= 50)
+                    {
+                        CurrentPosition = 50;
+                    }*/
 
                     //四舍五入
                     /*                    if (CurrentPosition >= 49.9)
@@ -362,7 +369,7 @@ namespace ElectricSlit.Views
         public void MotorConfig()
         {
             _motorEntity.SetPS();//设置为上下限位模式
-            _motorFunc.MoveToZero();//初始化置零位
+            //_motorFunc.MoveToZero();//初始化置零位
             _motorFunc.Enable();
             //_motorFunc.SetSpeed();
             _motorEntity.ReadPort();
@@ -399,40 +406,42 @@ namespace ElectricSlit.Views
             return 0;
         }
 
-        //狭缝调小(对应电机向上限位运动)
+        //狭缝调小(对应电机向下限位运动)
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             double singleStep = GetComboBox_SingleStep();
             if (_motorEntity != null)//
             {
-                if (_motorEntity.ReadPortPSH() == 0)//0 导通
+                if (_motorEntity.ReadPortPSL() == 0)//0 导通
                 {
                     DisEnabledButtons();
-                    _motorFunc.MoveRight(singleStep);
+                    _motorFunc.Enable();//运动前电机使能
+                    _motorFunc.MoveLeft(singleStep);
                 }
                 else
                 {
-
+                    _motorFunc.SetZero();//截止下限位脉冲设0位
                 }
             }
 
             
         }
 
-        //狭缝调大(对应电机向下限位运动)
+        //狭缝调大(对应电机向上限位运动)
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             double singleStep = GetComboBox_SingleStep();
             if (_motorEntity != null)//
             {
-                if (_motorEntity.ReadPortPSL() == 0)
+                if (_motorEntity.ReadPortPSH() == 0)
                 {
                     DisEnabledButtons();
-                    _motorFunc.MoveLeft(singleStep);
+                    _motorFunc.Enable();//运动前电机使能
+                    _motorFunc.MoveRight(singleStep);
                 }
                 else
                 {
-                    _motorFunc.SetZero();
+                    
                 }
             }
         }
@@ -458,11 +467,13 @@ namespace ElectricSlit.Views
             if(_motorEntity != null)
             {
                 DisEnabledButtons();
-                _motorFunc.MoveToLowerLimmit();
+                Button_Stop.IsEnabled = false;
+                _motorFunc.Enable();//运动前电机使能
+                _motorFunc.MoveToUpperLimmit();
 
-                if(_motorEntity.ReadPortPSL() == 1) //限位截止
+                if (_motorEntity.ReadPortPSH() == 1)
                 {
-                    _motorFunc.SetZero();//重设零位
+
                 }
             }
         }
@@ -473,11 +484,13 @@ namespace ElectricSlit.Views
             if(_motorEntity != null)
             {
                 DisEnabledButtons();
-                _motorFunc.MoveToUpperLimmit();
+                Button_Stop.IsEnabled = false;
+                _motorFunc.Enable();//运动前电机使能
+                _motorFunc.MoveToLowerLimmit();//全闭为下限位
 
-                if (_motorEntity.ReadPortPSH() == 1)
+                if (_motorEntity.ReadPortPSL() == 1) //限位截止
                 {
- 
+                    _motorFunc.SetZero();//重设零位
                 }
             }
         }
@@ -601,14 +614,14 @@ namespace ElectricSlit.Views
                         {
                             targetPosition = DoubleFormat(GetIntervalPos(targetLight, list_intervalPlus));//应用主光源+辅助光源曲线
 
-                            _motorFunc.MoveToPosition(50 - targetPosition, true);
+                            _motorFunc.MoveToPosition(targetPosition, true);
                             Thread.Sleep(100);
                         }
                         else if(targetLight <= list_wl[list_wl.Count - 1].Light)
                         {
                             targetPosition = DoubleFormat(GetIntervalPos(targetLight, list_interval));
 
-                            _motorFunc.MoveToPosition(50 - targetPosition, true);
+                            _motorFunc.MoveToPosition(targetPosition, true);
                             Thread.Sleep(100);
                         }
                         else
@@ -651,7 +664,6 @@ namespace ElectricSlit.Views
                 if (ListView_Set.SelectedIndex >= 0)//有选中一项
                 {
                     int selectedIndex = ListView_Set.SelectedIndex;//0,1,2,...                            
-                    ListView_Set.Items.RemoveAt(selectedIndex);
 
                     if(list_Light.Count > 0)
                     {
@@ -660,6 +672,7 @@ namespace ElectricSlit.Views
 
                     if (selectedIndex < list_wl.Count)
                     {
+                        ListView_Set.Items.RemoveAt(selectedIndex);
                         list_wl.RemoveAt(selectedIndex);
                         list_wlM.RemoveAt(selectedIndex);
                     }
@@ -689,8 +702,28 @@ namespace ElectricSlit.Views
                     DataGrid_ColorTemp.ItemsSource = null;
                     DataGrid_ColorTemp.ItemsSource = list_ic;
 
-                    DataGrid_ColorTemp.Columns[0].Header = "电流(A)            ";
+                    DataGrid_ColorTemp.Columns[0].Header = "电流(A)      ";
                     DataGrid_ColorTemp.Columns[1].Header = "色温(K)      ";
+                }
+            }
+        }
+
+        //色温记录表 删除事件（主+辅助）
+        private void DataGrid_ColorTempPlus_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                if (DataGrid_ColorTempPlus.SelectedIndex >= 0)
+                {
+                    int selectedIndex = DataGrid_ColorTempPlus.SelectedIndex;
+
+                    list_icPlus.RemoveAt(selectedIndex);
+
+                    DataGrid_ColorTempPlus.ItemsSource = null;
+                    DataGrid_ColorTempPlus.ItemsSource = list_icPlus;
+
+                    DataGrid_ColorTempPlus.Columns[0].Header = "电流(A)      ";
+                    DataGrid_ColorTempPlus.Columns[1].Header = "色温(K)      ";
                 }
             }
         }
@@ -699,38 +732,57 @@ namespace ElectricSlit.Views
         private void Button_Click_10(object sender, RoutedEventArgs e)
         {
             DataGrid_ColorTemp.IsEnabled = true;
+            DataGrid_ColorTempPlus.IsEnabled = true;
 
             list_ic.Add(new IColorTempViewModel(0, 0));
+            list_icPlus.Add(new IColorTempViewModel(0, 0));
 
             DataGrid_ColorTemp.ItemsSource = null;
             DataGrid_ColorTemp.ItemsSource = list_ic;
 
-            DataGrid_ColorTemp.Columns[0].Header = "电流(A)            ";
+            DataGrid_ColorTempPlus.ItemsSource = null;
+            DataGrid_ColorTempPlus.ItemsSource = list_icPlus;
+
+            DataGrid_ColorTemp.Columns[0].Header = "电流(A)      ";
             DataGrid_ColorTemp.Columns[1].Header = "色温(K)      ";
+
+            DataGrid_ColorTempPlus.Columns[0].Header = "电流(A)      ";
+            DataGrid_ColorTempPlus.Columns[1].Header = "色温(K)      ";
 
             System.Windows.Media.Brush brush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 255, 255));
             DataGrid_ColorTemp.Background = brush;
+            DataGrid_ColorTempPlus.Background = brush;
         }
 
         //色温调节 保存
         private void Button_Click_11(object sender, RoutedEventArgs e)
         {
             DataGrid_ColorTemp.IsEnabled = false;
+            DataGrid_ColorTempPlus.IsEnabled = false;
             System.Windows.Media.Brush brush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(240, 240, 240));
             DataGrid_ColorTemp.Background = brush;
+            DataGrid_ColorTempPlus.Background = brush;
 
             //保存到文件
             string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\ic.txt");
+            string filePath1 = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\icPlus.txt");
 
-            if (filePath != null)
+            if (filePath != null && filePath1 != null)
             {
                 StreamWriter writer = new StreamWriter(filePath);
+                StreamWriter writer1 = new StreamWriter(filePath1);
                 writer.WriteLine("ic");
+                writer1.WriteLine("icPlus");
                 for (int i = 0; i < list_ic.Count; i++)
                 {
                     writer.WriteLine(list_ic[i].Current.ToString() + " " + list_ic[i].ColorTemp.ToString());
                 }
+                for (int i = 0; i < list_icPlus.Count; i++)
+                {
+                    writer.WriteLine(list_icPlus[i].Current.ToString() + " " + list_icPlus[i].ColorTemp.ToString());
+                }
                 writer.Close();
+                writer1.Close();
                 MessageBox.Show("保存完成!");
             }
         }
@@ -814,6 +866,7 @@ namespace ElectricSlit.Views
         {
             useManual = true;
             TextBlock_ManualSwitch.Text = "辅助光源开";
+            ListView_Set.IsEnabled = false;
             DataGrid_Manual.IsEnabled = true;
         }
 
@@ -822,6 +875,7 @@ namespace ElectricSlit.Views
         {
             useManual = false;
             TextBlock_ManualSwitch.Text = "辅助光源关";
+            ListView_Set.IsEnabled = true;
             DataGrid_Manual.IsEnabled = false;
         }
 
@@ -984,7 +1038,9 @@ namespace ElectricSlit.Views
                             double temp = DoubleFormat(dList_Width[i]);//保留小数点后一位 宽度
                             double kLast = (dList_Light[i + 1] - dList_Light[i])
                                 / (DoubleFormat(dList_Width[i + 1]) - temp); //每个区间的系数 k//系数 k
-                            double kLastM = ((dList_Light[i + 1] + dList_LightM[i + 1]) - (dList_Light[i] + dList_LightM[i]))
+/*                            double kLastM = ((dList_Light[i + 1] + dList_LightM[i + 1]) - (dList_Light[i] + dList_LightM[i]))
+                                / (DoubleFormat(dList_Width[i + 1]) - temp); //每个区间的系数 k//系数 k*/
+                            double kLastM = ((dList_LightM[i + 1]) - (dList_LightM[i]))
                                 / (DoubleFormat(dList_Width[i + 1]) - temp); //每个区间的系数 k//系数 k
 
                             list_interval.Add(new Interval
@@ -1010,7 +1066,8 @@ namespace ElectricSlit.Views
                             {
                                 //得到每个细分区间插值后的照度列表
                                 list_LightInter.Add(interpolation.Interpolate(j / 10));
-                                list_LightInterOverlay.Add(list_LightInter[j - txLast] + interpolation1.Interpolate(j / 10));
+                                //list_LightInterOverlay.Add(list_LightInter[j - txLast] + interpolation1.Interpolate(j / 10));
+                                list_LightInterOverlay.Add(interpolation1.Interpolate(j / 10));
 
                                 //将点添加到图例中
                                 seriesLast.Points.Add(new DataPoint(j / 10, list_LightInter[j - txLast]));
@@ -1075,7 +1132,9 @@ namespace ElectricSlit.Views
                             double temp = DoubleFormat(dList_Width[i]);//保留小数点后一位 宽度
                             double k = (dList_Light[i + 1] - dList_Light[i])
                                 / (DoubleFormat(dList_Width[i + 1]) - temp); //每个区间的系数 k
-                            double kM = ((dList_Light[i + 1] + dList_LightM[i + 1]) - (dList_Light[i] + dList_LightM[i]))
+/*                            double kM = ((dList_Light[i + 1] + dList_LightM[i + 1]) - (dList_Light[i] + dList_LightM[i]))
+                                / (DoubleFormat(dList_Width[i + 1]) - temp); //每个区间的系数 k*/
+                            double kM = ((dList_LightM[i + 1]) - (dList_LightM[i]))
                                 / (DoubleFormat(dList_Width[i + 1]) - temp); //每个区间的系数 k
 
                             list_interval.Add(new Interval
@@ -1101,7 +1160,8 @@ namespace ElectricSlit.Views
                             {
                                 //得到每个细分区间插值后的照度列表
                                 list_LightInter.Add(interpolation.Interpolate(j / 10));
-                                list_LightInterOverlay.Add(list_LightInter[j - tx] + interpolation1.Interpolate(j / 10));
+                                //list_LightInterOverlay.Add(list_LightInter[j - tx] + interpolation1.Interpolate(j / 10));
+                                list_LightInterOverlay.Add(interpolation1.Interpolate(j / 10));
 
                                 //将点添加到图例中
                                 //series.Points.Add(new ScatterPoint(j, list_LightInter[j - Convert.ToInt32(dList_Width[i])]));
@@ -1201,6 +1261,7 @@ namespace ElectricSlit.Views
         private void Readic()
         {
             string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\ic.txt");
+            string filePath1 = System.IO.Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, @"config\icPlus.txt");
 
             using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
@@ -1220,6 +1281,35 @@ namespace ElectricSlit.Views
                                 double.TryParse(stringls[0], out double i);
                                 int.TryParse(stringls[1], out int c);
                                 list_ic.Add(new IColorTempViewModel(i, c));
+                            }
+                        }
+                        n++;
+                    }
+                }
+                catch
+                {
+
+                }
+            }
+
+            using (FileStream fs = new FileStream(filePath1, FileMode.Open, FileAccess.Read))
+            {
+                try
+                {
+                    StreamReader reader = new StreamReader(fs);
+                    string line = reader.ReadLine();
+                    int n = 0;
+                    while (line != null)
+                    {
+                        line = reader.ReadLine();
+                        if (line != null)
+                        {
+                            var stringls = line.Split(' ');
+                            if (stringls.Length == 2)
+                            {
+                                double.TryParse(stringls[0], out double i);
+                                int.TryParse(stringls[1], out int c);
+                                list_icPlus.Add(new IColorTempViewModel(i, c));
                             }
                         }
                         n++;
@@ -1361,8 +1451,6 @@ namespace ElectricSlit.Views
         {
             return Convert.ToDouble(num.ToString("f1"));
         }
-        
-        
         #endregion
     }
 }

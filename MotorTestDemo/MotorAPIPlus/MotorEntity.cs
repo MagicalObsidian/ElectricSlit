@@ -18,21 +18,6 @@ namespace MotorAPIPlus
         public byte slaveID = 0x01;//RTU地址
         private static Int64 TRT = 3840000; //1 圈=3840000MMS
 
-        /// <summary>
-        /// 系数 实际运动距离(mm) 与 脉冲数 的比值
-        /// </summary>
-        public double K { get; set; } = 0.0044706723891273;//系数 //0.00025  //0.0000025 //电动狭缝 0.0044706723891273
-
-        /// <summary>
-        /// 脉冲步进长度
-        /// </summary>
-        public int PulseLen { get; set; } = 19200;
-
-        /// <summary>
-        /// 速度
-        /// </summary>
-        public int Speed { get; set; } = 192; // 60 rpm ~ 192
-
         public SerialPortHelper _serialPort = null;
 
         public MotorEntity()
@@ -44,6 +29,23 @@ namespace MotorAPIPlus
         {
             _serialPort = serialPortHelper;
         }
+
+        #region 电机配置参数修改
+        /// <summary>
+        /// 系数 实际运动距离(mm) 与 脉冲数 的比值
+        /// </summary>
+        public double K { get; set; } = 0.0044706723891273;//系数 //0.00025  //0.0000025 //电动狭缝: 50mm / 11180 = 0.0044706723891273
+
+        /// <summary>
+        /// 脉冲步进长度
+        /// </summary>
+        public int PulseLen { get; set; } = 19200;
+
+        /// <summary>
+        /// 速度
+        /// </summary>
+        public int Speed { get; set; } = 192; // 转速60 rpm(转每分) 对应 速度192 速度不要过大
+        #endregion
 
         /* 功能码:
            0x04 读单个寄存器 
@@ -60,8 +62,6 @@ namespace MotorAPIPlus
            0x01 0x00 设置位置偏移至0 即重设当前位置为零位
         */
 
-
-
         #region 串口命令获取和数据转换
         /// <summary>
         /// 获得读命令
@@ -74,13 +74,13 @@ namespace MotorAPIPlus
         public byte[] GetReadCommand(byte slaveID, byte funCode, ushort registerAddress, byte[] data)
         {
             List<byte> cmd = new List<byte>();
-            cmd.Add(slaveID);
-            cmd.Add(funCode);
-            cmd.Add(BitConverter.GetBytes(registerAddress)[1]);
+            cmd.Add(slaveID);//伺服id
+            cmd.Add(funCode);//功能码
+            cmd.Add(BitConverter.GetBytes(registerAddress)[1]);//寄存器地址
             cmd.Add(BitConverter.GetBytes(registerAddress)[0]);
             /* 读命令中数据域 data 表示需要读取的寄存器个数 */
             cmd.AddRange(data);
-            cmd.AddRange(CRC16(cmd.ToList()));
+            cmd.AddRange(CRC16(cmd.ToList()));//CRC校验位
             return cmd.ToArray();
         }
 
@@ -148,7 +148,7 @@ namespace MotorAPIPlus
             object res = null;
             byte[] data;
             if (result.DataList == null || result.DataList.Count == 0) return null;
-            if(result.DataList.Count > 4)
+            if(result.DataList.Count > 4)//如果数据域的字节数大于4
             {
                 byte[] datalist = result.DataList.ToArray();
                 data = new byte[4];
@@ -324,6 +324,15 @@ namespace MotorAPIPlus
             return result;
         }
 
+        /// <summary>
+        /// 设置速度滤波
+        /// </summary>
+        public void SetVelFilter()
+        {
+
+        }
+
+
 
         /// <summary>
         /// 运动至上限位 需要接传感器
@@ -403,13 +412,7 @@ namespace MotorAPIPlus
             return result == 537010481 ? 1 : 0;
         }
 
-
-
-
-
-
-
-        //-------读取上下限位
+        //-------读取上下限位？功能未确定
         /// <summary>
         /// 获取上限位?
         /// </summary>
@@ -681,9 +684,6 @@ namespace MotorAPIPlus
         /// <returns></returns>
         public void SetMoveTo(double d, bool positionSign, int pulseLen = 19200)//3840000 / 19200 = 200
         {
-            //Result<int> state = new Result<int>();
-            int state;
-
             int offset = 0;//偏移脉冲数
             double targetABSPosition;//要移动到的绝对位置
             double currentABSPosition;//当前实际绝对位置
@@ -726,9 +726,6 @@ namespace MotorAPIPlus
         /// <returns></returns>
         public void SetSingleMove(double d, bool Dir = true, int pulseLen = 19200)//3840000 / 19200 = 200 ppr (细分值)
         {
-            //Result<int> state = new Result<int>();
-            int state;
-
             int currentPulsePosition = GetPulsePosition();//获取当前脉冲位置
 
             pulseLen = PulseLen;
